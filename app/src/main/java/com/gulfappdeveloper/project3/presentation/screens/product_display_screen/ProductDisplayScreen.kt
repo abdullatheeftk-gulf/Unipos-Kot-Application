@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.gulfappdeveloper.project3.R
+import com.gulfappdeveloper.project3.navigation.root.RootNavScreens
 import com.gulfappdeveloper.project3.navigation.root.RootViewModel
 import com.gulfappdeveloper.project3.presentation.presentation_util.UiEvent
 import com.gulfappdeveloper.project3.presentation.screens.product_display_screen.components.category.CategoryListRow
@@ -38,7 +39,7 @@ fun ProductDisplayScreen(
 
     val itemsCountInKot by rootViewModel.itemsCountInKot
 
-    val netAmount by rootViewModel.netAmount
+    val netAmount by rootViewModel.kotNetAmount
 
     var showProgressBar by remember {
         mutableStateOf(false)
@@ -61,8 +62,8 @@ fun ProductDisplayScreen(
                 is UiEvent.CloseProgressBar -> {
                     showProgressBar = false
                 }
-                is UiEvent.Navigate -> {
-
+                is UiEvent.ShowSnackBar -> {
+                    scaffoldState.snackbarHostState.showSnackbar(message = value.uiEvent.message)
                 }
                 is UiEvent.ShowEmptyList -> {
                     showEmptyList = true
@@ -82,14 +83,16 @@ fun ProductDisplayScreen(
                 title = {
                     Text(
                         buildAnnotatedString {
-                            withStyle(style = SpanStyle(color = MaterialTheme.colors.background)){
+                            withStyle(style = SpanStyle(color = MaterialTheme.colors.background)) {
                                 append("Net Amount : ")
                             }
-                            withStyle(style = SpanStyle(
-                                color = Color.Yellow,
-                                fontSize = 26.sp,
-                                fontWeight = FontWeight.Bold
-                            )){
+                            withStyle(
+                                style = SpanStyle(
+                                    color = Color.Yellow,
+                                    fontSize = 26.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            ) {
                                 append("$netAmount")
                             }
 
@@ -138,7 +141,12 @@ fun ProductDisplayScreen(
 
                 },
                 onClick = {
-
+                    if (itemsCountInKot == 0) {
+                        rootViewModel.showSnackBarInProductDisplayScreen(message = "KOT list is empty")
+                    }
+                    else{
+                        navHostController.navigate(RootNavScreens.ReviewScreen.route)
+                    }
                 }
             )
 

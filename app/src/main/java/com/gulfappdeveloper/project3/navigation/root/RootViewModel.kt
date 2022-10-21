@@ -15,6 +15,7 @@ import com.gulfappdeveloper.project3.presentation.screens.product_display_screen
 import com.gulfappdeveloper.project3.presentation.screens.splash_screen.util.SplashScreenEvent
 import com.gulfappdeveloper.project3.usecases.UseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
@@ -52,10 +53,10 @@ class RootViewModel @Inject constructor(
     val categoryList = mutableStateListOf<Category>()
     val productList = mutableStateListOf<Product>()
 
-    private val kotItemList = mutableListOf<KotItem>()
+    val kotItemList = mutableStateListOf<KotItem>()
     var itemsCountInKot = mutableStateOf(0)
         private set
-    var netAmount = mutableStateOf(0f)
+    var kotNetAmount = mutableStateOf(0f)
         private set
 
     init {
@@ -87,7 +88,7 @@ class RootViewModel @Inject constructor(
                 baseUrl.value = it
                 getWelcomeMessage()
                 getCategoryList()
-                getProductList()
+                getProductList(value = 0)
             }
         }
     }
@@ -100,7 +101,7 @@ class RootViewModel @Inject constructor(
                     if (result is GetDataFromRemote.Success) {
                         // Log.w(TAG, "getWelcomeMessage: ${result.data}", )
                         message.value = result.data.message
-                        navigateToNextScreenWithDelay(route = RootNavScreens.HomeScreen.route)
+                        navigateToNextScreenWithDelayForSplashScreen(route = RootNavScreens.HomeScreen.route)
                     }
                     if (result is GetDataFromRemote.Failed) {
                         Log.e(TAG, "getWelcomeMessage: ${result.error.code}")
@@ -172,23 +173,37 @@ class RootViewModel @Inject constructor(
 
     fun setSelectedCategory(value: Int) {
         selectedCategory.value = value
-        getProductList()
+        getProductList(value = value)
     }
 
-    private fun getProductList() {
+    private fun getProductList(value: Int) {
 
-        productList.removeAll {
-            true
+        try {
+            productList.removeAll {
+                true
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "getProductList: ${e.message}")
         }
+
 
         sendProductDisplayEvent(ProductDisplayScreenEvent(UiEvent.ShowProgressBar))
 
         val url = baseUrl.value + HttpRoutes.PRODUCT_LIST + "${selectedCategory.value}"
 
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             useCase.getProductListUseCase(
                 url = url
             ).collectLatest { result ->
+                try {
+                    productList.removeAll {
+                        true
+                    }
+                    selectedCategory.value = value
+                } catch (e: Exception) {
+                    Log.e(TAG, "getProductList: ${e.message}")
+                }
+
 
                 sendProductDisplayEvent(ProductDisplayScreenEvent(UiEvent.CloseProgressBar))
 
@@ -216,16 +231,45 @@ class RootViewModel @Inject constructor(
             netAmount = count * product.rate,
             quantity = count.toFloat(),
             rate = product.rate,
-            productId = product.id
+            productId = product.id,
+            productName = product.name
         )
         kotItemList.add(kotItem)
         itemsCountInKot.value += 1
-        netAmount.value += count * product.rate
+        kotNetAmount.value += count * product.rate
 
     }
 
+    fun onIncrementAndDecrementKotItemClicked(count: Int, productId: Int) {
+        kotItemList.map { kotItem ->
+            if (kotItem.productId == productId) {
+                kotNetAmount.value -= kotItem.netAmount
+                kotItem.quantity = count.toFloat()
+                kotItem.netAmount = count * kotItem.rate
+                kotNetAmount.value += kotItem.netAmount
+            }
+        }
 
-    private fun navigateToNextScreenWithDelay(route: String) {
+    }
+
+    fun onDeleteItemFromKotItemClicked(kotItem: KotItem) {
+        kotItemList.removeAll {
+            if (it.productId == kotItem.productId) {
+                kotNetAmount.value -= it.netAmount
+                itemsCountInKot.value -= 1
+                true
+            } else {
+                false
+            }
+        }
+    }
+
+    fun showSnackBarInProductDisplayScreen(message: String) {
+        sendProductDisplayEvent(ProductDisplayScreenEvent(UiEvent.ShowSnackBar(message)))
+    }
+
+
+    private fun navigateToNextScreenWithDelayForSplashScreen(route: String) {
         viewModelScope.launch {
             delay(2000)
             sendSplashScreenEvent(SplashScreenEvent(UiEvent.Navigate(route = route)))

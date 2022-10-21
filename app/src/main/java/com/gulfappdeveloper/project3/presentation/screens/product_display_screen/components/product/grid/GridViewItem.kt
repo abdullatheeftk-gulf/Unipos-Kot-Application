@@ -44,7 +44,7 @@ fun GridViewItem(
         shape = MaterialTheme.shapes.medium,
         elevation = 6.dp,
         modifier = Modifier.padding(5.dp),
-        border = BorderStroke(0.5.dp, Color.DarkGray)
+        border = BorderStroke(0.5.dp, MaterialTheme.colors.MyPrimeColor)
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),
