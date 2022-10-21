@@ -7,6 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.gulfappdeveloper.project3.R
 import com.gulfappdeveloper.project3.presentation.screens.home_screen.HomeScreen
+import com.gulfappdeveloper.project3.presentation.screens.product_display_screen.ProductDisplayScreen
 import com.gulfappdeveloper.project3.presentation.screens.splash_screen.SplashScreen
 import com.gulfappdeveloper.project3.presentation.screens.url_set_screen.SetBaseUrlScreen
 
@@ -39,11 +40,18 @@ fun RootNavGraph(
                 hideKeyboard = hideKeyBoard
             )
         }
-        composable(route = RootNavScreens.HomeScreen.route){
+        composable(route = RootNavScreens.HomeScreen.route) {
             changeStatusBarColor(R.color.white)
             HomeScreen(
                 navHostController = navHostController,
                 onScanButtonClicked = onScanButtonClicked
+            )
+        }
+        composable(route = RootNavScreens.ProductDisplayScreen.route) {
+            changeStatusBarColor(R.color.my_prime_color)
+            ProductDisplayScreen(
+                navHostController = navHostController,
+                rootViewModel = rootViewModel
             )
         }
     }

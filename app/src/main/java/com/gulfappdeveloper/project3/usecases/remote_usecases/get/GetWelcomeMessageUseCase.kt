@@ -1,4 +1,4 @@
-package com.gulfappdeveloper.project3.usecases.remote_usecases
+package com.gulfappdeveloper.project3.usecases.remote_usecases.get
 
 import com.gulfappdeveloper.project3.domain.remote.get.GetDataFromRemote
 import com.gulfappdeveloper.project3.domain.remote.get.welcome.WelcomeMessage

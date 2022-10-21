@@ -1,12 +1,17 @@
 package com.gulfappdeveloper.project3.navigation.root
 
 import android.util.Log
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gulfappdeveloper.project3.data.remote.HttpRoutes
 import com.gulfappdeveloper.project3.domain.remote.get.GetDataFromRemote
+import com.gulfappdeveloper.project3.domain.remote.get.product.Category
+import com.gulfappdeveloper.project3.domain.remote.get.product.Product
+import com.gulfappdeveloper.project3.domain.remote.post.KotItem
 import com.gulfappdeveloper.project3.presentation.presentation_util.UiEvent
+import com.gulfappdeveloper.project3.presentation.screens.product_display_screen.util.ProductDisplayScreenEvent
 import com.gulfappdeveloper.project3.presentation.screens.splash_screen.util.SplashScreenEvent
 import com.gulfappdeveloper.project3.usecases.UseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,6 +32,9 @@ class RootViewModel @Inject constructor(
     private val _splashScreenEvent = Channel<SplashScreenEvent>()
     val splashScreenEvent = _splashScreenEvent.receiveAsFlow()
 
+    private val _productDisplayEvent = Channel<ProductDisplayScreenEvent>()
+    val productDisplayScreenEvent = _productDisplayEvent.receiveAsFlow()
+
     var operationCount = mutableStateOf(0)
         private set
 
@@ -34,6 +42,20 @@ class RootViewModel @Inject constructor(
         private set
 
     var message = mutableStateOf("")
+        private set
+
+
+    var selectedCategory = mutableStateOf(0)
+        private set
+
+
+    val categoryList = mutableStateListOf<Category>()
+    val productList = mutableStateListOf<Product>()
+
+    private val kotItemList = mutableListOf<KotItem>()
+    var itemsCountInKot = mutableStateOf(0)
+        private set
+    var netAmount = mutableStateOf(0f)
         private set
 
     init {
@@ -51,7 +73,7 @@ class RootViewModel @Inject constructor(
     private fun readOperationCount() {
         viewModelScope.launch {
             useCase.readOperationCountUseCase().collectLatest {
-               // Log.d(TAG, "readOperationCount: $it")
+                // Log.d(TAG, "readOperationCount: $it")
                 operationCount.value = it
                 readBaseUrl()
             }
@@ -61,9 +83,11 @@ class RootViewModel @Inject constructor(
     private fun readBaseUrl() {
         viewModelScope.launch {
             useCase.readBaseUrlUseCase().collectLatest {
-               // Log.i(TAG, "readBaseUrl: $it")
+                // Log.i(TAG, "readBaseUrl: $it")
                 baseUrl.value = it
                 getWelcomeMessage()
+                getCategoryList()
+                getProductList()
             }
         }
     }
@@ -130,7 +154,78 @@ class RootViewModel @Inject constructor(
         }
     }
 
-    private fun navigateToNextScreenWithDelay(route:String){
+
+    private fun getCategoryList() {
+        viewModelScope.launch {
+            useCase.getCategoryListUseCase(url = baseUrl.value + HttpRoutes.CATEGORY_LIST)
+                .collectLatest { result ->
+                    if (result is GetDataFromRemote.Success) {
+                        categoryList.addAll(result.data)
+                    }
+                    if (result is GetDataFromRemote.Failed) {
+                        Log.e(TAG, "getCategoryList: ${result.error.code}")
+                    }
+
+                }
+        }
+    }
+
+    fun setSelectedCategory(value: Int) {
+        selectedCategory.value = value
+        getProductList()
+    }
+
+    private fun getProductList() {
+
+        productList.removeAll {
+            true
+        }
+
+        sendProductDisplayEvent(ProductDisplayScreenEvent(UiEvent.ShowProgressBar))
+
+        val url = baseUrl.value + HttpRoutes.PRODUCT_LIST + "${selectedCategory.value}"
+
+        viewModelScope.launch {
+            useCase.getProductListUseCase(
+                url = url
+            ).collectLatest { result ->
+
+                sendProductDisplayEvent(ProductDisplayScreenEvent(UiEvent.CloseProgressBar))
+
+                if (result is GetDataFromRemote.Success) {
+                    productList.addAll(result.data)
+                    if (result.data.isEmpty()) {
+                        sendProductDisplayEvent(ProductDisplayScreenEvent(UiEvent.ShowEmptyList))
+                    } else {
+                        sendProductDisplayEvent(ProductDisplayScreenEvent(UiEvent.ShowList))
+                    }
+                }
+                if (result is GetDataFromRemote.Failed) {
+                    sendProductDisplayEvent(ProductDisplayScreenEvent(UiEvent.ShowEmptyList))
+                    // Log.e(TAG, "getProductList: ${result.error.message} $url")
+                }
+
+            }
+        }
+    }
+
+
+    fun addProductToKOT(count: Int, product: Product) {
+        val kotItem = KotItem(
+            barcode = product.barcode,
+            netAmount = count * product.rate,
+            quantity = count.toFloat(),
+            rate = product.rate,
+            productId = product.id
+        )
+        kotItemList.add(kotItem)
+        itemsCountInKot.value += 1
+        netAmount.value += count * product.rate
+
+    }
+
+
+    private fun navigateToNextScreenWithDelay(route: String) {
         viewModelScope.launch {
             delay(2000)
             sendSplashScreenEvent(SplashScreenEvent(UiEvent.Navigate(route = route)))
@@ -140,6 +235,12 @@ class RootViewModel @Inject constructor(
     private fun sendSplashScreenEvent(splashScreenEvent: SplashScreenEvent) {
         viewModelScope.launch {
             _splashScreenEvent.send(splashScreenEvent)
+        }
+    }
+
+    private fun sendProductDisplayEvent(productDisplayScreenEvent: ProductDisplayScreenEvent) {
+        viewModelScope.launch {
+            _productDisplayEvent.send(productDisplayScreenEvent)
         }
     }
 }

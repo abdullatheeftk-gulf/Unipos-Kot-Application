@@ -4,7 +4,9 @@ import com.gulfappdeveloper.project3.usecases.data_store_usecases.base_url_useca
 import com.gulfappdeveloper.project3.usecases.data_store_usecases.base_url_usecases.SaveBaseUrlUseCase
 import com.gulfappdeveloper.project3.usecases.data_store_usecases.operation_counter_uscecases.ReadOperationCountUseCase
 import com.gulfappdeveloper.project3.usecases.data_store_usecases.operation_counter_uscecases.UpdateOperationCountUseCase
-import com.gulfappdeveloper.project3.usecases.remote_usecases.GetWelcomeMessageUseCase
+import com.gulfappdeveloper.project3.usecases.remote_usecases.get.GetCategoryListUseCase
+import com.gulfappdeveloper.project3.usecases.remote_usecases.get.GetProductListUseCase
+import com.gulfappdeveloper.project3.usecases.remote_usecases.get.GetWelcomeMessageUseCase
 
 data class UseCase(
     val updateOperationCountUseCase: UpdateOperationCountUseCase,
@@ -15,8 +17,10 @@ data class UseCase(
 
 
     val getWelcomeMessageUseCase: GetWelcomeMessageUseCase,
+    val getCategoryListUseCase: GetCategoryListUseCase,
+    val getProductListUseCase: GetProductListUseCase,
 
 
 
 
-)
+    )

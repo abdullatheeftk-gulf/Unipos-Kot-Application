@@ -7,7 +7,9 @@ import com.gulfappdeveloper.project3.usecases.data_store_usecases.base_url_useca
 import com.gulfappdeveloper.project3.usecases.data_store_usecases.base_url_usecases.SaveBaseUrlUseCase
 import com.gulfappdeveloper.project3.usecases.data_store_usecases.operation_counter_uscecases.ReadOperationCountUseCase
 import com.gulfappdeveloper.project3.usecases.data_store_usecases.operation_counter_uscecases.UpdateOperationCountUseCase
-import com.gulfappdeveloper.project3.usecases.remote_usecases.GetWelcomeMessageUseCase
+import com.gulfappdeveloper.project3.usecases.remote_usecases.get.GetCategoryListUseCase
+import com.gulfappdeveloper.project3.usecases.remote_usecases.get.GetProductListUseCase
+import com.gulfappdeveloper.project3.usecases.remote_usecases.get.GetWelcomeMessageUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -35,8 +37,10 @@ object RepositoryModule {
             readOperationCountUseCase = ReadOperationCountUseCase(dataStoreRepository = dataStoreRepository),
             readBaseUrlUseCase = ReadBaseUrlUseCase(dataStoreRepository = dataStoreRepository),
 
-            getWelcomeMessageUseCase = GetWelcomeMessageUseCase(remoteRepository = remoteRepository)
+            getWelcomeMessageUseCase = GetWelcomeMessageUseCase(remoteRepository = remoteRepository),
+            getCategoryListUseCase = GetCategoryListUseCase(remoteRepository = remoteRepository),
+            getProductListUseCase = GetProductListUseCase(remoteRepository = remoteRepository),
 
-        )
+            )
     }
 }

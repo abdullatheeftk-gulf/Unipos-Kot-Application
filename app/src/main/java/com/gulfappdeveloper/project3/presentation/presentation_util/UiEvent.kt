@@ -9,4 +9,6 @@ sealed class UiEvent {
     data class ShowSnackBar(val message: String) : UiEvent()
     data class Navigate(val route: String) : UiEvent()
     object ShowButton1 : UiEvent()
+    object ShowEmptyList : UiEvent()
+    object ShowList : UiEvent()
 }

@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.gulfappdeveloper.project3.R
+import com.gulfappdeveloper.project3.navigation.root.RootNavScreens
 import com.gulfappdeveloper.project3.presentation.screens.home_screen.components.MenuCard
 
 @Composable
@@ -46,8 +47,21 @@ fun HomeScreen(
             items(menuList) { item: Pair<Int, String> ->
                 MenuCard(
                     pair = item,
-                    onMenuCardClicked = {
+                    onMenuCardClicked = { menu ->
+                        when (menu) {
+                            "DINE IN" -> {
 
+                            }
+                            "TAKE AWAY" -> {
+                                navHostController.navigate(route = RootNavScreens.ProductDisplayScreen.route)
+                            }
+                            "EDIT" -> {
+
+                            }
+                            "SETTINGS" -> {
+
+                            }
+                        }
                     }
                 )
             }

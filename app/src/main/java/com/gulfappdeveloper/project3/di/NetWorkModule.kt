@@ -8,6 +8,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import io.ktor.client.*
 import io.ktor.client.engine.android.*
+import io.ktor.client.plugins.cache.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.logging.*
 import io.ktor.http.*
@@ -35,6 +36,7 @@ object NetWorkModule {
             install(Logging){
                 level = LogLevel.ALL
             }
+            install(HttpCache)
 
             engine {
                 connectTimeout = 30_000
