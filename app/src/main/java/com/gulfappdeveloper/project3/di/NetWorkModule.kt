@@ -1,5 +1,7 @@
 package com.gulfappdeveloper.project3.di
 
+import com.gulfappdeveloper.project3.data.remote.ApiServiceImpl
+import com.gulfappdeveloper.project3.domain.services.ApiService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -39,5 +41,12 @@ object NetWorkModule {
                 socketTimeout = 30_000
             }
         }
+    }
+
+
+    @Provides
+    @Singleton
+    fun provideApiService(client: HttpClient): ApiService {
+        return ApiServiceImpl(client)
     }
 }
