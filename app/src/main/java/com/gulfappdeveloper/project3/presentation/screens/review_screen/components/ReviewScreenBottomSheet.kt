@@ -5,6 +5,8 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -100,7 +102,7 @@ fun ReviewScreenBottomSheet(
                 enabled = !showProgressBar
             ) {
                 Icon(
-                    imageVector = Icons.Filled.ArrowBack,
+                    imageVector = Icons.Filled.KeyboardArrowLeft,
                     contentDescription = null,
                     tint = MaterialTheme.colors.MyPrimeColor
                 )
@@ -122,7 +124,7 @@ fun ReviewScreenBottomSheet(
             ) {
                 Text(text = "Generate KOT", color = MaterialTheme.colors.background)
                 Icon(
-                    imageVector = Icons.Filled.ArrowForward,
+                    imageVector = Icons.Filled.KeyboardArrowRight,
                     contentDescription = null,
                     tint = MaterialTheme.colors.MyPrimeColor
                 )

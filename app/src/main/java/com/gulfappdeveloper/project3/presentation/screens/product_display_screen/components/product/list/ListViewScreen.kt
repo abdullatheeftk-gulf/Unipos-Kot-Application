@@ -11,6 +11,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -54,7 +55,7 @@ fun ListViewScreen(
                     Image(
                         painter = painterResource(id = R.drawable.ic_hourglass_empty),
                         contentDescription = null,
-                        alpha = ContentAlpha.medium,
+                        alpha = ContentAlpha.disabled,
                         modifier = Modifier.size(200.dp)
                     )
                     Spacer(modifier = Modifier.height(20.dp))
@@ -62,7 +63,8 @@ fun ListViewScreen(
                         text = "Empty List",
                         color = MaterialTheme.colors.MyPrimeColor,
                         fontSize = 25.sp,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.alpha(ContentAlpha.disabled)
                     )
                 }
             }

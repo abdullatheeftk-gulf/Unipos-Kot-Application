@@ -42,6 +42,8 @@ fun KotItemsDisplay(
         mutableStateOf(kotItem.quantity.toInt())
     }
 
+    val baseUrl by rootViewModel.baseUrl
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -59,7 +61,7 @@ fun KotItemsDisplay(
                     .weight(.25f)
                     .padding(all = 5.dp),
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data(HttpRoutes.PRODUCT_IMAGE + "${kotItem.productId}")
+                    .data(baseUrl+HttpRoutes.PRODUCT_IMAGE + "${kotItem.productId}")
                     .crossfade(true)
                     .build(),
                 placeholder = painterResource(id = R.drawable.no_image),

@@ -1,5 +1,6 @@
 package com.gulfappdeveloper.project3.presentation.screens.home_screen
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,19 +11,27 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.gulfappdeveloper.project3.R
 import com.gulfappdeveloper.project3.navigation.root.RootNavScreens
+import com.gulfappdeveloper.project3.navigation.root.RootViewModel
 import com.gulfappdeveloper.project3.presentation.screens.home_screen.components.MenuCard
 
 @Composable
 fun HomeScreen(
     navHostController: NavHostController,
+    rootViewModel: RootViewModel,
     onScanButtonClicked: () -> Unit,
 ) {
 
     val scaffoldState = rememberScaffoldState()
+
+    val sectionList = rootViewModel.sectionList
+    val categoryList = rootViewModel.categoryList
+
+    val context = LocalContext.current
 
 
     val menuList = listOf(
@@ -50,10 +59,18 @@ fun HomeScreen(
                     onMenuCardClicked = { menu ->
                         when (menu) {
                             "DINE IN" -> {
-
+                                if (sectionList.isNotEmpty()) {
+                                    navHostController.navigate(route = RootNavScreens.DineInScreen.route)
+                                }else{
+                                    Toast.makeText(context, "Please wait!. Data is loading", Toast.LENGTH_SHORT).show()
+                                }
                             }
                             "TAKE AWAY" -> {
-                                navHostController.navigate(route = RootNavScreens.ProductDisplayScreen.route)
+                                if (categoryList.isNotEmpty()) {
+                                    navHostController.navigate(route = RootNavScreens.ProductDisplayScreen.route)
+                                }else{
+                                    Toast.makeText(context, "Please wait!. Data is loading", Toast.LENGTH_SHORT).show()
+                                }
                             }
                             "EDIT" -> {
 

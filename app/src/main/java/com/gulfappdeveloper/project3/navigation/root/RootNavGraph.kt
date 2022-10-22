@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.gulfappdeveloper.project3.R
+import com.gulfappdeveloper.project3.presentation.screens.dine_in_screen.DineInScreen
 import com.gulfappdeveloper.project3.presentation.screens.home_screen.HomeScreen
 import com.gulfappdeveloper.project3.presentation.screens.product_display_screen.ProductDisplayScreen
 import com.gulfappdeveloper.project3.presentation.screens.review_screen.ReviewScreen
@@ -46,9 +47,21 @@ fun RootNavGraph(
             changeStatusBarColor(R.color.white)
             HomeScreen(
                 navHostController = navHostController,
-                onScanButtonClicked = onScanButtonClicked
+                onScanButtonClicked = onScanButtonClicked,
+                rootViewModel = rootViewModel
             )
         }
+
+        composable(route = RootNavScreens.DineInScreen.route) {
+            changeStatusBarColor(R.color.my_prime_color)
+            DineInScreen(
+                navHostController = navHostController,
+                rootViewModel = rootViewModel,
+                hideKeyBoard = hideKeyBoard
+            )
+
+        }
+
         composable(route = RootNavScreens.ProductDisplayScreen.route) {
             changeStatusBarColor(R.color.my_prime_color)
             ProductDisplayScreen(

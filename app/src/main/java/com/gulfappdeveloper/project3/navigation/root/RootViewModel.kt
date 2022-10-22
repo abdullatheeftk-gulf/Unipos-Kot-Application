@@ -7,11 +7,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gulfappdeveloper.project3.data.remote.HttpRoutes
 import com.gulfappdeveloper.project3.domain.remote.get.GetDataFromRemote
+import com.gulfappdeveloper.project3.domain.remote.get.dine_in.Section
+import com.gulfappdeveloper.project3.domain.remote.get.dine_in.Table
 import com.gulfappdeveloper.project3.domain.remote.get.product.Category
 import com.gulfappdeveloper.project3.domain.remote.get.product.Product
 import com.gulfappdeveloper.project3.domain.remote.post.Kot
 import com.gulfappdeveloper.project3.domain.remote.post.KotItem
 import com.gulfappdeveloper.project3.presentation.presentation_util.UiEvent
+import com.gulfappdeveloper.project3.presentation.screens.dine_in_screen.components.util.DineInScreenEvent
 import com.gulfappdeveloper.project3.presentation.screens.product_display_screen.util.ProductDisplayScreenEvent
 import com.gulfappdeveloper.project3.presentation.screens.review_screen.util.ReviewScreenEvent
 import com.gulfappdeveloper.project3.presentation.screens.splash_screen.util.SplashScreenEvent
@@ -41,24 +44,38 @@ class RootViewModel @Inject constructor(
     private val _reviewScreenEvent = Channel<ReviewScreenEvent>()
     val reviewScreenEvent = _reviewScreenEvent.receiveAsFlow()
 
+    private val _dineInScreenEvent = Channel<DineInScreenEvent>()
+    val dineInScreenEvent = _dineInScreenEvent.receiveAsFlow()
+
+
+    // Operation count application
     var operationCount = mutableStateOf(0)
         private set
 
+    // Base Url
     var baseUrl = mutableStateOf(HttpRoutes.BASE_URL)
         private set
+
 
     // Welcome message in splash screen
     var message = mutableStateOf("")
         private set
 
-    // For product display
 
+    // For product display
     var selectedCategory = mutableStateOf(0)
         private set
 
-
     val categoryList = mutableStateListOf<Category>()
     val productList = mutableStateListOf<Product>()
+
+
+    // For Dine in
+    var selectedSection = mutableStateOf(1)
+        private set
+
+    val sectionList = mutableStateListOf<Section>()
+    val tableList = mutableStateListOf<Table>()
 
 
     // For KOT
@@ -104,6 +121,8 @@ class RootViewModel @Inject constructor(
                 getWelcomeMessage()
                 getCategoryList()
                 getProductList(value = 0)
+                getSectionList()
+                getTableList(value = 1)
             }
         }
     }
@@ -240,6 +259,79 @@ class RootViewModel @Inject constructor(
     }
 
 
+    // Get Dine in details
+    private fun getSectionList() {
+        viewModelScope.launch {
+            useCase.getSectionListUseCase(
+                url = baseUrl.value + HttpRoutes.SECTION_LIST
+            ).collectLatest { result ->
+                if (result is GetDataFromRemote.Success) {
+                    Log.i(TAG, "getSectionList: ${result.data}")
+                    sectionList.addAll(result.data)
+                }
+                if (result is GetDataFromRemote.Failed) {
+                    Log.e(TAG, "getSectionList: ${result.error}")
+                }
+
+            }
+        }
+    }
+
+    fun setSelectedSection(value: Int) {
+        selectedSection.value = value
+        getTableList(value = value)
+    }
+
+    private fun getTableList(value: Int) {
+        try {
+            tableList.removeAll {
+                true
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "getTableList: ${e.message}")
+        }
+
+
+        sendDineInScreenEvent(DineInScreenEvent(UiEvent.ShowProgressBar))
+
+        val url = baseUrl.value + HttpRoutes.TABLE_LIST + "${selectedSection.value}"
+
+        viewModelScope.launch(Dispatchers.IO) {
+            useCase.getTableListUseCase(
+                url = url
+            ).collectLatest { result ->
+
+                try {
+                    tableList.removeAll {
+                        true
+                    }
+                    selectedSection.value = value
+                } catch (e: Exception) {
+                    Log.e(TAG, "getTableList: ${e.message}")
+                }
+
+
+                sendDineInScreenEvent(DineInScreenEvent(UiEvent.CloseProgressBar))
+
+
+                if (result is GetDataFromRemote.Success) {
+                    tableList.addAll(result.data)
+                    if (result.data.isEmpty()) {
+                        sendDineInScreenEvent(DineInScreenEvent(UiEvent.ShowEmptyList))
+                    } else {
+                        sendDineInScreenEvent(DineInScreenEvent(UiEvent.ShowList))
+                    }
+                }
+                if (result is GetDataFromRemote.Failed) {
+                    sendDineInScreenEvent(DineInScreenEvent(UiEvent.ShowEmptyList))
+                    Log.e(TAG, "getTableList: ${result.error.message} $url")
+                }
+
+            }
+        }
+    }
+
+
     // KOT
     fun addProductToKOT(count: Int, product: Product) {
         val kotItem = KotItem(
@@ -299,6 +391,8 @@ class RootViewModel @Inject constructor(
         itemsCountInKot.value = 0
         kotNetAmount.value = 0f
         kotNotes.value = ""
+
+        // Need to do reset dine in features
     }
 
     fun generateKot(deviceId: String) {
@@ -318,9 +412,7 @@ class RootViewModel @Inject constructor(
                 sendReviewScreenEvent(ReviewScreenEvent(UiEvent.CloseProgressBar))
                 if (statusCode in 200..299) {
                     sendReviewScreenEvent(ReviewScreenEvent(UiEvent.ShowAlertDialog))
-
-                }
-                else{
+                } else {
                     sendReviewScreenEvent(ReviewScreenEvent(UiEvent.ShowSnackBar(message = "There have some error :- $message")))
                 }
             }
@@ -353,9 +445,15 @@ class RootViewModel @Inject constructor(
         }
     }
 
-    private fun sendReviewScreenEvent(reviewScreenEvent: ReviewScreenEvent){
+    private fun sendReviewScreenEvent(reviewScreenEvent: ReviewScreenEvent) {
         viewModelScope.launch {
             _reviewScreenEvent.send(reviewScreenEvent)
+        }
+    }
+
+    private fun sendDineInScreenEvent(dineInScreenEvent: DineInScreenEvent){
+        viewModelScope.launch {
+            _dineInScreenEvent.send(dineInScreenEvent)
         }
     }
 

@@ -1,4 +1,4 @@
-package com.gulfappdeveloper.project3.usecases.remote_usecases.get
+package com.gulfappdeveloper.project3.usecases.remote_usecases.get.product
 
 import com.gulfappdeveloper.project3.domain.remote.get.GetDataFromRemote
 import com.gulfappdeveloper.project3.domain.remote.get.product.Product

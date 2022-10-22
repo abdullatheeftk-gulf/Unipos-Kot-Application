@@ -37,6 +37,8 @@ fun ListViewItem(
         mutableStateOf(1)
     }
 
+    val baseUrl by rootViewModel.baseUrl
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -47,7 +49,7 @@ fun ListViewItem(
             width = 0.5.dp,
             color = MaterialTheme.colors.MyPrimeColor
         )
-    ){
+    ) {
         Row(
             modifier = Modifier.fillMaxSize(),
             verticalAlignment = Alignment.CenterVertically
@@ -57,7 +59,7 @@ fun ListViewItem(
                     .weight(.25f)
                     .padding(vertical = 5.dp),
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data(HttpRoutes.PRODUCT_IMAGE + "${product.id}")
+                    .data(baseUrl + HttpRoutes.PRODUCT_IMAGE + "${product.id}")
                     .crossfade(true)
                     .build(),
                 placeholder = painterResource(id = R.drawable.image_loading),

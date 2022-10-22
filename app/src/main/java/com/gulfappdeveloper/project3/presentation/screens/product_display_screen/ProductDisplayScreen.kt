@@ -1,5 +1,6 @@
 package com.gulfappdeveloper.project3.presentation.screens.product_display_screen
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -76,6 +77,11 @@ fun ProductDisplayScreen(
         }
     }
 
+    BackHandler(enabled = true) {
+        rootViewModel.resetKot()
+        navHostController.popBackStack()
+    }
+
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = {
@@ -100,7 +106,9 @@ fun ProductDisplayScreen(
                     )
                 },
                 actions = {
-                    IconButton(onClick = { }) {
+                    IconButton(onClick = {
+                        // ToDo
+                    }) {
                         Icon(
                             imageVector = Icons.Outlined.Search,
                             contentDescription = null
@@ -143,8 +151,7 @@ fun ProductDisplayScreen(
                 onClick = {
                     if (itemsCountInKot == 0) {
                         rootViewModel.showSnackBarInProductDisplayScreen(message = "KOT list is empty")
-                    }
-                    else{
+                    } else {
                         navHostController.navigate(RootNavScreens.ReviewScreen.route)
                     }
                 }

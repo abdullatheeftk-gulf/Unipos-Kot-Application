@@ -40,6 +40,8 @@ fun GridViewItem(
         mutableStateOf(1)
     }
 
+    val baseUrl by rootViewModel.baseUrl
+
     Card(
         shape = MaterialTheme.shapes.medium,
         elevation = 6.dp,
@@ -56,7 +58,7 @@ fun GridViewItem(
 
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data(HttpRoutes.PRODUCT_IMAGE + "${product.id}")
+                    .data(baseUrl + HttpRoutes.PRODUCT_IMAGE + "${product.id}")
                     .crossfade(true)
                     .build(),
                 contentDescription = "",

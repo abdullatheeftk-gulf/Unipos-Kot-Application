@@ -1,4 +1,4 @@
-package com.gulfappdeveloper.project3.presentation.screens.product_display_screen.components.product.grid
+package com.gulfappdeveloper.project3.presentation.screens.dine_in_screen.components.tables
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -23,13 +23,13 @@ import com.gulfappdeveloper.project3.ui.theme.MyPrimeColor
 import com.gulfappdeveloper.project3.ui.theme.ProgressBarColour
 
 @Composable
-fun GridViewScreen(
+fun TableListDisplay(
     rootViewModel: RootViewModel,
     showProgressBar: Boolean,
     showEmptyList: Boolean
 ) {
 
-    val productList = rootViewModel.productList
+    val tableList = rootViewModel.tableList
 
     if (showProgressBar) {
         Box(
@@ -72,17 +72,17 @@ fun GridViewScreen(
         } else {
 
             LazyVerticalGrid(
-                columns = GridCells.Fixed(3),
+                columns = GridCells.Fixed(2),
                 contentPadding = PaddingValues(10.dp)
             ) {
 
-                items(productList) { product ->
-                    GridViewItem(
+                items(tableList) { table ->
+                    TableDisplay(
                         rootViewModel = rootViewModel,
-                        product = product
+                        table = table
                     )
                 }
-                if (productList.size % 3 == 0) {
+                if (tableList.size % 2 == 0) {
                     item {
                         Spacer(modifier = Modifier.height(200.dp))
                     }
@@ -96,6 +96,5 @@ fun GridViewScreen(
 
         }
     }
-
 
 }
