@@ -1,12 +1,13 @@
 package com.gulfappdeveloper.project3.data.remote
 
 import android.util.Log
-import com.gulfappdeveloper.project3.domain.remote.get.GetDataFromRemote
-import com.gulfappdeveloper.project3.domain.services.ApiService
 import com.gulfappdeveloper.project3.domain.remote.error.Error
+import com.gulfappdeveloper.project3.domain.remote.get.GetDataFromRemote
 import com.gulfappdeveloper.project3.domain.remote.get.product.Category
 import com.gulfappdeveloper.project3.domain.remote.get.product.Product
 import com.gulfappdeveloper.project3.domain.remote.get.welcome.WelcomeMessage
+import com.gulfappdeveloper.project3.domain.remote.post.Kot
+import com.gulfappdeveloper.project3.domain.services.ApiService
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.network.sockets.*
@@ -357,5 +358,30 @@ class ApiServiceImpl(
             }
         }
     }
+
+
+    override suspend fun generateKOT(
+        url: String,
+        kot: Kot,
+        callBack: suspend (Int, String) -> Unit
+    ) {
+        try {
+            val httpResponse = client.post(url) {
+                contentType(ContentType.Application.Json)
+                setBody(body = kot)
+            }
+            val statusCode = httpResponse.status.value
+            val statusMessage = httpResponse.status.description
+            callBack(statusCode, statusMessage)
+            Log.i(TAG, "$kot")
+            Log.d(TAG, "generateKOT: $statusCode $statusMessage")
+
+        } catch (e: Exception) {
+            Log.e(TAG, "generateKOT: ${e.message}", )
+            callBack(404, e.toString())
+        }
+
+    }
+
 
 }

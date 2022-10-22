@@ -2,6 +2,7 @@ package com.gulfappdeveloper.project3
 
 import android.content.Context
 import android.os.Bundle
+import android.provider.Settings
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -21,6 +22,9 @@ private const val TAG = "MainActivity"
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val deviceId = Settings.Secure.getString(this.contentResolver, Settings.Secure.ANDROID_ID)
+
         setContent {
             Project3Theme {
                 Surface(
@@ -33,10 +37,11 @@ class MainActivity : ComponentActivity() {
                             hideSoftKeyBoard()
                         },
                         onScanButtonClicked = { /*TODO*/ },
-                        changeStatusBarColor = {color->
+                        changeStatusBarColor = { color ->
                             window.statusBarColor = ContextCompat.getColor(this, color)
                         },
-                        navHostController = navHostController
+                        navHostController = navHostController,
+                        deviceId = deviceId
                     )
                 }
             }

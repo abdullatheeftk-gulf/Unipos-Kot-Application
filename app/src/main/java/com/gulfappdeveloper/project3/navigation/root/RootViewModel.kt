@@ -9,9 +9,11 @@ import com.gulfappdeveloper.project3.data.remote.HttpRoutes
 import com.gulfappdeveloper.project3.domain.remote.get.GetDataFromRemote
 import com.gulfappdeveloper.project3.domain.remote.get.product.Category
 import com.gulfappdeveloper.project3.domain.remote.get.product.Product
+import com.gulfappdeveloper.project3.domain.remote.post.Kot
 import com.gulfappdeveloper.project3.domain.remote.post.KotItem
 import com.gulfappdeveloper.project3.presentation.presentation_util.UiEvent
 import com.gulfappdeveloper.project3.presentation.screens.product_display_screen.util.ProductDisplayScreenEvent
+import com.gulfappdeveloper.project3.presentation.screens.review_screen.util.ReviewScreenEvent
 import com.gulfappdeveloper.project3.presentation.screens.splash_screen.util.SplashScreenEvent
 import com.gulfappdeveloper.project3.usecases.UseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -36,15 +38,20 @@ class RootViewModel @Inject constructor(
     private val _productDisplayEvent = Channel<ProductDisplayScreenEvent>()
     val productDisplayScreenEvent = _productDisplayEvent.receiveAsFlow()
 
+    private val _reviewScreenEvent = Channel<ReviewScreenEvent>()
+    val reviewScreenEvent = _reviewScreenEvent.receiveAsFlow()
+
     var operationCount = mutableStateOf(0)
         private set
 
     var baseUrl = mutableStateOf(HttpRoutes.BASE_URL)
         private set
 
+    // Welcome message in splash screen
     var message = mutableStateOf("")
         private set
 
+    // For product display
 
     var selectedCategory = mutableStateOf(0)
         private set
@@ -53,11 +60,19 @@ class RootViewModel @Inject constructor(
     val categoryList = mutableStateListOf<Category>()
     val productList = mutableStateListOf<Product>()
 
+
+    // For KOT
     val kotItemList = mutableStateListOf<KotItem>()
+
     var itemsCountInKot = mutableStateOf(0)
         private set
+
     var kotNetAmount = mutableStateOf(0f)
         private set
+
+    var kotNotes = mutableStateOf("")
+        private set
+
 
     init {
         sendSplashScreenEvent(SplashScreenEvent(UiEvent.ShowProgressBar))
@@ -93,6 +108,7 @@ class RootViewModel @Inject constructor(
         }
     }
 
+    // Product display
     private fun getWelcomeMessage() {
         viewModelScope.launch {
             useCase.getWelcomeMessageUseCase(url = baseUrl.value + HttpRoutes.WELCOME_MESSAGE)
@@ -154,7 +170,6 @@ class RootViewModel @Inject constructor(
                 }
         }
     }
-
 
     private fun getCategoryList() {
         viewModelScope.launch {
@@ -225,6 +240,7 @@ class RootViewModel @Inject constructor(
     }
 
 
+    // KOT
     fun addProductToKOT(count: Int, product: Product) {
         val kotItem = KotItem(
             barcode = product.barcode,
@@ -249,7 +265,6 @@ class RootViewModel @Inject constructor(
                 kotNetAmount.value += kotItem.netAmount
             }
         }
-
     }
 
     fun onDeleteItemFromKotItemClicked(kotItem: KotItem) {
@@ -264,19 +279,60 @@ class RootViewModel @Inject constructor(
         }
     }
 
-    fun showSnackBarInProductDisplayScreen(message: String) {
-        sendProductDisplayEvent(ProductDisplayScreenEvent(UiEvent.ShowSnackBar(message)))
+    fun addKotNotes(value: String) {
+        kotNotes.value = value
     }
 
-    fun addNoteToKotItem(kotItem: KotItem,note:String){
-        kotItemList.map { item->
-            if (item.productId==kotItem.productId){
+    fun addNoteToKotItem(kotItem: KotItem, note: String) {
+        kotItemList.map { item ->
+            if (item.productId == kotItem.productId) {
                 item.itemNote = note
             }
         }
-
     }
 
+
+    fun resetKot() {
+        kotItemList.removeAll {
+            true
+        }
+        itemsCountInKot.value = 0
+        kotNetAmount.value = 0f
+        kotNotes.value = ""
+    }
+
+    fun generateKot(deviceId: String) {
+        sendReviewScreenEvent(ReviewScreenEvent(UiEvent.ShowProgressBar))
+        val kot = Kot(
+            fK_UserId = 1,
+            kotDetails = kotItemList.toList(),
+            notes = kotNotes.value,
+            serialNo = 1,
+            terminal = deviceId
+        )
+        viewModelScope.launch(Dispatchers.IO) {
+            useCase.generateKotUseCase(
+                url = baseUrl.value + HttpRoutes.GENERATE_KOT,
+                kot = kot
+            ) { statusCode, message ->
+                sendReviewScreenEvent(ReviewScreenEvent(UiEvent.CloseProgressBar))
+                if (statusCode in 200..299) {
+                    sendReviewScreenEvent(ReviewScreenEvent(UiEvent.ShowAlertDialog))
+
+                }
+                else{
+                    sendReviewScreenEvent(ReviewScreenEvent(UiEvent.ShowSnackBar(message = "There have some error :- $message")))
+                }
+            }
+
+        }
+    }
+
+
+    // Miscellaneous
+    fun showSnackBarInProductDisplayScreen(message: String) {
+        sendProductDisplayEvent(ProductDisplayScreenEvent(UiEvent.ShowSnackBar(message)))
+    }
 
     private fun navigateToNextScreenWithDelayForSplashScreen(route: String) {
         viewModelScope.launch {
@@ -296,4 +352,12 @@ class RootViewModel @Inject constructor(
             _productDisplayEvent.send(productDisplayScreenEvent)
         }
     }
+
+    private fun sendReviewScreenEvent(reviewScreenEvent: ReviewScreenEvent){
+        viewModelScope.launch {
+            _reviewScreenEvent.send(reviewScreenEvent)
+        }
+    }
+
+
 }

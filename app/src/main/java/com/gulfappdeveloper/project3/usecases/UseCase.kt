@@ -7,6 +7,7 @@ import com.gulfappdeveloper.project3.usecases.data_store_usecases.operation_coun
 import com.gulfappdeveloper.project3.usecases.remote_usecases.get.GetCategoryListUseCase
 import com.gulfappdeveloper.project3.usecases.remote_usecases.get.GetProductListUseCase
 import com.gulfappdeveloper.project3.usecases.remote_usecases.get.GetWelcomeMessageUseCase
+import com.gulfappdeveloper.project3.usecases.remote_usecases.post.GenerateKotUseCase
 
 data class UseCase(
     val updateOperationCountUseCase: UpdateOperationCountUseCase,
@@ -20,6 +21,7 @@ data class UseCase(
     val getCategoryListUseCase: GetCategoryListUseCase,
     val getProductListUseCase: GetProductListUseCase,
 
+    val generateKotUseCase:GenerateKotUseCase,
 
 
 

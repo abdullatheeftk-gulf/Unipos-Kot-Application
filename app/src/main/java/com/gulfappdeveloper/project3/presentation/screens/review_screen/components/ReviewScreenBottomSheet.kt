@@ -20,7 +20,9 @@ import com.gulfappdeveloper.project3.ui.theme.ProgressBarColour
 @Composable
 fun ReviewScreenBottomSheet(
     rootViewModel: RootViewModel,
-    navHostController: NavHostController
+    navHostController: NavHostController,
+    deviceId: String,
+    showProgressBar: Boolean
 ) {
     val itemCountInKot by rootViewModel.itemsCountInKot
     val kotNetAmount by rootViewModel.kotNetAmount
@@ -94,7 +96,8 @@ fun ReviewScreenBottomSheet(
                 modifier = Modifier.weight(4f),
                 colors = ButtonDefaults.buttonColors(
                     backgroundColor = MaterialTheme.colors.background
-                )
+                ),
+                enabled = !showProgressBar
             ) {
                 Icon(
                     imageVector = Icons.Filled.ArrowBack,
@@ -108,11 +111,14 @@ fun ReviewScreenBottomSheet(
             }
             Spacer(modifier = Modifier.width(20.dp))
             Button(
-                onClick = { /*TODO*/ },
+                onClick = {
+                    rootViewModel.generateKot(deviceId = deviceId)
+                },
                 modifier = Modifier.weight(4f),
                 colors = ButtonDefaults.buttonColors(
                     backgroundColor = MaterialTheme.colors.error
-                )
+                ),
+                enabled = !showProgressBar
             ) {
                 Text(text = "Generate KOT", color = MaterialTheme.colors.background)
                 Icon(

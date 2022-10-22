@@ -15,6 +15,7 @@ import com.gulfappdeveloper.project3.presentation.screens.url_set_screen.SetBase
 @Composable
 fun RootNavGraph(
     rootViewModel: RootViewModel = hiltViewModel(),
+    deviceId: String,
     hideKeyBoard: () -> Unit,
     onScanButtonClicked: () -> Unit,
     changeStatusBarColor: (Int) -> Unit,
@@ -55,11 +56,12 @@ fun RootNavGraph(
                 rootViewModel = rootViewModel
             )
         }
-        composable(route = RootNavScreens.ReviewScreen.route){
+        composable(route = RootNavScreens.ReviewScreen.route) {
             changeStatusBarColor(R.color.my_prime_color)
             ReviewScreen(
                 navHostController = navHostController,
-                rootViewModel = rootViewModel
+                rootViewModel = rootViewModel,
+                deviceId = deviceId
             )
         }
     }

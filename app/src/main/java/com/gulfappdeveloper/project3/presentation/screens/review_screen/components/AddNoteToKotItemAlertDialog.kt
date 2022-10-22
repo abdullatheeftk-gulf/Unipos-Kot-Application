@@ -15,7 +15,7 @@ import com.gulfappdeveloper.project3.domain.remote.post.KotItem
 import com.gulfappdeveloper.project3.navigation.root.RootViewModel
 
 @Composable
-fun AddNoteAlertDialog(
+fun AddNoteToKotItemAlertDialog(
     onDismissRequest: () -> Unit,
     rootViewModel: RootViewModel,
     kotItem: KotItem
@@ -56,6 +56,5 @@ fun AddNoteAlertDialog(
 
         },
         shape = RoundedCornerShape(corner = CornerSize(10.dp)),
-
-        )
+    )
 }

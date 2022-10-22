@@ -10,6 +10,7 @@ import com.gulfappdeveloper.project3.usecases.data_store_usecases.operation_coun
 import com.gulfappdeveloper.project3.usecases.remote_usecases.get.GetCategoryListUseCase
 import com.gulfappdeveloper.project3.usecases.remote_usecases.get.GetProductListUseCase
 import com.gulfappdeveloper.project3.usecases.remote_usecases.get.GetWelcomeMessageUseCase
+import com.gulfappdeveloper.project3.usecases.remote_usecases.post.GenerateKotUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -40,6 +41,8 @@ object RepositoryModule {
             getWelcomeMessageUseCase = GetWelcomeMessageUseCase(remoteRepository = remoteRepository),
             getCategoryListUseCase = GetCategoryListUseCase(remoteRepository = remoteRepository),
             getProductListUseCase = GetProductListUseCase(remoteRepository = remoteRepository),
+
+            generateKotUseCase = GenerateKotUseCase(remoteRepository = remoteRepository),
 
             )
     }

@@ -6,45 +6,144 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.gulfappdeveloper.project3.domain.remote.post.KotItem
+import com.gulfappdeveloper.project3.navigation.root.RootNavScreens
 import com.gulfappdeveloper.project3.navigation.root.RootViewModel
-import com.gulfappdeveloper.project3.presentation.screens.review_screen.components.AddNoteAlertDialog
-import com.gulfappdeveloper.project3.presentation.screens.review_screen.components.KotItemsDisplay
-import com.gulfappdeveloper.project3.presentation.screens.review_screen.components.ReviewScreenBottomSheet
+import com.gulfappdeveloper.project3.presentation.presentation_util.UiEvent
+import com.gulfappdeveloper.project3.presentation.screens.review_screen.components.*
 import com.gulfappdeveloper.project3.ui.theme.MyPrimeColor
+import com.gulfappdeveloper.project3.ui.theme.ProgressBarColour
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun ReviewScreen(
     navHostController: NavHostController,
-    rootViewModel: RootViewModel
+    rootViewModel: RootViewModel,
+    deviceId: String
 ) {
 
     val scaffoldState = rememberScaffoldState()
 
     val kotItemList = rootViewModel.kotItemList
 
-    var showAlertDialog by remember {
+    var showAddNoteToKotItemAlertDialog by remember {
         mutableStateOf(false)
     }
 
-    var kotItemSelectedForAddingNote:KotItem? by remember {
+    var kotItemSelectedForAddingNote: KotItem? by remember {
         mutableStateOf(null)
     }
 
+    var showAddNoteToKotAlertDialog by remember {
+        mutableStateOf(false)
+    }
+
+    var cancelKotAlertDialog by remember {
+        mutableStateOf(false)
+    }
+
+    var kotSuccessAlertDialog by remember {
+        mutableStateOf(false)
+    }
+
+    var showProgressBar by remember {
+        mutableStateOf(false)
+    }
+
+
+
+    LaunchedEffect(key1 = true) {
+        rootViewModel.reviewScreenEvent.collectLatest { event ->
+            when (event.uiEvent) {
+                is UiEvent.ShowProgressBar -> {
+                    showProgressBar = true
+                }
+                is UiEvent.CloseProgressBar -> {
+                    showProgressBar = false
+                }
+                is UiEvent.ShowAlertDialog -> {
+                    kotSuccessAlertDialog = true
+                }
+                is UiEvent.ShowSnackBar -> {
+                    scaffoldState.snackbarHostState.showSnackbar(
+                        message = event.uiEvent.message,
+                        duration = SnackbarDuration.Long
+                    )
+                }
+                else -> Unit
+            }
+        }
+    }
+
     kotItemSelectedForAddingNote?.let {
-        if (showAlertDialog) {
-            AddNoteAlertDialog(
+        if (showAddNoteToKotItemAlertDialog) {
+            AddNoteToKotItemAlertDialog(
                 onDismissRequest = {
-                    showAlertDialog = false
+                    showAddNoteToKotItemAlertDialog = false
+                    kotItemSelectedForAddingNote = null
                 },
                 rootViewModel = rootViewModel,
                 kotItem = it
+            )
+        }
+    }
+
+    if (showAddNoteToKotAlertDialog) {
+        AddNoteToKotAlertDialog(
+            rootViewModel = rootViewModel,
+            onDismissRequest = {
+                showAddNoteToKotAlertDialog = false
+            }
+        )
+    }
+
+    if (cancelKotAlertDialog) {
+        CancelKotAlertDialog(
+            rootViewModel = rootViewModel,
+            onYesButtonClicked = {
+                cancelKotAlertDialog = false
+                navHostController.popBackStack(
+                    route = RootNavScreens.ProductDisplayScreen.route,
+                    inclusive = true
+                )
+            },
+            onDismissRequest = {
+                cancelKotAlertDialog = false
+            }
+
+        )
+    }
+
+    if (kotSuccessAlertDialog) {
+        KotSuccessAlertDialog {
+            kotSuccessAlertDialog = false
+            rootViewModel.resetKot()
+            navHostController.popBackStack(
+                route = RootNavScreens.ProductDisplayScreen.route,
+                inclusive = true
+            )
+        }
+    }
+
+    if (showProgressBar) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator(
+                modifier = Modifier.size(30.dp),
+                strokeWidth = 1.dp,
+                color = MaterialTheme.colors.ProgressBarColour
             )
         }
     }
@@ -68,9 +167,35 @@ fun ReviewScreen(
                             contentDescription = null
                         )
                     }
+                },
+                actions = {
+                    IconButton(
+                        onClick = {
+                            showAddNoteToKotAlertDialog = true
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = null,
+                            tint = Color.Cyan
+                        )
+                    }
+                    IconButton(onClick = {
+                        cancelKotAlertDialog = true
+                    }) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = null,
+                            tint = Color.Yellow
+                        )
+                    }
                 }
             )
-        }
+        },
+        modifier = Modifier.alpha(
+            if (showProgressBar) ContentAlpha.disabled
+            else ContentAlpha.high
+        )
     ) {
         it.calculateTopPadding()
 
@@ -82,9 +207,9 @@ fun ReviewScreen(
                 KotItemsDisplay(
                     kotItem = item,
                     rootViewModel = rootViewModel,
-                    onItemClicked = {kotItem->
+                    onItemClicked = { kotItem ->
                         kotItemSelectedForAddingNote = kotItem
-                        showAlertDialog = true
+                        showAddNoteToKotItemAlertDialog = true
                     }
                 )
             }
@@ -111,11 +236,15 @@ fun ReviewScreen(
             ) {
                 ReviewScreenBottomSheet(
                     rootViewModel = rootViewModel,
-                    navHostController = navHostController
+                    navHostController = navHostController,
+                    deviceId = deviceId,
+                    showProgressBar = showProgressBar
                 )
             }
 
         }
 
     }
+
+
 }

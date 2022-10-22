@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 data class Kot(
     val chairCount: Int=0,
     val fK_UserId: Int,
-    val kotItems: List<KotItem>,
+    val kotDetails: List<KotItem>,
     val kotMasterId: Int =1,
     var notes: String ="",
     val orderName: String="",
