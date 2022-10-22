@@ -10,6 +10,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,11 +29,13 @@ import com.gulfappdeveloper.project3.data.remote.HttpRoutes
 import com.gulfappdeveloper.project3.domain.remote.post.KotItem
 import com.gulfappdeveloper.project3.navigation.root.RootViewModel
 import com.gulfappdeveloper.project3.ui.theme.MyPrimeColor
+import com.gulfappdeveloper.project3.ui.theme.ProgressBarColour
 
 @Composable
 fun KotItemsDisplay(
     kotItem: KotItem,
-    rootViewModel: RootViewModel
+    rootViewModel: RootViewModel,
+    onItemClicked: (KotItem) -> Unit
 ) {
 
     var itemCount by remember {
@@ -68,13 +71,33 @@ fun KotItemsDisplay(
                 modifier = Modifier.weight(.5f),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    modifier = Modifier.weight(0.6f),
-                    text = kotItem.productName,
-                    fontSize = 20.sp,
-                    fontStyle = MaterialTheme.typography.subtitle1.fontStyle,
-                    textAlign = TextAlign.Center
-                )
+                Column(
+                    modifier = Modifier
+                        .weight(0.6f)
+                        .clickable {
+                            onItemClicked(kotItem)
+                        },
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+
+                ) {
+                    Text(
+                        text = kotItem.productName,
+                        fontSize = 20.sp,
+                        fontStyle = MaterialTheme.typography.subtitle1.fontStyle,
+                        textAlign = TextAlign.Center
+                    )
+                    if (kotItem.itemNote.isNotEmpty()){
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_baseline_notes_24),
+                            contentDescription = null,
+                            modifier = Modifier.size(20.dp),
+                            tint = MaterialTheme.colors.ProgressBarColour
+                        )
+                    }
+
+                }
+
                 Text(
                     modifier = Modifier.weight(0.4f),
                     text = "${kotItem.rate * itemCount}",

@@ -268,6 +268,15 @@ class RootViewModel @Inject constructor(
         sendProductDisplayEvent(ProductDisplayScreenEvent(UiEvent.ShowSnackBar(message)))
     }
 
+    fun addNoteToKotItem(kotItem: KotItem,note:String){
+        kotItemList.map { item->
+            if (item.productId==kotItem.productId){
+                item.itemNote = note
+            }
+        }
+
+    }
+
 
     private fun navigateToNextScreenWithDelayForSplashScreen(route: String) {
         viewModelScope.launch {
