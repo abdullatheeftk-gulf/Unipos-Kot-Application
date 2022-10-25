@@ -27,7 +27,6 @@ private const val TAG = "SplashScreen"
 fun SplashScreen(
     navHostController: NavHostController,
     rootViewModel: RootViewModel,
-    splashScreenViewModel: SplashScreenViewModel = hiltViewModel()
 ) {
 
     val scaffoldState = rememberScaffoldState()
@@ -41,6 +40,8 @@ fun SplashScreen(
     var showUrlSetButton by remember {
         mutableStateOf(false)
     }
+
+    Log.d(TAG, "SplashScreen: ")
 
     LaunchedEffect(key1 = true) {
         rootViewModel.splashScreenEvent.collectLatest { event ->

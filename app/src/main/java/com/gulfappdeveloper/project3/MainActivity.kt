@@ -33,8 +33,8 @@ class MainActivity : ComponentActivity() {
                 ) {
                     val navHostController = rememberNavController()
                     RootNavGraph(
-                        hideKeyBoard = {
-                            hideSoftKeyBoard()
+                        hideKeyboard = {
+                            hideSoftKeyboard()
                         },
                         onScanButtonClicked = { /*TODO*/ },
                         changeStatusBarColor = { color ->
@@ -48,7 +48,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun hideSoftKeyBoard() {
+    private fun hideSoftKeyboard() {
         this.currentFocus?.let { view ->
             val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             imm?.hideSoftInputFromWindow(view.windowToken, 0)

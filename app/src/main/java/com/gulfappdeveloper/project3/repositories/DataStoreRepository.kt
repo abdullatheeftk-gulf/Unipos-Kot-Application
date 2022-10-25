@@ -18,6 +18,10 @@ class DataStoreRepository @Inject constructor(
         dataStoreService.saveBaseUrl(baseUrl = baseUrl)
     }
 
+    suspend fun updateSerialNo() {
+        dataStoreService.updateSerialNo()
+    }
+
 
     fun readOperationCount(): Flow<Int> {
         return dataStoreService.readOperationCount()
@@ -25,6 +29,10 @@ class DataStoreRepository @Inject constructor(
 
     fun readBaseUrl(): Flow<String> {
         return dataStoreService.readBaseUrl()
+    }
+
+    fun readSerialNo():Flow<Int>{
+        return dataStoreService.readSerialNo()
     }
 
 

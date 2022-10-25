@@ -18,6 +18,7 @@ class DataStoreServiceImpl(context: Context) : DataStoreService {
     private object PreferenceKeys {
         val operationCountKey = intPreferencesKey(name = DataStoreConstants.OPERATION_COUNT_KEY)
         val baseUrlKey = stringPreferencesKey(name = DataStoreConstants.BASE_URL_KEY)
+        val serialNoKey = intPreferencesKey(name = DataStoreConstants.SERIAL_NO_KEY)
     }
 
     private val dataStore = context.dataStore
@@ -29,9 +30,16 @@ class DataStoreServiceImpl(context: Context) : DataStoreService {
         }
     }
 
-    override suspend fun saveBaseUrl(baseUrl:String) {
-        dataStore.edit { preference->
+    override suspend fun saveBaseUrl(baseUrl: String) {
+        dataStore.edit { preference ->
             preference[PreferenceKeys.baseUrlKey] = baseUrl
+        }
+    }
+
+    override suspend fun updateSerialNo() {
+        dataStore.edit { preference ->
+            val count = preference[PreferenceKeys.serialNoKey] ?: 0
+            preference[PreferenceKeys.serialNoKey] = count + 1
         }
     }
 
@@ -60,6 +68,20 @@ class DataStoreServiceImpl(context: Context) : DataStoreService {
             .map { preferences ->
                 val baseUrl = preferences[PreferenceKeys.baseUrlKey] ?: HttpRoutes.BASE_URL
                 baseUrl
+            }
+    }
+
+    override fun readSerialNo(): Flow<Int> {
+        return dataStore.data
+            .catch { exception ->
+                if (exception is IOException)
+                    emit(emptyPreferences())
+                else
+                    throw exception
+            }
+            .map { preferences ->
+                val serialNoCount = preferences[PreferenceKeys.serialNoKey] ?: 0
+                serialNoCount
             }
     }
 }

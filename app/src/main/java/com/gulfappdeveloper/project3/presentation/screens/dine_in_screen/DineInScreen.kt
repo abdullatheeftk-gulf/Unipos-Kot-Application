@@ -1,6 +1,5 @@
 package com.gulfappdeveloper.project3.presentation.screens.dine_in_screen
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -15,14 +14,13 @@ import com.gulfappdeveloper.project3.presentation.presentation_util.UiEvent
 import com.gulfappdeveloper.project3.presentation.screens.dine_in_screen.components.sections.SectionListRow
 import com.gulfappdeveloper.project3.presentation.screens.dine_in_screen.components.tables.TableListDisplay
 import com.gulfappdeveloper.project3.presentation.screens.dine_in_screen.components.util.DineInScreenEvent
-import com.gulfappdeveloper.project3.presentation.screens.product_display_screen.util.ProductDisplayScreenEvent
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun DineInScreen(
     navHostController: NavHostController,
     rootViewModel: RootViewModel,
-    hideKeyBoard: () -> Unit,
+    hideKeyboard: () -> Unit,
 ) {
 
     val scaffoldState = rememberScaffoldState()

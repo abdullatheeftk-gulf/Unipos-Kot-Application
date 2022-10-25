@@ -35,7 +35,7 @@ class SetBaseUrlScreenViewModel @Inject constructor(
             useCase.getWelcomeMessageUseCase(url = url).collectLatest { result ->
                 sendUiEvent(UiEvent.CloseProgressBar)
                 if (result is GetDataFromRemote.Success) {
-                    sendUiEvent(UiEvent.Navigate(RootNavScreens.HomeScreen.route))
+                    sendUiEvent(UiEvent.Navigate(RootNavScreens.LocalRegisterScreen.route))
                 }
                 if (result is GetDataFromRemote.Failed) {
                     sendUiEvent(UiEvent.ShowSnackBar(message = "This Server with $url is down"))

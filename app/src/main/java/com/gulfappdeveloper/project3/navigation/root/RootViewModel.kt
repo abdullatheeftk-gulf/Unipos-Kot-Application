@@ -31,7 +31,7 @@ import javax.inject.Inject
 private const val TAG = "RootViewModel"
 
 @HiltViewModel
-class RootViewModel @Inject constructor(
+open class RootViewModel @Inject constructor(
     private val useCase: UseCase
 ) : ViewModel() {
 
@@ -46,6 +46,10 @@ class RootViewModel @Inject constructor(
 
     private val _dineInScreenEvent = Channel<DineInScreenEvent>()
     val dineInScreenEvent = _dineInScreenEvent.receiveAsFlow()
+
+
+
+
 
 
     // Operation count application
@@ -90,8 +94,15 @@ class RootViewModel @Inject constructor(
     var kotNotes = mutableStateOf("")
         private set
 
+    var fKUserId = mutableStateOf(0)
+        private set
+
+    var serialNo = mutableStateOf(0)
+        private set
+
 
     init {
+        Log.i(TAG, "init root viewModel: ")
         sendSplashScreenEvent(SplashScreenEvent(UiEvent.ShowProgressBar))
         saveOperationCount()
     }
@@ -136,7 +147,7 @@ class RootViewModel @Inject constructor(
                     if (result is GetDataFromRemote.Success) {
                         // Log.w(TAG, "getWelcomeMessage: ${result.data}", )
                         message.value = result.data.message
-                        navigateToNextScreenWithDelayForSplashScreen(route = RootNavScreens.HomeScreen.route)
+                        navigateToNextScreenWithDelayForSplashScreen(route = RootNavScreens.LocalRegisterScreen.route)
                     }
                     if (result is GetDataFromRemote.Failed) {
                         Log.e(TAG, "getWelcomeMessage: ${result.error.code}")
@@ -195,6 +206,13 @@ class RootViewModel @Inject constructor(
             useCase.getCategoryListUseCase(url = baseUrl.value + HttpRoutes.CATEGORY_LIST)
                 .collectLatest { result ->
                     if (result is GetDataFromRemote.Success) {
+                        try {
+                            categoryList.removeAll{
+                                true
+                            }
+                        }catch (e:Exception){
+                            Log.e(TAG, "getCategoryList: ${e.message}", )
+                        }
                         categoryList.addAll(result.data)
                     }
                     if (result is GetDataFromRemote.Failed) {
@@ -267,6 +285,13 @@ class RootViewModel @Inject constructor(
             ).collectLatest { result ->
                 if (result is GetDataFromRemote.Success) {
                     Log.i(TAG, "getSectionList: ${result.data}")
+                    try {
+                        sectionList.removeAll{
+                            true
+                        }
+                    }catch (e:Exception){
+                        Log.e(TAG, "getSectionList: ${e.message}", )
+                    }
                     sectionList.addAll(result.data)
                 }
                 if (result is GetDataFromRemote.Failed) {
@@ -398,10 +423,10 @@ class RootViewModel @Inject constructor(
     fun generateKot(deviceId: String) {
         sendReviewScreenEvent(ReviewScreenEvent(UiEvent.ShowProgressBar))
         val kot = Kot(
-            fK_UserId = 1,
+            fK_UserId = fKUserId.value,
             kotDetails = kotItemList.toList(),
             notes = kotNotes.value,
-            serialNo = 1,
+            serialNo = serialNo.value,
             terminal = deviceId
         )
         viewModelScope.launch(Dispatchers.IO) {

@@ -253,6 +253,7 @@ class ApiServiceImpl(
     }
 
     override suspend fun getCategory(url: String): Flow<GetDataFromRemote<List<Category>>> {
+        Log.i(TAG, "getCategory: ")
         return flow {
             try {
                 val httpResponse = client.get(urlString = url)
@@ -365,6 +366,7 @@ class ApiServiceImpl(
     }
 
     override suspend fun getProducts(url: String): Flow<GetDataFromRemote<List<Product>>> {
+        Log.i(TAG, "getProducts: ")
         return flow {
             try {
                 val httpResponse = client.get(urlString = url)
