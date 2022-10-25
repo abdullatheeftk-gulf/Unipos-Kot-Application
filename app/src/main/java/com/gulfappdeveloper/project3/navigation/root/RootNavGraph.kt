@@ -17,7 +17,6 @@ import com.gulfappdeveloper.project3.presentation.screens.url_set_screen.SetBase
 @Composable
 fun RootNavGraph(
     rootViewModel: RootViewModel = hiltViewModel(),
-    rootViewModel2: RootViewModel2 = hiltViewModel(),
     deviceId: String,
     hideKeyboard: () -> Unit,
     onScanButtonClicked: () -> Unit,
@@ -45,9 +44,10 @@ fun RootNavGraph(
                 hideKeyboard = hideKeyboard
             )
         }
-        composable(route = RootNavScreens.LocalRegisterScreen.route){
+        composable(route = RootNavScreens.LocalRegisterScreen.route) {
             changeStatusBarColor(R.color.my_prime_color)
-            LocalRegister(rootViewModel2 = rootViewModel2,
+            LocalRegister(
+                rootViewModel = rootViewModel,
                 navHostController = navHostController,
                 hideKeyboard = hideKeyboard
             )

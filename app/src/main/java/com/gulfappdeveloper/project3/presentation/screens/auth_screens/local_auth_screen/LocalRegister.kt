@@ -15,24 +15,23 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.gulfappdeveloper.project3.R
-import com.gulfappdeveloper.project3.navigation.root.RootViewModel2
+import com.gulfappdeveloper.project3.navigation.root.RootViewModel
 import com.gulfappdeveloper.project3.presentation.presentation_util.UiEvent
 import com.gulfappdeveloper.project3.ui.theme.ProgressBarColour
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun LocalRegister(
-    rootViewModel2: RootViewModel2,
+    rootViewModel: RootViewModel,
     navHostController: NavHostController,
     hideKeyboard: () -> Unit
 ) {
 
     val scaffoldState = rememberScaffoldState()
 
-    val baseUrl by rootViewModel2.baseUrl
+    val baseUrl by rootViewModel.baseUrl
 
     var text by remember {
         mutableStateOf("")
@@ -52,7 +51,7 @@ fun LocalRegister(
 
     LaunchedEffect(key1 = true) {
         focusRequester.requestFocus()
-        rootViewModel2.localRegisterEvent.collectLatest { value: UiEvent ->
+        rootViewModel.localRegisterEvent.collectLatest { value: UiEvent ->
             when (value) {
                 is UiEvent.Navigate -> {
                     navHostController.popBackStack()
@@ -125,12 +124,12 @@ fun LocalRegister(
                     onDone = {
                         hideKeyboard()
                         if (text.isNotEmpty()) {
-                            rootViewModel2.onRegisterLocally(
+                            rootViewModel.onRegisterLocally(
                                 baseUrl = baseUrl,
                                 password = text
                             )
                         } else {
-                            rootViewModel2.onErrorOnPassword()
+                            rootViewModel.onErrorOnPassword()
                         }
                     }
                 ),
@@ -144,12 +143,12 @@ fun LocalRegister(
                 onClick = {
                     hideKeyboard()
                     if (text.isNotEmpty()) {
-                        rootViewModel2.onRegisterLocally(
+                        rootViewModel.onRegisterLocally(
                             baseUrl = baseUrl,
                             password = text
                         )
                     } else {
-                        rootViewModel2.onErrorOnPassword()
+                        rootViewModel.onErrorOnPassword()
                     }
 
                 },

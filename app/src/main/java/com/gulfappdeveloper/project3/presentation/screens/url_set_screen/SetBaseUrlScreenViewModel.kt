@@ -1,5 +1,6 @@
 package com.gulfappdeveloper.project3.presentation.screens.url_set_screen
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gulfappdeveloper.project3.data.remote.HttpRoutes
@@ -14,6 +15,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+private const val TAG = "SetBaseUrlScreenViewMod"
 @HiltViewModel
 class SetBaseUrlScreenViewModel @Inject constructor(
     private val useCase: UseCase
@@ -23,6 +25,7 @@ class SetBaseUrlScreenViewModel @Inject constructor(
     val uiEvent = _uiEvent.receiveAsFlow()
 
     fun setBaseUrl(value: String) {
+        Log.d(TAG, "setBaseUrl: ")
         viewModelScope.launch {
             useCase.saveBaseUrlUseCase(baseUrl = value)
             getWelcomeMessage(url = value + HttpRoutes.WELCOME_MESSAGE)

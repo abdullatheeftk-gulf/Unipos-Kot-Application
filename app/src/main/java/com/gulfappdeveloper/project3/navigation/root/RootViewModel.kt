@@ -35,6 +35,8 @@ open class RootViewModel @Inject constructor(
     private val useCase: UseCase
 ) : ViewModel() {
 
+    private var isInitialLoadingFinished = true
+
     private val _splashScreenEvent = Channel<SplashScreenEvent>()
     val splashScreenEvent = _splashScreenEvent.receiveAsFlow()
 
@@ -46,6 +48,9 @@ open class RootViewModel @Inject constructor(
 
     private val _dineInScreenEvent = Channel<DineInScreenEvent>()
     val dineInScreenEvent = _dineInScreenEvent.receiveAsFlow()
+
+    private val _localRegisterEvent = Channel<UiEvent>()
+    val localRegisterEvent = _localRegisterEvent.receiveAsFlow()
 
 
 
@@ -105,51 +110,79 @@ open class RootViewModel @Inject constructor(
         Log.i(TAG, "init root viewModel: ")
         sendSplashScreenEvent(SplashScreenEvent(UiEvent.ShowProgressBar))
         saveOperationCount()
+        readOperationCount()
+        readSerialNo()
+        readBaseUrl()
+
+        getWelcomeMessage()
+        getCategoryList()
+        getProductList(value = 0)
+        getSectionList()
+        getTableList(value = 1)
+
     }
 
     private fun saveOperationCount() {
+        Log.d(TAG, "saveOperationCount: ")
         viewModelScope.launch {
             useCase.updateOperationCountUseCase()
-            readOperationCount()
         }
     }
 
     private fun readOperationCount() {
+       // Log.i(TAG, "readOperationCount: ")
         viewModelScope.launch {
-            useCase.readOperationCountUseCase().collectLatest {
-                // Log.d(TAG, "readOperationCount: $it")
+            useCase.readOperationCountUseCase().collect {
+                 Log.d(TAG, "readOperationCount: $it")
                 operationCount.value = it
-                readBaseUrl()
+            }
+        }
+    }
+
+    private fun readSerialNo(){
+        Log.i(TAG, "readSerialNo: ")
+        viewModelScope.launch {
+            useCase.readSerialNoCountUseCase().collect {
+                Log.d(TAG, "readSerialNo: $it")
+                serialNo.value = it
             }
         }
     }
 
     private fun readBaseUrl() {
+        Log.e(TAG, "readBaseUrl: ", )
         viewModelScope.launch {
-            useCase.readBaseUrlUseCase().collectLatest {
-                // Log.i(TAG, "readBaseUrl: $it")
+            useCase.readBaseUrlUseCase().collect {
+                 Log.i(TAG, "readBaseUrl: $it")
                 baseUrl.value = it
-                getWelcomeMessage()
-                getCategoryList()
-                getProductList(value = 0)
-                getSectionList()
-                getTableList(value = 1)
+
+                if (!isInitialLoadingFinished){
+                    getWelcomeMessage()
+                    getCategoryList()
+                    getProductList(value = 0)
+                    getSectionList()
+                    getTableList(value = 1)
+                }
+
             }
         }
     }
 
     // Product display
     private fun getWelcomeMessage() {
+        Log.d(TAG, "getWelcomeMessage: ")
         viewModelScope.launch {
             useCase.getWelcomeMessageUseCase(url = baseUrl.value + HttpRoutes.WELCOME_MESSAGE)
                 .collectLatest { result ->
                     sendSplashScreenEvent(SplashScreenEvent(UiEvent.CloseProgressBar))
                     if (result is GetDataFromRemote.Success) {
-                        // Log.w(TAG, "getWelcomeMessage: ${result.data}", )
+                         Log.w(TAG, "getWelcomeMessage: ${result.data}", )
                         message.value = result.data.message
                         navigateToNextScreenWithDelayForSplashScreen(route = RootNavScreens.LocalRegisterScreen.route)
+                        isInitialLoadingFinished = true
                     }
                     if (result is GetDataFromRemote.Failed) {
+                        isInitialLoadingFinished = false
                         Log.e(TAG, "getWelcomeMessage: ${result.error.code}")
                         when (result.error.code) {
                             in 300..399 -> {
@@ -214,8 +247,10 @@ open class RootViewModel @Inject constructor(
                             Log.e(TAG, "getCategoryList: ${e.message}", )
                         }
                         categoryList.addAll(result.data)
+                        isInitialLoadingFinished = true
                     }
                     if (result is GetDataFromRemote.Failed) {
+                        isInitialLoadingFinished = false
                         Log.e(TAG, "getCategoryList: ${result.error.code}")
                     }
 
@@ -294,7 +329,9 @@ open class RootViewModel @Inject constructor(
                     }
                     sectionList.addAll(result.data)
                 }
+                isInitialLoadingFinished = true
                 if (result is GetDataFromRemote.Failed) {
+                    isInitialLoadingFinished = false
                     Log.e(TAG, "getSectionList: ${result.error}")
                 }
 
@@ -354,6 +391,44 @@ open class RootViewModel @Inject constructor(
 
             }
         }
+    }
+
+
+
+    //login local server
+    fun onRegisterLocally(baseUrl: String, password: String) {
+
+        sendLocalRegisterEvent(UiEvent.ShowProgressBar)
+
+        viewModelScope.launch(Dispatchers.IO) {
+            useCase.registerUserUseCase(url = baseUrl + HttpRoutes.LOGIN + password)
+                .collectLatest { result ->
+
+                    sendLocalRegisterEvent(UiEvent.CloseProgressBar)
+
+                    if (result is GetDataFromRemote.Success) {
+                        val user = result.data
+                        updateSerialNo()
+                        fKUserId.value = user.userId
+                        sendLocalRegisterEvent(UiEvent.Navigate(route = RootNavScreens.HomeScreen.route))
+                    }
+                    if (result is GetDataFromRemote.Failed) {
+                        Log.e(TAG, "onRegisterLocally: ${result.error} ")
+                        sendLocalRegisterEvent(UiEvent.ShowSnackBar(message = "There Have Some Error :- ${result.error.message}"))
+                    }
+                }
+        }
+
+    }
+
+    private fun updateSerialNo(){
+        viewModelScope.launch(Dispatchers.IO) {
+            useCase.updateSerialNoUseCase()
+        }
+    }
+
+    fun onErrorOnPassword() {
+        sendLocalRegisterEvent(UiEvent.ShowSnackBar(message = "Password not entered"))
     }
 
 
@@ -479,6 +554,12 @@ open class RootViewModel @Inject constructor(
     private fun sendDineInScreenEvent(dineInScreenEvent: DineInScreenEvent){
         viewModelScope.launch {
             _dineInScreenEvent.send(dineInScreenEvent)
+        }
+    }
+
+    private fun sendLocalRegisterEvent(uiEvent: UiEvent) {
+        viewModelScope.launch {
+            _localRegisterEvent.send(uiEvent)
         }
     }
 
