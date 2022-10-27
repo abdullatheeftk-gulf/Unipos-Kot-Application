@@ -346,6 +346,7 @@ open class RootViewModel @Inject constructor(
                         true
                     }
                     selectedCategory.value = -1
+                    productSearchText.value = ""
                 } catch (e: Exception) {
                     Log.e(TAG, "productSearch: ${e.message}")
                 }

@@ -16,7 +16,7 @@ import com.gulfappdeveloper.project3.navigation.root.RootViewModel
 @Composable
 fun NormalTopBar(
     rootViewModel: RootViewModel,
-    onSearchButtonClicked:()->Unit,
+    onSearchButtonClicked: () -> Unit,
 ) {
 
     val netAmount by rootViewModel.kotNetAmount

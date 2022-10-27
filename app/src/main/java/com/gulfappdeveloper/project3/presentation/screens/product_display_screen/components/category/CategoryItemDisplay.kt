@@ -18,13 +18,15 @@ import com.gulfappdeveloper.project3.ui.theme.CategoryBackGroundClicked
 @Composable
 fun CategoryItemDisplay(
     rootViewModel: RootViewModel,
-    category: Category
+    category: Category,
+    onCategoryItemClicked:()->Unit
 ) {
     val categorySelected by rootViewModel.selectedCategory
 
     Card(
         modifier = Modifier.clickable {
             rootViewModel.setSelectedCategory(value = category.id)
+            onCategoryItemClicked()
         },
         elevation = 4.dp,
         backgroundColor = if (categorySelected == category.id) MaterialTheme.colors.CategoryBackGroundClicked else MaterialTheme.colors.CategoryBackGround,

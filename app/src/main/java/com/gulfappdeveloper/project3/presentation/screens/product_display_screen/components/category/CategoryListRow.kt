@@ -11,7 +11,8 @@ import com.gulfappdeveloper.project3.navigation.root.RootViewModel
 
 @Composable
 fun CategoryListRow(
-    rootViewModel: RootViewModel
+    rootViewModel: RootViewModel,
+    onCategoryItemClicked:()->Unit
 ) {
     val categoryList = rootViewModel.categoryList
 
@@ -22,7 +23,11 @@ fun CategoryListRow(
         }
 
         items(categoryList){category->
-            CategoryItemDisplay(rootViewModel = rootViewModel, category = category)
+            CategoryItemDisplay(
+                rootViewModel = rootViewModel,
+                category = category,
+                onCategoryItemClicked = onCategoryItemClicked
+            )
             Spacer(modifier = Modifier.width(8.dp))
         }
     }

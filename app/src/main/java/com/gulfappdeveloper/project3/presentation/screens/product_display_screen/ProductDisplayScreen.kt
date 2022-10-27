@@ -152,7 +152,12 @@ fun ProductDisplayScreen(
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            CategoryListRow(rootViewModel = rootViewModel)
+            CategoryListRow(
+                rootViewModel = rootViewModel,
+                onCategoryItemClicked = {
+                    normalAndSearchTobBarToggle = true
+                }
+            )
 
             Spacer(modifier = Modifier.height(15.dp))
 
