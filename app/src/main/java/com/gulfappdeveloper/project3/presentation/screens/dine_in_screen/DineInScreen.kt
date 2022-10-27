@@ -51,6 +51,9 @@ fun DineInScreen(
                 is UiEvent.ShowList -> {
                     showEmptyList = false
                 }
+                is UiEvent.Navigate -> {
+                    navHostController.navigate(value.uiEvent.route)
+                }
                 else -> Unit
             }
         }
@@ -71,7 +74,7 @@ fun DineInScreen(
                     Text(text = "Select Table")
                 },
                 navigationIcon = {
-                    IconButton(onClick = { /*TODO*/ }) {
+                    IconButton(onClick = { navHostController.popBackStack() }) {
                         Icon(
                             imageVector = Icons.Filled.ArrowBack,
                             contentDescription = null

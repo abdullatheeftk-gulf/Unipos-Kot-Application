@@ -12,6 +12,7 @@ import com.gulfappdeveloper.project3.presentation.screens.home_screen.HomeScreen
 import com.gulfappdeveloper.project3.presentation.screens.product_display_screen.ProductDisplayScreen
 import com.gulfappdeveloper.project3.presentation.screens.review_screen.ReviewScreen
 import com.gulfappdeveloper.project3.presentation.screens.splash_screen.SplashScreen
+import com.gulfappdeveloper.project3.presentation.screens.table_selection_screen.TableSelectionScreen
 import com.gulfappdeveloper.project3.presentation.screens.url_set_screen.SetBaseUrlScreen
 
 @Composable
@@ -69,6 +70,14 @@ fun RootNavGraph(
                 hideKeyboard = hideKeyboard
             )
 
+        }
+
+        composable(route = RootNavScreens.TableSelectionScreen.route){
+            changeStatusBarColor(R.color.my_prime_color)
+            TableSelectionScreen(
+                navHostController = navHostController,
+                rootViewModel = rootViewModel
+            )
         }
 
         composable(route = RootNavScreens.ProductDisplayScreen.route) {

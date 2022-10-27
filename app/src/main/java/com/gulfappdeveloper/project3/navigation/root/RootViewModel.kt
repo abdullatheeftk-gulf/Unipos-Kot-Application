@@ -1,12 +1,14 @@
 package com.gulfappdeveloper.project3.navigation.root
 
 import android.util.Log
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gulfappdeveloper.project3.data.remote.HttpRoutes
 import com.gulfappdeveloper.project3.domain.remote.get.GetDataFromRemote
+import com.gulfappdeveloper.project3.domain.remote.get.TableOrder
 import com.gulfappdeveloper.project3.domain.remote.get.dine_in.Section
 import com.gulfappdeveloper.project3.domain.remote.get.dine_in.Table
 import com.gulfappdeveloper.project3.domain.remote.get.product.Category
@@ -18,6 +20,7 @@ import com.gulfappdeveloper.project3.presentation.screens.dine_in_screen.compone
 import com.gulfappdeveloper.project3.presentation.screens.product_display_screen.util.ProductDisplayScreenEvent
 import com.gulfappdeveloper.project3.presentation.screens.review_screen.util.ReviewScreenEvent
 import com.gulfappdeveloper.project3.presentation.screens.splash_screen.util.SplashScreenEvent
+import com.gulfappdeveloper.project3.presentation.screens.table_selection_screen.TableSelectionUiEvent
 import com.gulfappdeveloper.project3.usecases.UseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -49,12 +52,11 @@ open class RootViewModel @Inject constructor(
     private val _dineInScreenEvent = Channel<DineInScreenEvent>()
     val dineInScreenEvent = _dineInScreenEvent.receiveAsFlow()
 
+    private val _tableSelectionUiEvent = Channel<TableSelectionUiEvent>()
+    val tableSelectionUiEvent = _tableSelectionUiEvent.receiveAsFlow()
+
     private val _localRegisterEvent = Channel<UiEvent>()
     val localRegisterEvent = _localRegisterEvent.receiveAsFlow()
-
-
-
-
 
 
     // Operation count application
@@ -85,6 +87,11 @@ open class RootViewModel @Inject constructor(
 
     val sectionList = mutableStateListOf<Section>()
     val tableList = mutableStateListOf<Table>()
+
+    var selectedTable: MutableState<Table?> = mutableStateOf(null)
+        private set
+
+    val tableOrderList = mutableStateListOf<TableOrder>()
 
 
     // For KOT
@@ -130,16 +137,16 @@ open class RootViewModel @Inject constructor(
     }
 
     private fun readOperationCount() {
-       // Log.i(TAG, "readOperationCount: ")
+        // Log.i(TAG, "readOperationCount: ")
         viewModelScope.launch {
             useCase.readOperationCountUseCase().collect {
-                 Log.d(TAG, "readOperationCount: $it")
+                Log.d(TAG, "readOperationCount: $it")
                 operationCount.value = it
             }
         }
     }
 
-    private fun readSerialNo(){
+    private fun readSerialNo() {
         Log.i(TAG, "readSerialNo: ")
         viewModelScope.launch {
             useCase.readSerialNoCountUseCase().collect {
@@ -150,13 +157,13 @@ open class RootViewModel @Inject constructor(
     }
 
     private fun readBaseUrl() {
-        Log.e(TAG, "readBaseUrl: ", )
+        Log.e(TAG, "readBaseUrl: ")
         viewModelScope.launch {
             useCase.readBaseUrlUseCase().collect {
-                 Log.i(TAG, "readBaseUrl: $it")
+                Log.i(TAG, "readBaseUrl: $it")
                 baseUrl.value = it
 
-                if (!isInitialLoadingFinished){
+                if (!isInitialLoadingFinished) {
                     getWelcomeMessage()
                     getCategoryList()
                     getProductList(value = 0)
@@ -176,7 +183,7 @@ open class RootViewModel @Inject constructor(
                 .collectLatest { result ->
                     sendSplashScreenEvent(SplashScreenEvent(UiEvent.CloseProgressBar))
                     if (result is GetDataFromRemote.Success) {
-                         Log.w(TAG, "getWelcomeMessage: ${result.data}", )
+                        Log.w(TAG, "getWelcomeMessage: ${result.data}")
                         message.value = result.data.message
                         navigateToNextScreenWithDelayForSplashScreen(route = RootNavScreens.LocalRegisterScreen.route)
                         isInitialLoadingFinished = true
@@ -240,11 +247,11 @@ open class RootViewModel @Inject constructor(
                 .collectLatest { result ->
                     if (result is GetDataFromRemote.Success) {
                         try {
-                            categoryList.removeAll{
+                            categoryList.removeAll {
                                 true
                             }
-                        }catch (e:Exception){
-                            Log.e(TAG, "getCategoryList: ${e.message}", )
+                        } catch (e: Exception) {
+                            Log.e(TAG, "getCategoryList: ${e.message}")
                         }
                         categoryList.addAll(result.data)
                         isInitialLoadingFinished = true
@@ -321,11 +328,11 @@ open class RootViewModel @Inject constructor(
                 if (result is GetDataFromRemote.Success) {
                     Log.i(TAG, "getSectionList: ${result.data}")
                     try {
-                        sectionList.removeAll{
+                        sectionList.removeAll {
                             true
                         }
-                    }catch (e:Exception){
-                        Log.e(TAG, "getSectionList: ${e.message}", )
+                    } catch (e: Exception) {
+                        Log.e(TAG, "getSectionList: ${e.message}")
                     }
                     sectionList.addAll(result.data)
                 }
@@ -393,6 +400,40 @@ open class RootViewModel @Inject constructor(
         }
     }
 
+    fun setSelectedTable(table: Table) {
+        selectedTable.value = table
+        sendDineInScreenEvent(DineInScreenEvent(UiEvent.Navigate(route = RootNavScreens.TableSelectionScreen.route)))
+        getTableOrderList(id = table.id)
+    }
+
+    private fun getTableOrderList(id: Int) {
+        Log.w(TAG, "getTableOrderList: $id", )
+        sendTableSelectionUiEvent(TableSelectionUiEvent(UiEvent.ShowProgressBar))
+        try {
+            tableOrderList.removeAll {
+                true
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "getTableOrderList: ${e.message}")
+        }
+
+        viewModelScope.launch(Dispatchers.IO) {
+            useCase.getTableOrderListUseCase(
+                url = baseUrl.value + HttpRoutes.TABLE_ORDER + id
+            ).collectLatest { result ->
+                sendTableSelectionUiEvent(TableSelectionUiEvent(UiEvent.CloseProgressBar))
+
+                if (result is GetDataFromRemote.Success) {
+                    tableOrderList.addAll(result.data)
+                }
+                if (result is GetDataFromRemote.Failed) {
+                    sendTableSelectionUiEvent(TableSelectionUiEvent(UiEvent.ShowSnackBar("There have some Error :- ${result.error.message}")))
+
+                    Log.e(TAG, "getTableOrderList: ${result.error}")
+                }
+            }
+        }
+    }
 
 
     //login local server
@@ -421,7 +462,7 @@ open class RootViewModel @Inject constructor(
 
     }
 
-    private fun updateSerialNo(){
+    private fun updateSerialNo() {
         viewModelScope.launch(Dispatchers.IO) {
             useCase.updateSerialNoUseCase()
         }
@@ -551,9 +592,15 @@ open class RootViewModel @Inject constructor(
         }
     }
 
-    private fun sendDineInScreenEvent(dineInScreenEvent: DineInScreenEvent){
+    private fun sendDineInScreenEvent(dineInScreenEvent: DineInScreenEvent) {
         viewModelScope.launch {
             _dineInScreenEvent.send(dineInScreenEvent)
+        }
+    }
+
+    private fun sendTableSelectionUiEvent(tableSelectionUiEvent: TableSelectionUiEvent) {
+        viewModelScope.launch {
+            _tableSelectionUiEvent.send(tableSelectionUiEvent)
         }
     }
 

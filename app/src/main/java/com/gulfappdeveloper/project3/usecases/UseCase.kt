@@ -11,7 +11,9 @@ import com.gulfappdeveloper.project3.usecases.remote_usecases.get.product.GetPro
 import com.gulfappdeveloper.project3.usecases.remote_usecases.get.GetWelcomeMessageUseCase
 import com.gulfappdeveloper.project3.usecases.remote_usecases.get.dine_in.GetSectionListUseCase
 import com.gulfappdeveloper.project3.usecases.remote_usecases.get.dine_in.GetTableListUseCase
+import com.gulfappdeveloper.project3.usecases.remote_usecases.get.dine_in.GetTableOrderListUseCase
 import com.gulfappdeveloper.project3.usecases.remote_usecases.get.login.RegisterUserUseCase
+import com.gulfappdeveloper.project3.usecases.remote_usecases.get.product.ProductSearchUseCase
 import com.gulfappdeveloper.project3.usecases.remote_usecases.post.GenerateKotUseCase
 
 data class UseCase(
@@ -30,9 +32,11 @@ data class UseCase(
 
     val getCategoryListUseCase: GetCategoryListUseCase,
     val getProductListUseCase: GetProductListUseCase,
+    val productSearchUseCase : ProductSearchUseCase,
 
     val getSectionListUseCase:GetSectionListUseCase,
     val getTableListUseCase: GetTableListUseCase,
+    val getTableOrderListUseCase: GetTableOrderListUseCase,
 
     val generateKotUseCase:GenerateKotUseCase,
 

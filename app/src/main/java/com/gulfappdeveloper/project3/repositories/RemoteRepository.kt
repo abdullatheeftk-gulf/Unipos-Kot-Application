@@ -1,6 +1,7 @@
 package com.gulfappdeveloper.project3.repositories
 
 import com.gulfappdeveloper.project3.domain.remote.get.GetDataFromRemote
+import com.gulfappdeveloper.project3.domain.remote.get.TableOrder
 import com.gulfappdeveloper.project3.domain.remote.get.dine_in.Section
 import com.gulfappdeveloper.project3.domain.remote.get.dine_in.Table
 import com.gulfappdeveloper.project3.domain.remote.get.login.User
@@ -36,12 +37,20 @@ class RemoteRepository @Inject constructor(
         return apiService.getProducts(url = url)
     }
 
+    suspend fun productSearch(url: String): Flow<GetDataFromRemote<List<Product>>> {
+        return apiService.productSearch(url = url)
+    }
+
     suspend fun getSectionList(url: String): Flow<GetDataFromRemote<List<Section>>> {
         return apiService.getSectionList(url = url)
     }
 
     suspend fun getTableList(url: String): Flow<GetDataFromRemote<List<Table>>> {
         return apiService.getTableList(url = url)
+    }
+
+    suspend fun getTableOrders(url: String): Flow<GetDataFromRemote<List<TableOrder>>> {
+        return apiService.getTableOrders(url = url)
     }
 
 

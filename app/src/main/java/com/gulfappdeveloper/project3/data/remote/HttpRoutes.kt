@@ -9,10 +9,12 @@ object HttpRoutes {
     const val CATEGORY_LIST = "/api/category"
     const val PRODUCT_LIST = "/api/product/"
     const val PRODUCT_IMAGE = "/api/proimage/"
+    const val PRODUCT_SEARCH = "/api/productsearch/"
 
     const val SECTION_LIST = "/api/section"
     const val TABLE_LIST = "/api/table/"
     const val TABLE_IMAGE = "/api/tableimage/"
+    const val TABLE_ORDER = "/api/tableorder/"
 
     const val GENERATE_KOT = "/api/kichenorder"
 }

@@ -6,6 +6,7 @@ sealed class RootNavScreens(val route: String) {
     object LocalRegisterScreen : RootNavScreens("local_register_screen")
     object HomeScreen : RootNavScreens("home_screen")
     object DineInScreen : RootNavScreens("dine_in_screen")
+    object TableSelectionScreen : RootNavScreens("table_selection_screen")
     object ProductDisplayScreen : RootNavScreens("product_display_screen")
     object ReviewScreen : RootNavScreens("review_screen")
     object KotScreen : RootNavScreens("kot_screen")

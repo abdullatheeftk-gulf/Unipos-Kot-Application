@@ -12,9 +12,11 @@ import com.gulfappdeveloper.project3.usecases.data_store_usecases.serial_counter
 import com.gulfappdeveloper.project3.usecases.remote_usecases.get.GetWelcomeMessageUseCase
 import com.gulfappdeveloper.project3.usecases.remote_usecases.get.dine_in.GetSectionListUseCase
 import com.gulfappdeveloper.project3.usecases.remote_usecases.get.dine_in.GetTableListUseCase
+import com.gulfappdeveloper.project3.usecases.remote_usecases.get.dine_in.GetTableOrderListUseCase
 import com.gulfappdeveloper.project3.usecases.remote_usecases.get.login.RegisterUserUseCase
 import com.gulfappdeveloper.project3.usecases.remote_usecases.get.product.GetCategoryListUseCase
 import com.gulfappdeveloper.project3.usecases.remote_usecases.get.product.GetProductListUseCase
+import com.gulfappdeveloper.project3.usecases.remote_usecases.get.product.ProductSearchUseCase
 import com.gulfappdeveloper.project3.usecases.remote_usecases.post.GenerateKotUseCase
 import dagger.Module
 import dagger.Provides
@@ -49,9 +51,11 @@ object RepositoryModule {
 
             getCategoryListUseCase = GetCategoryListUseCase(remoteRepository = remoteRepository),
             getProductListUseCase = GetProductListUseCase(remoteRepository = remoteRepository),
+            productSearchUseCase = ProductSearchUseCase(remoteRepository = remoteRepository),
 
             getSectionListUseCase = GetSectionListUseCase(remoteRepository = remoteRepository),
             getTableListUseCase = GetTableListUseCase(remoteRepository = remoteRepository),
+            getTableOrderListUseCase = GetTableOrderListUseCase(remoteRepository = remoteRepository),
 
             generateKotUseCase = GenerateKotUseCase(remoteRepository = remoteRepository),
 
