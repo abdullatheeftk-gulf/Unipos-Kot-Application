@@ -80,6 +80,9 @@ open class RootViewModel @Inject constructor(
     val categoryList = mutableStateListOf<Category>()
     val productList = mutableStateListOf<Product>()
 
+    var productSearchText = mutableStateOf("")
+        private set
+
 
     // For Dine in
     var selectedSection = mutableStateOf(1)
@@ -267,6 +270,9 @@ open class RootViewModel @Inject constructor(
 
     fun setSelectedCategory(value: Int) {
         selectedCategory.value = value
+        if (value == -1) {
+            return
+        }
         getProductList(value = value)
     }
 
@@ -316,6 +322,58 @@ open class RootViewModel @Inject constructor(
 
             }
         }
+    }
+
+
+    fun productSearch() {
+        selectedCategory.value = -1
+        try {
+            productList.removeAll {
+                true
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "productSearch: ${e.message}")
+        }
+
+        sendProductDisplayEvent(ProductDisplayScreenEvent(UiEvent.ShowProgressBar))
+        val url = baseUrl.value + HttpRoutes.PRODUCT_SEARCH + productSearchText.value
+        viewModelScope.launch(Dispatchers.IO) {
+            useCase.productSearchUseCase(
+                url = url
+            ).collectLatest { result ->
+                try {
+                    productList.removeAll {
+                        true
+                    }
+                    selectedCategory.value = -1
+                } catch (e: Exception) {
+                    Log.e(TAG, "productSearch: ${e.message}")
+                }
+
+
+                sendProductDisplayEvent(ProductDisplayScreenEvent(UiEvent.CloseProgressBar))
+
+                if (result is GetDataFromRemote.Success) {
+                    productList.addAll(result.data)
+                    if (result.data.isEmpty()) {
+                        sendProductDisplayEvent(ProductDisplayScreenEvent(UiEvent.ShowEmptyList))
+                    } else {
+                        sendProductDisplayEvent(ProductDisplayScreenEvent(UiEvent.ShowList))
+                    }
+                }
+                if (result is GetDataFromRemote.Failed) {
+                    sendProductDisplayEvent(ProductDisplayScreenEvent(UiEvent.ShowEmptyList))
+                    Log.e(TAG, "product Search: ${result.error.message} $url")
+                }
+
+            }
+        }
+
+
+    }
+
+    fun setProductSearchText(value: String) {
+        productSearchText.value = value
     }
 
 
@@ -407,7 +465,7 @@ open class RootViewModel @Inject constructor(
     }
 
     private fun getTableOrderList(id: Int) {
-        Log.w(TAG, "getTableOrderList: $id", )
+        Log.w(TAG, "getTableOrderList: $id")
         sendTableSelectionUiEvent(TableSelectionUiEvent(UiEvent.ShowProgressBar))
         try {
             tableOrderList.removeAll {

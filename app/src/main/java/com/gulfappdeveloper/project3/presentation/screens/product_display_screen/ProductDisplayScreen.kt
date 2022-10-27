@@ -7,18 +7,12 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.ShoppingCart
-import androidx.compose.material.icons.outlined.Search
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.gulfappdeveloper.project3.R
 import com.gulfappdeveloper.project3.navigation.root.RootNavScreens
@@ -27,6 +21,8 @@ import com.gulfappdeveloper.project3.presentation.presentation_util.UiEvent
 import com.gulfappdeveloper.project3.presentation.screens.product_display_screen.components.category.CategoryListRow
 import com.gulfappdeveloper.project3.presentation.screens.product_display_screen.components.product.grid.GridViewScreen
 import com.gulfappdeveloper.project3.presentation.screens.product_display_screen.components.product.list.ListViewScreen
+import com.gulfappdeveloper.project3.presentation.screens.product_display_screen.components.topbar.NormalTopBar
+import com.gulfappdeveloper.project3.presentation.screens.product_display_screen.components.topbar.SearchTopBar
 import com.gulfappdeveloper.project3.presentation.screens.product_display_screen.util.ProductDisplayScreenEvent
 import com.gulfappdeveloper.project3.presentation.screens.product_display_screen.util.ViewSwitcher
 import kotlinx.coroutines.flow.collectLatest
@@ -34,13 +30,13 @@ import kotlinx.coroutines.flow.collectLatest
 @Composable
 fun ProductDisplayScreen(
     navHostController: NavHostController,
-    rootViewModel: RootViewModel
+    rootViewModel: RootViewModel,
+    hideKeyboard:()->Unit,
 ) {
     val scaffoldState = rememberScaffoldState()
 
     val itemsCountInKot by rootViewModel.itemsCountInKot
 
-    val netAmount by rootViewModel.kotNetAmount
 
     var showProgressBar by remember {
         mutableStateOf(false)
@@ -52,6 +48,10 @@ fun ProductDisplayScreen(
 
     var productListViewSwitcher by remember {
         mutableStateOf(ViewSwitcher.LIST)
+    }
+
+    var normalAndSearchTobBarToggle by remember {
+        mutableStateOf(true)
     }
 
     LaunchedEffect(key1 = true) {
@@ -85,37 +85,22 @@ fun ProductDisplayScreen(
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        buildAnnotatedString {
-                            withStyle(style = SpanStyle(color = MaterialTheme.colors.background)) {
-                                append("Net Amount : ")
-                            }
-                            withStyle(
-                                style = SpanStyle(
-                                    color = Color.Yellow,
-                                    fontSize = 26.sp,
-                                    fontWeight = FontWeight.Bold
-                                )
-                            ) {
-                                append("$netAmount")
-                            }
-
-                        }
-                    )
-                },
-                actions = {
-                    IconButton(onClick = {
-                        // ToDo
-                    }) {
-                        Icon(
-                            imageVector = Icons.Outlined.Search,
-                            contentDescription = null
-                        )
+            if (normalAndSearchTobBarToggle) {
+                NormalTopBar(
+                    rootViewModel = rootViewModel,
+                    onSearchButtonClicked = {
+                        normalAndSearchTobBarToggle = false
                     }
-                }
-            )
+                )
+            } else {
+                SearchTopBar(
+                    rootViewModel = rootViewModel,
+                    onClearButtonClicked = {
+                        normalAndSearchTobBarToggle = true
+                    },
+                    hideKeyboard = hideKeyboard
+                )
+            }
         },
         floatingActionButton = {
             ExtendedFloatingActionButton(

@@ -84,7 +84,8 @@ fun RootNavGraph(
             changeStatusBarColor(R.color.my_prime_color)
             ProductDisplayScreen(
                 navHostController = navHostController,
-                rootViewModel = rootViewModel
+                rootViewModel = rootViewModel,
+                hideKeyboard = hideKeyboard
             )
         }
         composable(route = RootNavScreens.ReviewScreen.route) {
