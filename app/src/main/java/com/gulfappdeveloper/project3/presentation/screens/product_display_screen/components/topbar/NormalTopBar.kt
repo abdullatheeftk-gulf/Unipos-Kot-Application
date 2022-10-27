@@ -2,6 +2,7 @@ package com.gulfappdeveloper.project3.presentation.screens.product_display_scree
 
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -16,6 +17,7 @@ import com.gulfappdeveloper.project3.navigation.root.RootViewModel
 @Composable
 fun NormalTopBar(
     rootViewModel: RootViewModel,
+    onBackButtonClicked: () -> Unit,
     onSearchButtonClicked: () -> Unit,
 ) {
 
@@ -47,6 +49,16 @@ fun NormalTopBar(
             }) {
                 Icon(
                     imageVector = Icons.Outlined.Search,
+                    contentDescription = null
+                )
+            }
+        },
+        navigationIcon = {
+            IconButton(onClick = {
+                onBackButtonClicked()
+            }) {
+                Icon(
+                    imageVector = Icons.Filled.ArrowBack,
                     contentDescription = null
                 )
             }

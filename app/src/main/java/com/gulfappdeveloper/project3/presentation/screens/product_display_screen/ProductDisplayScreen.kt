@@ -90,6 +90,10 @@ fun ProductDisplayScreen(
                     rootViewModel = rootViewModel,
                     onSearchButtonClicked = {
                         normalAndSearchTobBarToggle = false
+                    },
+                    onBackButtonClicked = {
+                        rootViewModel.resetKot()
+                        navHostController.popBackStack()
                     }
                 )
             } else {
