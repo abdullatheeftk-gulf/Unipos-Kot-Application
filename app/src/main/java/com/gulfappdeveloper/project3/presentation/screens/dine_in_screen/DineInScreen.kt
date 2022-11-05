@@ -83,26 +83,7 @@ fun DineInScreen(
                 }
             )
         },
-        floatingActionButtonPosition = FabPosition.Center,
-        floatingActionButton = {
-            ExtendedFloatingActionButton(
-                text = {
-                    Row(
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        Text(text = "Go to Product List")
-                        Spacer(modifier = Modifier.width(5.dp))
-                        Icon(
-                            imageVector = Icons.Filled.KeyboardArrowRight,
-                            contentDescription = null
-                        )
-                    }
-                },
-                onClick = {
 
-                }
-            )
-        }
     ) {
         it.calculateTopPadding()
 

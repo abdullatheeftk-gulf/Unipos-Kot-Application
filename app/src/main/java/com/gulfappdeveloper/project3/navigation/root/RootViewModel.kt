@@ -94,6 +94,9 @@ open class RootViewModel @Inject constructor(
     var selectedTable: MutableState<Table?> = mutableStateOf(null)
         private set
 
+    var newTableOrder: MutableState<TableOrder?> = mutableStateOf(null)
+        private set
+
     val tableOrderList = mutableStateListOf<TableOrder>()
 
 
@@ -115,9 +118,18 @@ open class RootViewModel @Inject constructor(
     var serialNo = mutableStateOf(0)
         private set
 
+    var orderName = mutableStateOf("")
+        private set
+
+    var tableId = mutableStateOf(0)
+        private set
+
+    var chairCount = mutableStateOf(0)
+        private set
+
 
     init {
-        Log.i(TAG, "init root viewModel: ")
+        //Log.i(TAG, "init root viewModel: ")
         sendSplashScreenEvent(SplashScreenEvent(UiEvent.ShowProgressBar))
         saveOperationCount()
         readOperationCount()
@@ -133,7 +145,7 @@ open class RootViewModel @Inject constructor(
     }
 
     private fun saveOperationCount() {
-        Log.d(TAG, "saveOperationCount: ")
+        // Log.d(TAG, "saveOperationCount: ")
         viewModelScope.launch {
             useCase.updateOperationCountUseCase()
         }
@@ -143,27 +155,27 @@ open class RootViewModel @Inject constructor(
         // Log.i(TAG, "readOperationCount: ")
         viewModelScope.launch {
             useCase.readOperationCountUseCase().collect {
-                Log.d(TAG, "readOperationCount: $it")
+                //  Log.d(TAG, "readOperationCount: $it")
                 operationCount.value = it
             }
         }
     }
 
     private fun readSerialNo() {
-        Log.i(TAG, "readSerialNo: ")
+        // Log.i(TAG, "readSerialNo: ")
         viewModelScope.launch {
             useCase.readSerialNoCountUseCase().collect {
-                Log.d(TAG, "readSerialNo: $it")
+                // Log.d(TAG, "readSerialNo: $it")
                 serialNo.value = it
             }
         }
     }
 
     private fun readBaseUrl() {
-        Log.e(TAG, "readBaseUrl: ")
+        // Log.e(TAG, "readBaseUrl: ")
         viewModelScope.launch {
             useCase.readBaseUrlUseCase().collect {
-                Log.i(TAG, "readBaseUrl: $it")
+                //  Log.i(TAG, "readBaseUrl: $it")
                 baseUrl.value = it
 
                 if (!isInitialLoadingFinished) {
@@ -180,20 +192,20 @@ open class RootViewModel @Inject constructor(
 
     // Product display
     private fun getWelcomeMessage() {
-        Log.d(TAG, "getWelcomeMessage: ")
+        //  Log.d(TAG, "getWelcomeMessage: ")
         viewModelScope.launch {
             useCase.getWelcomeMessageUseCase(url = baseUrl.value + HttpRoutes.WELCOME_MESSAGE)
                 .collectLatest { result ->
                     sendSplashScreenEvent(SplashScreenEvent(UiEvent.CloseProgressBar))
                     if (result is GetDataFromRemote.Success) {
-                        Log.w(TAG, "getWelcomeMessage: ${result.data}")
+                        //  Log.w(TAG, "getWelcomeMessage: ${result.data}")
                         message.value = result.data.message
                         navigateToNextScreenWithDelayForSplashScreen(route = RootNavScreens.LocalRegisterScreen.route)
                         isInitialLoadingFinished = true
                     }
                     if (result is GetDataFromRemote.Failed) {
                         isInitialLoadingFinished = false
-                        Log.e(TAG, "getWelcomeMessage: ${result.error.code}")
+                        // Log.e(TAG, "getWelcomeMessage: ${result.error.code}")
                         when (result.error.code) {
                             in 300..399 -> {
                                 sendSplashScreenEvent(
@@ -254,14 +266,14 @@ open class RootViewModel @Inject constructor(
                                 true
                             }
                         } catch (e: Exception) {
-                            Log.e(TAG, "getCategoryList: ${e.message}")
+                            //  Log.e(TAG, "getCategoryList: ${e.message}")
                         }
                         categoryList.addAll(result.data)
                         isInitialLoadingFinished = true
                     }
                     if (result is GetDataFromRemote.Failed) {
                         isInitialLoadingFinished = false
-                        Log.e(TAG, "getCategoryList: ${result.error.code}")
+                        // Log.e(TAG, "getCategoryList: ${result.error.code}")
                     }
 
                 }
@@ -283,7 +295,7 @@ open class RootViewModel @Inject constructor(
                 true
             }
         } catch (e: Exception) {
-            Log.e(TAG, "getProductList: ${e.message}")
+            // Log.e(TAG, "getProductList: ${e.message}")
         }
 
 
@@ -301,7 +313,7 @@ open class RootViewModel @Inject constructor(
                     }
                     selectedCategory.value = value
                 } catch (e: Exception) {
-                    Log.e(TAG, "getProductList: ${e.message}")
+                    // Log.e(TAG, "getProductList: ${e.message}")
                 }
 
 
@@ -332,7 +344,7 @@ open class RootViewModel @Inject constructor(
                 true
             }
         } catch (e: Exception) {
-            Log.e(TAG, "productSearch: ${e.message}")
+            // Log.e(TAG, "productSearch: ${e.message}")
         }
 
         sendProductDisplayEvent(ProductDisplayScreenEvent(UiEvent.ShowProgressBar))
@@ -348,7 +360,7 @@ open class RootViewModel @Inject constructor(
                     selectedCategory.value = -1
                     productSearchText.value = ""
                 } catch (e: Exception) {
-                    Log.e(TAG, "productSearch: ${e.message}")
+                    // Log.e(TAG, "productSearch: ${e.message}")
                 }
 
 
@@ -364,7 +376,7 @@ open class RootViewModel @Inject constructor(
                 }
                 if (result is GetDataFromRemote.Failed) {
                     sendProductDisplayEvent(ProductDisplayScreenEvent(UiEvent.ShowEmptyList))
-                    Log.e(TAG, "product Search: ${result.error.message} $url")
+                    // Log.e(TAG, "product Search: ${result.error.message} $url")
                 }
 
             }
@@ -385,20 +397,20 @@ open class RootViewModel @Inject constructor(
                 url = baseUrl.value + HttpRoutes.SECTION_LIST
             ).collectLatest { result ->
                 if (result is GetDataFromRemote.Success) {
-                    Log.i(TAG, "getSectionList: ${result.data}")
+                    // Log.i(TAG, "getSectionList: ${result.data}")
                     try {
                         sectionList.removeAll {
                             true
                         }
                     } catch (e: Exception) {
-                        Log.e(TAG, "getSectionList: ${e.message}")
+                        // Log.e(TAG, "getSectionList: ${e.message}")
                     }
                     sectionList.addAll(result.data)
                 }
                 isInitialLoadingFinished = true
                 if (result is GetDataFromRemote.Failed) {
                     isInitialLoadingFinished = false
-                    Log.e(TAG, "getSectionList: ${result.error}")
+                    // Log.e(TAG, "getSectionList: ${result.error}")
                 }
 
             }
@@ -416,7 +428,7 @@ open class RootViewModel @Inject constructor(
                 true
             }
         } catch (e: Exception) {
-            Log.e(TAG, "getTableList: ${e.message}")
+            // Log.e(TAG, "getTableList: ${e.message}")
         }
 
 
@@ -435,7 +447,7 @@ open class RootViewModel @Inject constructor(
                     }
                     selectedSection.value = value
                 } catch (e: Exception) {
-                    Log.e(TAG, "getTableList: ${e.message}")
+                    // Log.e(TAG, "getTableList: ${e.message}")
                 }
 
 
@@ -452,7 +464,7 @@ open class RootViewModel @Inject constructor(
                 }
                 if (result is GetDataFromRemote.Failed) {
                     sendDineInScreenEvent(DineInScreenEvent(UiEvent.ShowEmptyList))
-                    Log.e(TAG, "getTableList: ${result.error.message} $url")
+                    // Log.e(TAG, "getTableList: ${result.error.message} $url")
                 }
 
             }
@@ -466,14 +478,14 @@ open class RootViewModel @Inject constructor(
     }
 
     private fun getTableOrderList(id: Int) {
-        Log.w(TAG, "getTableOrderList: $id")
+        // Log.w(TAG, "getTableOrderList: $id")
         sendTableSelectionUiEvent(TableSelectionUiEvent(UiEvent.ShowProgressBar))
         try {
             tableOrderList.removeAll {
                 true
             }
         } catch (e: Exception) {
-            Log.e(TAG, "getTableOrderList: ${e.message}")
+            //  Log.e(TAG, "getTableOrderList: ${e.message}")
         }
 
         viewModelScope.launch(Dispatchers.IO) {
@@ -488,9 +500,45 @@ open class RootViewModel @Inject constructor(
                 if (result is GetDataFromRemote.Failed) {
                     sendTableSelectionUiEvent(TableSelectionUiEvent(UiEvent.ShowSnackBar("There have some Error :- ${result.error.message}")))
 
-                    Log.e(TAG, "getTableOrderList: ${result.error}")
+                    //  Log.e(TAG, "getTableOrderList: ${result.error}")
                 }
             }
+        }
+    }
+
+
+    fun onSelectedTable() {
+        tableId.value = selectedTable.value?.id!!
+        newTableOrder.value = TableOrder(
+            chairCount = 1,
+            fK_TableId = selectedTable.value?.id!!,
+            fK_KOTInvoiceId = 0,
+            id = 0,
+            isBooked = false,
+            isReserved = false,
+            orderName = "New Order",
+            remarks = null
+        )
+        tableOrderList.add(
+            element = newTableOrder.value!!
+        )
+    }
+
+    fun onOrderNameChange(orderName: String) {
+        newTableOrder.value = newTableOrder.value?.copy(orderName = orderName)
+    }
+
+    fun onChairCountChange(chairCount: Int) {
+        newTableOrder.value = newTableOrder.value?.copy(chairCount = chairCount)
+    }
+
+    fun removeTableOrder() {
+        try {
+            tableOrderList.removeAll {
+                it.id == 0
+            }
+        } catch (e: Exception) {
+            //Log.e(TAG, "removeOrder: ", )
         }
     }
 
@@ -513,7 +561,7 @@ open class RootViewModel @Inject constructor(
                         sendLocalRegisterEvent(UiEvent.Navigate(route = RootNavScreens.HomeScreen.route))
                     }
                     if (result is GetDataFromRemote.Failed) {
-                        Log.e(TAG, "onRegisterLocally: ${result.error} ")
+                        //  Log.e(TAG, "onRegisterLocally: ${result.error} ")
                         sendLocalRegisterEvent(UiEvent.ShowSnackBar(message = "There Have Some Error :- ${result.error.message}"))
                     }
                 }
@@ -583,6 +631,13 @@ open class RootViewModel @Inject constructor(
         }
     }
 
+    fun onTableOrderSet() {
+        orderName.value = newTableOrder.value?.orderName!!
+       // tableId.value = newTableOrder.value?.id!!
+        chairCount.value = newTableOrder.value?.chairCount!!
+        Log.w(TAG, "onTableOrderSet: ${tableId.value}", )
+    }
+
 
     fun resetKot() {
         kotItemList.removeAll {
@@ -593,6 +648,16 @@ open class RootViewModel @Inject constructor(
         kotNotes.value = ""
 
         // Need to do reset dine in features
+
+        orderName.value = ""
+        chairCount.value = 1
+        //tableId.value = 0
+        selectedTable.value = null
+        newTableOrder.value = null
+    }
+
+    fun onResetTableId(){
+        tableId.value = 0
     }
 
     fun generateKot(deviceId: String) {
@@ -602,8 +667,13 @@ open class RootViewModel @Inject constructor(
             kotDetails = kotItemList.toList(),
             notes = kotNotes.value,
             serialNo = serialNo.value,
-            terminal = deviceId
+            terminal = deviceId,
+            tableId = tableId.value,
+            orderName = orderName.value,
+            chairCount = chairCount.value
         )
+
+        Log.d(TAG, "generateKot: $kot")
         viewModelScope.launch(Dispatchers.IO) {
             useCase.generateKotUseCase(
                 url = baseUrl.value + HttpRoutes.GENERATE_KOT,

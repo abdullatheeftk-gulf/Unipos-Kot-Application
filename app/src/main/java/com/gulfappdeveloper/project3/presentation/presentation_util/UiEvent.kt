@@ -11,4 +11,5 @@ sealed class UiEvent {
     object ShowButton1 : UiEvent()
     object ShowEmptyList : UiEvent()
     object ShowList : UiEvent()
+    object HideKeyboard : UiEvent()
 }

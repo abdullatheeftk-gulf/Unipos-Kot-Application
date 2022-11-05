@@ -40,6 +40,8 @@ fun ReviewScreen(
         mutableStateOf(false)
     }
 
+    val tableId by rootViewModel.tableId
+
     var kotItemSelectedForAddingNote: KotItem? by remember {
         mutableStateOf(null)
     }
@@ -113,9 +115,15 @@ fun ReviewScreen(
             onYesButtonClicked = {
                 cancelKotAlertDialog = false
                 navHostController.popBackStack(
-                    route = RootNavScreens.ProductDisplayScreen.route,
+                    route =
+                   if (tableId == 0)
+                        RootNavScreens.ProductDisplayScreen.route
+                    else
+                        RootNavScreens.DineInScreen.route,
                     inclusive = true
                 )
+
+                rootViewModel.onResetTableId()
             },
             onDismissRequest = {
                 cancelKotAlertDialog = false
@@ -129,9 +137,14 @@ fun ReviewScreen(
             kotSuccessAlertDialog = false
             rootViewModel.resetKot()
             navHostController.popBackStack(
-                route = RootNavScreens.ProductDisplayScreen.route,
+                route =
+                if (tableId == 0)
+                    RootNavScreens.ProductDisplayScreen.route
+                else
+                    RootNavScreens.DineInScreen.route,
                 inclusive = true
             )
+            rootViewModel.onResetTableId()
         }
     }
 

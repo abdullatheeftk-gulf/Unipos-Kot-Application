@@ -76,7 +76,8 @@ fun RootNavGraph(
             changeStatusBarColor(R.color.my_prime_color)
             TableSelectionScreen(
                 navHostController = navHostController,
-                rootViewModel = rootViewModel
+                rootViewModel = rootViewModel,
+                hideKeyboard = hideKeyboard
             )
         }
 
