@@ -2,7 +2,10 @@ package com.gulfappdeveloper.project3.presentation.screens.dine_in_screen.compon
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.Card
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.MaterialTheme
@@ -33,7 +36,7 @@ fun TableDisplay(
     val baseUrl by rootViewModel.baseUrl
 
     Card(
-        modifier = if (table.occupied>=table.noOfSeats)
+        modifier = if (table.occupied >= table.noOfSeats)
             Modifier
                 .size(128.dp)
                 .padding(all = 8.dp)
@@ -46,39 +49,44 @@ fun TableDisplay(
                     rootViewModel.setSelectedTable(table = table)
                 },
 
-            border = BorderStroke(
-                width = 1.dp,
-                color = MaterialTheme.colors.MyPrimeColor
-            ),
-            elevation = 0.dp,
-            shape = MaterialTheme.shapes.medium,
+        border = BorderStroke(
+            width = 1.dp,
+            color = MaterialTheme.colors.MyPrimeColor
+        ),
+        elevation = 0.dp,
+        shape = MaterialTheme.shapes.medium,
+        ) {
 
-            ) {
+        AsyncImage(
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(data = baseUrl + HttpRoutes.TABLE_IMAGE + "${table.id}")
+                .crossfade(true)
+                .build(),
+            contentDescription = null,
+            modifier = Modifier
+                .size(128.dp)
+                .padding(8.dp),
+            placeholder = painterResource(id = R.drawable.image_loading),
+            alignment = Alignment.Center,
+            error = painterResource(id = R.drawable.no_image)
+        )
 
-                AsyncImage(
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(data = baseUrl + HttpRoutes.TABLE_IMAGE + "${table.id}")
-                        .crossfade(true)
-                        .build(),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(128.dp)
-                        .padding(8.dp),
-                    placeholder = painterResource(id = R.drawable.image_loading),
-                    alignment = Alignment.Center,
-                    error = painterResource(id = R.drawable.no_image)
-                )
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = table.tableName,
+                color =
+                if (table.occupied > 0 && table.occupied < table.noOfSeats)
+                    Color.Blue
+                else if (table.occupied >= table.noOfSeats)
+                    Color.Red
+                else
+                    Color.Black
+            )
+        }
 
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ){
-                    Text(
-                        text = table.tableName,
-                        color = if (table.occupied > 0) Color.Blue else Color.Black
-                    )
-                }
-
-            }
+    }
 
 }

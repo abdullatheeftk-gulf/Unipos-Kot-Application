@@ -31,6 +31,10 @@ fun OrderView(
 
     val focusManager = LocalFocusManager.current
 
+    val selectedTable by rootViewModel.selectedTable
+
+    val chairRemaining = selectedTable?.noOfSeats!! - selectedTable?.occupied!!
+
 
     var colorChange by remember {
         mutableStateOf(false)
@@ -82,6 +86,7 @@ fun OrderView(
                     ),
                     onClick = {
                         colorChange = !colorChange
+                        focusManager.clearFocus()
                     },
                     shape = CircleShape
                 ) {}
@@ -140,7 +145,7 @@ fun OrderView(
                 expanded = showDropDownMenu,
                 onDismissRequest = { showDropDownMenu = false }
             ) {
-                (1..4).forEach {
+                (1..chairRemaining).forEach {
                     DropdownMenuItem(
                         onClick = {
                             rootViewModel.onChairCountChange(it)

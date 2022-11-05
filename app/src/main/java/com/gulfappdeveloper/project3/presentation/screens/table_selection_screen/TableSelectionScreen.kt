@@ -81,7 +81,7 @@ fun TableSelectionScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(text = "Table Order")
+                    Text(text = "Table ${selectedTable?.tableName} Orders")
                 },
                 navigationIcon = {
                     IconButton(onClick = {
