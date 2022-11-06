@@ -78,7 +78,10 @@ fun DineInScreen(
                     Text(text = "Select Table")
                 },
                 navigationIcon = {
-                    IconButton(onClick = { navHostController.popBackStack() }) {
+                    IconButton(onClick = {
+                        rootViewModel.resetKot()
+                        navHostController.popBackStack()
+                    }) {
                         Icon(
                             imageVector = Icons.Filled.ArrowBack,
                             contentDescription = null
