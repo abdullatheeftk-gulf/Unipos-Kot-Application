@@ -11,6 +11,7 @@ import com.gulfappdeveloper.project3.presentation.screens.dine_in_screen.DineInS
 import com.gulfappdeveloper.project3.presentation.screens.home_screen.HomeScreen
 import com.gulfappdeveloper.project3.presentation.screens.product_display_screen.ProductDisplayScreen
 import com.gulfappdeveloper.project3.presentation.screens.review_screen.ReviewScreen
+import com.gulfappdeveloper.project3.presentation.screens.settings_screen.SettingsScreen
 import com.gulfappdeveloper.project3.presentation.screens.splash_screen.SplashScreen
 import com.gulfappdeveloper.project3.presentation.screens.table_selection_screen.TableSelectionScreen
 import com.gulfappdeveloper.project3.presentation.screens.url_set_screen.SetBaseUrlScreen
@@ -89,6 +90,16 @@ fun RootNavGraph(
                 hideKeyboard = hideKeyboard
             )
         }
+
+        composable(route = RootNavScreens.SettingsScreen.route){
+            changeStatusBarColor(R.color.my_prime_color)
+            SettingsScreen(
+                rootViewModel = rootViewModel,
+                hideKeyboard = hideKeyboard,
+                navHostController = navHostController
+            )
+        }
+
         composable(route = RootNavScreens.ReviewScreen.route) {
             changeStatusBarColor(R.color.my_prime_color)
             ReviewScreen(

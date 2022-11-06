@@ -140,8 +140,29 @@ open class RootViewModel @Inject constructor(
         getCategoryList()
         getProductList(value = 0)
         getSectionList()
-        getTableList(value = 1)
+        getTableList(value = 1, callFromDiningScreen = false)
 
+    }
+
+    fun setIsInitialLoadingIsFinished() {
+        try {
+            categoryList.removeAll {
+                true
+            }
+            productList.removeAll {
+                true
+            }
+            sectionList.removeAll {
+                true
+            }
+            tableList.removeAll {
+                true
+            }
+
+        } catch (e: Exception) {
+            Log.e(TAG, "setInitialLoadingIsFinished: ")
+        }
+        isInitialLoadingFinished = false
     }
 
     private fun saveOperationCount() {
@@ -183,7 +204,7 @@ open class RootViewModel @Inject constructor(
                     getCategoryList()
                     getProductList(value = 0)
                     getSectionList()
-                    getTableList(value = 1)
+                    getTableList(value = 1, callFromDiningScreen = false)
                 }
 
             }
@@ -419,20 +440,23 @@ open class RootViewModel @Inject constructor(
 
     fun setSelectedSection(value: Int) {
         selectedSection.value = value
-        getTableList(value = value)
+        getTableList(value = value, callFromDiningScreen = false)
     }
 
-    private fun getTableList(value: Int) {
-        try {
-            tableList.removeAll {
-                true
+    fun getTableList(value: Int, callFromDiningScreen: Boolean) {
+        if (!callFromDiningScreen) {
+            try {
+                tableList.removeAll {
+                    true
+                }
+            } catch (e: Exception) {
+                // Log.e(TAG, "getTableList: ${e.message}")
             }
-        } catch (e: Exception) {
-            // Log.e(TAG, "getTableList: ${e.message}")
+            sendDineInScreenEvent(DineInScreenEvent(UiEvent.ShowProgressBar))
         }
 
 
-        sendDineInScreenEvent(DineInScreenEvent(UiEvent.ShowProgressBar))
+
 
         val url = baseUrl.value + HttpRoutes.TABLE_LIST + "${selectedSection.value}"
 
@@ -633,9 +657,9 @@ open class RootViewModel @Inject constructor(
 
     fun onTableOrderSet() {
         orderName.value = newTableOrder.value?.orderName!!
-       // tableId.value = newTableOrder.value?.id!!
+        // tableId.value = newTableOrder.value?.id!!
         chairCount.value = newTableOrder.value?.chairCount!!
-        Log.w(TAG, "onTableOrderSet: ${tableId.value}", )
+        Log.w(TAG, "onTableOrderSet: ${tableId.value}")
     }
 
 
@@ -656,7 +680,7 @@ open class RootViewModel @Inject constructor(
         newTableOrder.value = null
     }
 
-    fun onResetTableId(){
+    fun onResetTableId() {
         tableId.value = 0
     }
 
@@ -725,6 +749,10 @@ open class RootViewModel @Inject constructor(
         viewModelScope.launch {
             _dineInScreenEvent.send(dineInScreenEvent)
         }
+    }
+
+    fun filledTableClicked() {
+        sendDineInScreenEvent(DineInScreenEvent(UiEvent.ShowSnackBar("This Table is full")))
     }
 
     private fun sendTableSelectionUiEvent(tableSelectionUiEvent: TableSelectionUiEvent) {

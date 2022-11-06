@@ -1,6 +1,5 @@
 package com.gulfappdeveloper.project3.presentation.screens.home_screen
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -21,6 +20,7 @@ import com.gulfappdeveloper.project3.navigation.root.RootViewModel
 import com.gulfappdeveloper.project3.presentation.screens.home_screen.components.MenuCard
 
 private const val TAG = "HomeScreen"
+
 @Composable
 fun HomeScreen(
     navHostController: NavHostController,
@@ -43,8 +43,7 @@ fun HomeScreen(
         Pair(first = R.drawable.settings, "SETTINGS")
     )
 
-   // Log.d(TAG, "HomeScreen: ")
-
+    // Log.d(TAG, "HomeScreen: ")
 
 
     Scaffold(scaffoldState = scaffoldState) {
@@ -65,22 +64,30 @@ fun HomeScreen(
                             "DINE IN" -> {
                                 if (sectionList.isNotEmpty()) {
                                     navHostController.navigate(route = RootNavScreens.DineInScreen.route)
-                                }else{
-                                    Toast.makeText(context, "Please wait!. Data is loading", Toast.LENGTH_SHORT).show()
+                                } else {
+                                    Toast.makeText(
+                                        context,
+                                        "Please wait!. Data is loading",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 }
                             }
                             "TAKE AWAY" -> {
                                 if (categoryList.isNotEmpty()) {
                                     navHostController.navigate(route = RootNavScreens.ProductDisplayScreen.route)
-                                }else{
-                                    Toast.makeText(context, "Please wait!. Data is loading", Toast.LENGTH_SHORT).show()
+                                } else {
+                                    Toast.makeText(
+                                        context,
+                                        "Please wait!. Data is loading",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 }
                             }
                             "EDIT" -> {
 
                             }
                             "SETTINGS" -> {
-
+                                navHostController.navigate(RootNavScreens.SettingsScreen.route)
                             }
                         }
                     }

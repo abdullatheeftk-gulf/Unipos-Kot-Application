@@ -41,6 +41,9 @@ fun TableDisplay(
                 .size(128.dp)
                 .padding(all = 8.dp)
                 .alpha(ContentAlpha.disabled)
+                .clickable {
+                    rootViewModel.filledTableClicked()
+                }
         else
             Modifier
                 .size(128.dp)

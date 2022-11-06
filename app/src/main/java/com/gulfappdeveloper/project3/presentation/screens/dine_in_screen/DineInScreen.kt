@@ -1,10 +1,13 @@
 package com.gulfappdeveloper.project3.presentation.screens.dine_in_screen
 
-import androidx.compose.foundation.layout.*
+import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -34,6 +37,7 @@ fun DineInScreen(
     }
 
     LaunchedEffect(key1 = true) {
+        rootViewModel.getTableList(value = 1,callFromDiningScreen = true)
         rootViewModel.dineInScreenEvent.collectLatest { value: DineInScreenEvent ->
             when (value.uiEvent) {
                 is UiEvent.ShowProgressBar -> {
@@ -60,11 +64,11 @@ fun DineInScreen(
     }
 
 
-    // ToDo
-    /*BackHandler(enabled = true) {
+
+    BackHandler(enabled = true) {
         rootViewModel.resetKot()
         navHostController.popBackStack()
-    }*/
+    }
 
     Scaffold(
         scaffoldState = scaffoldState,
@@ -84,7 +88,7 @@ fun DineInScreen(
             )
         },
 
-    ) {
+        ) {
         it.calculateTopPadding()
 
         Column(modifier = Modifier.fillMaxSize()) {
