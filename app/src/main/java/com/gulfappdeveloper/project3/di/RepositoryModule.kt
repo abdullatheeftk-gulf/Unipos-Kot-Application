@@ -9,10 +9,12 @@ import com.gulfappdeveloper.project3.usecases.data_store_usecases.operation_coun
 import com.gulfappdeveloper.project3.usecases.data_store_usecases.operation_counter_uscecases.UpdateOperationCountUseCase
 import com.gulfappdeveloper.project3.usecases.data_store_usecases.serial_counter_usecases.ReadSerialNoCountUseCase
 import com.gulfappdeveloper.project3.usecases.data_store_usecases.serial_counter_usecases.UpdateSerialNoUseCase
+import com.gulfappdeveloper.project3.usecases.remote_usecases.delete.DeleteKotUseCase
 import com.gulfappdeveloper.project3.usecases.remote_usecases.get.GetWelcomeMessageUseCase
 import com.gulfappdeveloper.project3.usecases.remote_usecases.get.dine_in.GetSectionListUseCase
 import com.gulfappdeveloper.project3.usecases.remote_usecases.get.dine_in.GetTableListUseCase
 import com.gulfappdeveloper.project3.usecases.remote_usecases.get.dine_in.GetTableOrderListUseCase
+import com.gulfappdeveloper.project3.usecases.remote_usecases.get.kot.GetKOTDetailsUseCase
 import com.gulfappdeveloper.project3.usecases.remote_usecases.get.login.RegisterUserUseCase
 import com.gulfappdeveloper.project3.usecases.remote_usecases.get.product.GetCategoryListUseCase
 import com.gulfappdeveloper.project3.usecases.remote_usecases.get.product.GetProductListUseCase
@@ -58,7 +60,9 @@ object RepositoryModule {
             getTableOrderListUseCase = GetTableOrderListUseCase(remoteRepository = remoteRepository),
 
             generateKotUseCase = GenerateKotUseCase(remoteRepository = remoteRepository),
+            getKOTDetailsUseCase = GetKOTDetailsUseCase(remoteRepository = remoteRepository),
+            deleteKotUseCase = DeleteKotUseCase(remoteRepository = remoteRepository)
 
-            )
+        )
     }
 }

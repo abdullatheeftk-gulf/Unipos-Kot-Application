@@ -8,10 +8,12 @@ import androidx.navigation.compose.composable
 import com.gulfappdeveloper.project3.R
 import com.gulfappdeveloper.project3.presentation.screens.auth_screens.local_auth_screen.LocalRegister
 import com.gulfappdeveloper.project3.presentation.screens.dine_in_screen.DineInScreen
+import com.gulfappdeveloper.project3.presentation.screens.editing_screen.EditingScreen
 import com.gulfappdeveloper.project3.presentation.screens.home_screen.HomeScreen
 import com.gulfappdeveloper.project3.presentation.screens.product_display_screen.ProductDisplayScreen
 import com.gulfappdeveloper.project3.presentation.screens.review_screen.ReviewScreen
 import com.gulfappdeveloper.project3.presentation.screens.settings_screen.SettingsScreen
+import com.gulfappdeveloper.project3.presentation.screens.show_kot_screen.ShowKOTScreen
 import com.gulfappdeveloper.project3.presentation.screens.splash_screen.SplashScreen
 import com.gulfappdeveloper.project3.presentation.screens.table_selection_screen.TableSelectionScreen
 import com.gulfappdeveloper.project3.presentation.screens.url_set_screen.SetBaseUrlScreen
@@ -73,7 +75,7 @@ fun RootNavGraph(
 
         }
 
-        composable(route = RootNavScreens.TableSelectionScreen.route){
+        composable(route = RootNavScreens.TableSelectionScreen.route) {
             changeStatusBarColor(R.color.my_prime_color)
             TableSelectionScreen(
                 navHostController = navHostController,
@@ -91,7 +93,7 @@ fun RootNavGraph(
             )
         }
 
-        composable(route = RootNavScreens.SettingsScreen.route){
+        composable(route = RootNavScreens.SettingsScreen.route) {
             changeStatusBarColor(R.color.my_prime_color)
             SettingsScreen(
                 rootViewModel = rootViewModel,
@@ -99,6 +101,7 @@ fun RootNavGraph(
                 navHostController = navHostController
             )
         }
+
 
         composable(route = RootNavScreens.ReviewScreen.route) {
             changeStatusBarColor(R.color.my_prime_color)
@@ -108,6 +111,26 @@ fun RootNavGraph(
                 deviceId = deviceId
             )
         }
+
+        composable(route = RootNavScreens.EditingScreen.route) {
+            changeStatusBarColor(R.color.my_prime_color)
+            EditingScreen(
+                rootViewModel = rootViewModel,
+                navHostController = navHostController,
+                hideKeyboard = hideKeyboard
+            )
+        }
+
+        composable(route=RootNavScreens.ShowKotScreen.route){
+            changeStatusBarColor(R.color.my_prime_color)
+            ShowKOTScreen(
+                rootViewModel = rootViewModel,
+                navHostController = navHostController
+            )
+
+        }
+
+
     }
 
 }

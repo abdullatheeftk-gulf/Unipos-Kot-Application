@@ -31,4 +31,13 @@ interface ApiService {
 
     // Post
     suspend fun generateKOT(url: String,kot: Kot, callBack:suspend (Int,String)->Unit)
+
+    // Get Kot for editing
+    suspend fun getKOTDetails(url: String):Flow<GetDataFromRemote<Kot?>>
+
+    // Put edited kot
+    suspend fun editKOTDetails(url: String,kot: Kot,callBack: suspend (Int, String) -> Unit)
+
+    // Delete kot
+    suspend fun deleteKOT(url: String,callBack: suspend (Int, String) -> Unit)
 }

@@ -17,4 +17,6 @@ object HttpRoutes {
     const val TABLE_ORDER = "/api/tableorder/"
 
     const val GENERATE_KOT = "/api/kichenorder"
+
+    const val EDIT_KOT = "/api/kichenorder/"
 }

@@ -54,10 +54,27 @@ class RemoteRepository @Inject constructor(
     }
 
 
-    // Post
+    // Post kot
     suspend fun generateKOT(url: String, kot: Kot, callBack: suspend (Int, String) -> Unit) {
         apiService.generateKOT(url = url, kot = kot, callBack = callBack)
     }
+
+    // Get kot
+    suspend fun getKOTDetails(
+        url: String
+    ): Flow<GetDataFromRemote<Kot?>> {
+      return  apiService.getKOTDetails(url = url)
+    }
+
+    // Delete kot
+    suspend fun deleteKOT(
+        url: String,
+        callBack: suspend (Int, String) -> Unit
+    ) {
+        apiService.deleteKOT(url = url,callBack = callBack)
+    }
+
+
 
 
 }

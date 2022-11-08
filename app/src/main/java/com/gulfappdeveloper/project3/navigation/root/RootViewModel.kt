@@ -17,8 +17,10 @@ import com.gulfappdeveloper.project3.domain.remote.post.Kot
 import com.gulfappdeveloper.project3.domain.remote.post.KotItem
 import com.gulfappdeveloper.project3.presentation.presentation_util.UiEvent
 import com.gulfappdeveloper.project3.presentation.screens.dine_in_screen.components.util.DineInScreenEvent
+import com.gulfappdeveloper.project3.presentation.screens.editing_screen.EditingScreenEvent
 import com.gulfappdeveloper.project3.presentation.screens.product_display_screen.util.ProductDisplayScreenEvent
 import com.gulfappdeveloper.project3.presentation.screens.review_screen.util.ReviewScreenEvent
+import com.gulfappdeveloper.project3.presentation.screens.show_kot_screen.util.ShowKotScreenUiEvent
 import com.gulfappdeveloper.project3.presentation.screens.splash_screen.util.SplashScreenEvent
 import com.gulfappdeveloper.project3.presentation.screens.table_selection_screen.TableSelectionUiEvent
 import com.gulfappdeveloper.project3.usecases.UseCase
@@ -57,6 +59,12 @@ open class RootViewModel @Inject constructor(
 
     private val _localRegisterEvent = Channel<UiEvent>()
     val localRegisterEvent = _localRegisterEvent.receiveAsFlow()
+
+    private val _editingScreenEvent = Channel<EditingScreenEvent>()
+    val editingScreenEvent = _editingScreenEvent.receiveAsFlow()
+
+    private val _showKotScreenEvent = Channel<ShowKotScreenUiEvent>()
+    val showKotScreenUiEvent = _showKotScreenEvent.receiveAsFlow()
 
 
     // Operation count application
@@ -125,6 +133,10 @@ open class RootViewModel @Inject constructor(
         private set
 
     var chairCount = mutableStateOf(0)
+        private set
+
+    // For editing
+    var kotMasterId  = mutableStateOf(0)
         private set
 
 
@@ -456,8 +468,6 @@ open class RootViewModel @Inject constructor(
         }
 
 
-
-
         val url = baseUrl.value + HttpRoutes.TABLE_LIST + "${selectedSection.value}"
 
         viewModelScope.launch(Dispatchers.IO) {
@@ -694,7 +704,8 @@ open class RootViewModel @Inject constructor(
             terminal = deviceId,
             tableId = tableId.value,
             orderName = orderName.value,
-            chairCount = chairCount.value
+            chairCount = chairCount.value,
+            kotMasterId = 1
         )
 
         Log.d(TAG, "generateKot: $kot")
@@ -711,6 +722,59 @@ open class RootViewModel @Inject constructor(
                 }
             }
 
+        }
+    }
+
+
+    // Get KOT
+    fun getKOTDetails(kotNumber: Int) {
+        sendEditScreenEvent(UiEvent.ShowProgressBar)
+        viewModelScope.launch(Dispatchers.IO) {
+            useCase.getKOTDetailsUseCase(
+                url = baseUrl.value + HttpRoutes.EDIT_KOT + kotNumber
+            ).collectLatest { result ->
+                sendEditScreenEvent(UiEvent.CloseProgressBar)
+                if (result is GetDataFromRemote.Success) {
+                    val value = result.data
+                    if (value == null) {
+                        sendEditScreenEvent(UiEvent.ShowEmptyList)
+                    } else {
+                        try {
+                            kotItemList.removeAll {
+                                true
+                            }
+                        } catch (e: Exception) {
+                            Log.e(TAG, "getKOTDetails: ")
+                        }
+                        kotItemList.addAll(value.kotDetails)
+                        kotMasterId.value = value.kotMasterId
+                         sendEditScreenEvent(UiEvent.Navigate(RootNavScreens.ShowKotScreen.route))
+                    }
+                    // Log.d(TAG, "getKOTDetails: ${result.data}")
+                }
+                if (result is GetDataFromRemote.Failed) {
+                    // Log.e(TAG, "getKOTDetails: ${result.error}")
+                    sendEditScreenEvent(UiEvent.ShowSnackBar("There have Some error:- ${result.error.message}"))
+                }
+            }
+        }
+    }
+
+    fun deleteKot() {
+        sendShowKotUiEvent(UiEvent.ShowProgressBar)
+        viewModelScope.launch(Dispatchers.IO) {
+            useCase.deleteKotUseCase(
+                url = baseUrl.value+HttpRoutes.EDIT_KOT+kotMasterId.value,
+                callBack = {statusCade,statusMessage->
+                    sendShowKotUiEvent(UiEvent.CloseProgressBar)
+                    if (statusCade==204){
+                        sendShowKotUiEvent(UiEvent.ShowSnackBar("Deleted kot successfully "))
+                        sendShowKotUiEvent(UiEvent.Navigate(route = RootNavScreens.HomeScreen.route))
+                    }else{
+                        sendShowKotUiEvent(UiEvent.ShowSnackBar("There have some Error with message : $statusMessage"))
+                    }
+                }
+            )
         }
     }
 
@@ -766,6 +830,20 @@ open class RootViewModel @Inject constructor(
             _localRegisterEvent.send(uiEvent)
         }
     }
+
+    private fun sendEditScreenEvent(uiEvent: UiEvent) {
+        viewModelScope.launch {
+            _editingScreenEvent.send(EditingScreenEvent(uiEvent = uiEvent))
+        }
+    }
+
+    private fun sendShowKotUiEvent(uiEvent: UiEvent) {
+        viewModelScope.launch {
+            _showKotScreenEvent.send(ShowKotScreenUiEvent(uiEvent = uiEvent))
+        }
+    }
+
+
 
 
 }

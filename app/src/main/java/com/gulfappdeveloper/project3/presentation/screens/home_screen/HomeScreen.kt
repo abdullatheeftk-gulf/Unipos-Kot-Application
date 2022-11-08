@@ -84,7 +84,7 @@ fun HomeScreen(
                                 }
                             }
                             "EDIT" -> {
-
+                                navHostController.navigate(RootNavScreens.EditingScreen.route)
                             }
                             "SETTINGS" -> {
                                 navHostController.navigate(RootNavScreens.SettingsScreen.route)

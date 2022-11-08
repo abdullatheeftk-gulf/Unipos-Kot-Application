@@ -7,7 +7,7 @@ data class Kot(
     val chairCount: Int=0,
     val fK_UserId: Int,
     val kotDetails: List<KotItem>,
-    val kotMasterId: Int =1,
+    val kotMasterId: Int,
     var notes: String ="",
     val orderName: String="",
     var remarks: String = "",
