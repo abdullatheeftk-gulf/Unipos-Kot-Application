@@ -179,7 +179,13 @@ fun ShowKOTScreen(
                 }
                 Spacer(modifier = Modifier.width(16.dp))
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = {
+                        navHostController.popBackStack(
+                            route = RootNavScreens.EditingScreen.route,
+                            inclusive = true
+                        )
+                        navHostController.navigate(route = RootNavScreens.ReviewScreen.route)
+                    },
                     modifier = Modifier.weight(1f),
                     enabled = !showProgressBar
                 ) {

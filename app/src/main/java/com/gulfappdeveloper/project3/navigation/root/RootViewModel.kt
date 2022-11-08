@@ -136,7 +136,7 @@ open class RootViewModel @Inject constructor(
         private set
 
     // For editing
-    var kotMasterId  = mutableStateOf(0)
+    var kotMasterId = mutableStateOf(0)
         private set
 
 
@@ -674,20 +674,39 @@ open class RootViewModel @Inject constructor(
 
 
     fun resetKot() {
-        kotItemList.removeAll {
-            true
+        try {
+            kotItemList.removeAll {
+                true
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "resetKot: ${e.message}")
         }
+
         itemsCountInKot.value = 0
         kotNetAmount.value = 0f
         kotNotes.value = ""
 
-        // Need to do reset dine in features
+        kotMasterId.value = 0
 
+        // Dine in features  imp:- table id will reset in separate function
         orderName.value = ""
         chairCount.value = 1
-        //tableId.value = 0
+
         selectedTable.value = null
         newTableOrder.value = null
+        try {
+            tableOrderList.removeAll {
+                true
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "resetKot: ${e.message}")
+        }
+
+
+        // product search
+        productSearchText.value = ""
+
+
     }
 
     fun onResetTableId() {
@@ -746,9 +765,27 @@ open class RootViewModel @Inject constructor(
                         } catch (e: Exception) {
                             Log.e(TAG, "getKOTDetails: ")
                         }
+
+                        //Adding data for editing
                         kotItemList.addAll(value.kotDetails)
+                        itemsCountInKot.value = value.kotDetails.size
+                        try {
+                            kotItemList.forEach { kotItem ->
+                                kotNetAmount.value += kotItem.netAmount
+                            }
+                        } catch (e: Exception) {
+                            Log.e(TAG, "getKOTDetails: ${e.message}")
+                        }
+
                         kotMasterId.value = value.kotMasterId
-                         sendEditScreenEvent(UiEvent.Navigate(RootNavScreens.ShowKotScreen.route))
+                        tableId.value = value.tableId
+                        kotNotes.value = value.notes
+                        chairCount.value = value.chairCount
+                        orderName.value = value.orderName
+
+
+
+                        sendEditScreenEvent(UiEvent.Navigate(RootNavScreens.ShowKotScreen.route))
                     }
                     // Log.d(TAG, "getKOTDetails: ${result.data}")
                 }
@@ -764,13 +801,14 @@ open class RootViewModel @Inject constructor(
         sendShowKotUiEvent(UiEvent.ShowProgressBar)
         viewModelScope.launch(Dispatchers.IO) {
             useCase.deleteKotUseCase(
-                url = baseUrl.value+HttpRoutes.EDIT_KOT+kotMasterId.value,
-                callBack = {statusCade,statusMessage->
+                url = baseUrl.value + HttpRoutes.EDIT_KOT + kotMasterId.value,
+                callBack = { statusCade, statusMessage ->
                     sendShowKotUiEvent(UiEvent.CloseProgressBar)
-                    if (statusCade==204){
+                    if (statusCade == 204) {
+                        resetKot()
                         sendShowKotUiEvent(UiEvent.ShowSnackBar("Deleted kot successfully "))
                         sendShowKotUiEvent(UiEvent.Navigate(route = RootNavScreens.HomeScreen.route))
-                    }else{
+                    } else {
                         sendShowKotUiEvent(UiEvent.ShowSnackBar("There have some Error with message : $statusMessage"))
                     }
                 }
@@ -842,8 +880,6 @@ open class RootViewModel @Inject constructor(
             _showKotScreenEvent.send(ShowKotScreenUiEvent(uiEvent = uiEvent))
         }
     }
-
-
 
 
 }
