@@ -43,7 +43,7 @@ fun CancelKotAlertDialog(
         },
         confirmButton = {
             Button(onClick = {
-                rootViewModel.resetKot()
+
                 onYesButtonClicked()
             }) {
                 Text(text = "Yes")

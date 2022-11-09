@@ -32,7 +32,7 @@ fun AddNoteToKotItemAlertDialog(
             ) {
                 Spacer(modifier = Modifier.size(10.dp))
                 OutlinedTextField(
-                    value = typedText,
+                    value = typedText ?: "",
                     onValueChange = {
                         typedText = it
                     },
@@ -46,7 +46,7 @@ fun AddNoteToKotItemAlertDialog(
                 Spacer(modifier = Modifier.height(10.dp))
                 Button(
                     onClick = {
-                        rootViewModel.addNoteToKotItem(kotItem = kotItem, note = typedText)
+                        rootViewModel.addNoteToKotItem(kotItem = kotItem, note = typedText ?: "")
                         onDismissRequest()
                     }
                 ) {

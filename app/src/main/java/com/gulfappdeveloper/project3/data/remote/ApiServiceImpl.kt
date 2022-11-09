@@ -955,6 +955,26 @@ class ApiServiceImpl(
 
     }
 
+    // Put
+    override suspend fun editKOTDetails(
+        url: String,
+        kot: Kot,
+        callBack: suspend (Int, String) -> Unit
+    ) {
+        try {
+            val httpResponse = client.put(urlString = url) {
+                contentType(ContentType.Application.Json)
+                setBody(body = kot)
+            }
+            val statusCode = httpResponse.status.value
+            val statusMessage = httpResponse.status.description
+            callBack(statusCode, statusMessage)
+
+        } catch (e: Exception) {
+            callBack(404, e.toString())
+        }
+    }
+
 
     override suspend fun getKOTDetails(
         url: String,
@@ -1078,26 +1098,19 @@ class ApiServiceImpl(
         }
     }
 
-    override suspend fun editKOTDetails(
-        url: String,
-        kot: Kot,
-        callBack: suspend (Int, String) -> Unit
-    ) {
-        TODO("Not yet implemented")
-    }
 
     override suspend fun deleteKOT(
         url: String,
         callBack: suspend (Int, String) -> Unit
     ) {
         try {
-            val httpResponse =  client.delete(urlString = url)
+            val httpResponse = client.delete(urlString = url)
             val statusCode = httpResponse.status.value
             val statusMessage = httpResponse.status.description
             Log.d(TAG, "deleteKOT: $statusCode")
             callBack(statusCode, statusMessage)
-        }catch (e:Exception){
-            Log.e(TAG, "deleteKOT: ", )
+        } catch (e: Exception) {
+            Log.e(TAG, "deleteKOT: ")
             callBack(404, e.toString())
         }
     }

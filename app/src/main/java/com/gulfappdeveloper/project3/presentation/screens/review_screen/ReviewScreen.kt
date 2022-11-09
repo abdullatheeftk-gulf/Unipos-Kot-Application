@@ -1,5 +1,7 @@
 package com.gulfappdeveloper.project3.presentation.screens.review_screen
 
+import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -25,6 +27,7 @@ import com.gulfappdeveloper.project3.ui.theme.MyPrimeColor
 import com.gulfappdeveloper.project3.ui.theme.ProgressBarColour
 import kotlinx.coroutines.flow.collectLatest
 
+private const val TAG = "ReviewScreen"
 @Composable
 fun ReviewScreen(
     navHostController: NavHostController,
@@ -35,6 +38,8 @@ fun ReviewScreen(
     val scaffoldState = rememberScaffoldState()
 
     val kotItemList = rootViewModel.kotItemList
+
+    val editMode by rootViewModel.editMode
 
     var showAddNoteToKotItemAlertDialog by remember {
         mutableStateOf(false)
@@ -114,36 +119,46 @@ fun ReviewScreen(
             rootViewModel = rootViewModel,
             onYesButtonClicked = {
                 cancelKotAlertDialog = false
-                navHostController.popBackStack(
-                    route =
-                   if (tableId == 0)
-                        RootNavScreens.ProductDisplayScreen.route
-                    else
-                        RootNavScreens.DineInScreen.route,
-                    inclusive = true
-                )
+               // Log.e(TAG, "ReviewScreen: $editMode", )
+                if (editMode) {
+
+                    navHostController.navigate(
+                        route = RootNavScreens.HomeScreen.route
+                    ){
+                        popUpTo(route = RootNavScreens.HomeScreen.route){
+                            inclusive = true
+                        }
+                    }
+                } else {
+                    navHostController.popBackStack(
+                        route =
+                        if (tableId == 0)
+                            RootNavScreens.ProductDisplayScreen.route
+                        else
+                            RootNavScreens.DineInScreen.route,
+                        inclusive = true
+                    )
+                }
+                rootViewModel.resetKot()
 
                 rootViewModel.onResetTableId()
             },
             onDismissRequest = {
                 cancelKotAlertDialog = false
             }
-
         )
     }
 
     if (kotSuccessAlertDialog) {
-        KotSuccessAlertDialog {
+        KotSuccessAlertDialog(rootViewModel = rootViewModel) {
             kotSuccessAlertDialog = false
             rootViewModel.resetKot()
-            navHostController.popBackStack(
-                route =
-                if (tableId == 0)
-                    RootNavScreens.ProductDisplayScreen.route
-                else
-                    RootNavScreens.DineInScreen.route,
-                inclusive = true
-            )
+
+            navHostController.navigate(route = RootNavScreens.HomeScreen.route){
+                popUpTo(route = RootNavScreens.HomeScreen.route){
+                    inclusive = true
+                }
+            }
             rootViewModel.onResetTableId()
         }
     }
@@ -161,6 +176,22 @@ fun ReviewScreen(
         }
     }
 
+    BackHandler(true) {
+        if (editMode) {
+            Log.w(TAG, "ReviewScreen: $editMode", )
+            navHostController.navigate(
+                route = RootNavScreens.HomeScreen.route
+            ){
+                popUpTo(route = RootNavScreens.HomeScreen.route){
+                    inclusive = true
+                }
+            }
+            rootViewModel.resetKot()
+        } else {
+            navHostController.popBackStack()
+        }
+    }
+
 
     Scaffold(
         scaffoldState = scaffoldState,
@@ -172,7 +203,18 @@ fun ReviewScreen(
                 navigationIcon = {
                     IconButton(
                         onClick = {
-                            navHostController.popBackStack()
+                            if (editMode) {
+                                navHostController.navigate(
+                                    route = RootNavScreens.HomeScreen.route
+                                ){
+                                    popUpTo(route = RootNavScreens.HomeScreen.route){
+                                        inclusive = true
+                                    }
+                                }
+                                rootViewModel.resetKot()
+                            } else {
+                                navHostController.popBackStack()
+                            }
                         }
                     ) {
                         Icon(

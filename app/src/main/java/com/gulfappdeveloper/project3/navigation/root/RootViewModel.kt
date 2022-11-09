@@ -40,7 +40,7 @@ open class RootViewModel @Inject constructor(
     private val useCase: UseCase
 ) : ViewModel() {
 
-    private var isInitialLoadingFinished = true
+    private var isInitialLoadingFinished = false
 
     private val _splashScreenEvent = Channel<SplashScreenEvent>()
     val splashScreenEvent = _splashScreenEvent.receiveAsFlow()
@@ -135,28 +135,26 @@ open class RootViewModel @Inject constructor(
     var chairCount = mutableStateOf(0)
         private set
 
-    // For editing
+    // For editing only
     var kotMasterId = mutableStateOf(0)
+        private set
+
+    var editMode = mutableStateOf(false)
         private set
 
 
     init {
-        //Log.i(TAG, "init root viewModel: ")
+     
         sendSplashScreenEvent(SplashScreenEvent(UiEvent.ShowProgressBar))
         saveOperationCount()
         readOperationCount()
         readSerialNo()
         readBaseUrl()
 
-        getWelcomeMessage()
-        getCategoryList()
-        getProductList(value = 0)
-        getSectionList()
-        getTableList(value = 1, callFromDiningScreen = false)
-
     }
 
-    fun setIsInitialLoadingIsFinished() {
+    fun setIsInitialLoadingIsNotFinished() {
+        isInitialLoadingFinished = false
         try {
             categoryList.removeAll {
                 true
@@ -170,11 +168,13 @@ open class RootViewModel @Inject constructor(
             tableList.removeAll {
                 true
             }
+            readBaseUrl()
 
         } catch (e: Exception) {
-            Log.e(TAG, "setInitialLoadingIsFinished: ")
+            Log.e(TAG, "setInitialLoadingIsFinished:${e.message} ")
         }
-        isInitialLoadingFinished = false
+
+        //Log.w(TAG, "setIsInitialLoadingIsNotFinished: $isInitialLoadingFinished", )
     }
 
     private fun saveOperationCount() {
@@ -200,6 +200,7 @@ open class RootViewModel @Inject constructor(
             useCase.readSerialNoCountUseCase().collect {
                 // Log.d(TAG, "readSerialNo: $it")
                 serialNo.value = it
+
             }
         }
     }
@@ -208,15 +209,17 @@ open class RootViewModel @Inject constructor(
         // Log.e(TAG, "readBaseUrl: ")
         viewModelScope.launch {
             useCase.readBaseUrlUseCase().collect {
-                //  Log.i(TAG, "readBaseUrl: $it")
-                baseUrl.value = it
 
+                baseUrl.value = it
+               // Log.w(TAG, "readBaseUrl: $it $isInitialLoadingFinished")
                 if (!isInitialLoadingFinished) {
+                    Log.i(TAG, "readBaseUrl: $it")
                     getWelcomeMessage()
                     getCategoryList()
                     getProductList(value = 0)
                     getSectionList()
                     getTableList(value = 1, callFromDiningScreen = false)
+                    isInitialLoadingFinished = true
                 }
 
             }
@@ -234,7 +237,7 @@ open class RootViewModel @Inject constructor(
                         //  Log.w(TAG, "getWelcomeMessage: ${result.data}")
                         message.value = result.data.message
                         navigateToNextScreenWithDelayForSplashScreen(route = RootNavScreens.LocalRegisterScreen.route)
-                        isInitialLoadingFinished = true
+                       // isInitialLoadingFinished = true
                     }
                     if (result is GetDataFromRemote.Failed) {
                         isInitialLoadingFinished = false
@@ -302,7 +305,7 @@ open class RootViewModel @Inject constructor(
                             //  Log.e(TAG, "getCategoryList: ${e.message}")
                         }
                         categoryList.addAll(result.data)
-                        isInitialLoadingFinished = true
+                       // isInitialLoadingFinished = true
                     }
                     if (result is GetDataFromRemote.Failed) {
                         isInitialLoadingFinished = false
@@ -669,7 +672,7 @@ open class RootViewModel @Inject constructor(
         orderName.value = newTableOrder.value?.orderName!!
         // tableId.value = newTableOrder.value?.id!!
         chairCount.value = newTableOrder.value?.chairCount!!
-        Log.w(TAG, "onTableOrderSet: ${tableId.value}")
+        //Log.w(TAG, "onTableOrderSet: ${tableId.value}")
     }
 
 
@@ -706,6 +709,8 @@ open class RootViewModel @Inject constructor(
         // product search
         productSearchText.value = ""
 
+        // edit mode
+        editMode.value = false
 
     }
 
@@ -714,6 +719,10 @@ open class RootViewModel @Inject constructor(
     }
 
     fun generateKot(deviceId: String) {
+        if (kotItemList.isEmpty()){
+            sendReviewScreenEvent(ReviewScreenEvent(UiEvent.ShowSnackBar("No item in kot")))
+            return
+        }
         sendReviewScreenEvent(ReviewScreenEvent(UiEvent.ShowProgressBar))
         val kot = Kot(
             fK_UserId = fKUserId.value,
@@ -727,7 +736,7 @@ open class RootViewModel @Inject constructor(
             kotMasterId = 1
         )
 
-        Log.d(TAG, "generateKot: $kot")
+       // Log.d(TAG, "generateKot: $kot")
         viewModelScope.launch(Dispatchers.IO) {
             useCase.generateKotUseCase(
                 url = baseUrl.value + HttpRoutes.GENERATE_KOT,
@@ -741,6 +750,54 @@ open class RootViewModel @Inject constructor(
                 }
             }
 
+        }
+    }
+
+
+    // Editing Section
+    fun setEditMode(value: Boolean){
+        editMode.value = value
+    }
+
+    //Edit Kot
+    fun editKot(deviceId: String) {
+        if (kotItemList.isEmpty()){
+            sendReviewScreenEvent(ReviewScreenEvent(UiEvent.ShowSnackBar("No item in Kot")))
+            return
+        }
+        sendReviewScreenEvent(ReviewScreenEvent(UiEvent.ShowProgressBar))
+
+        /*Log.i(TAG, "editKot: ${kotItemList.toList()}")
+        Log.d(TAG, "editKot: ${kotMasterId.value}")
+        Log.e(TAG, "editKot: ${tableId.value}", )
+        Log.w(TAG, "editKot: ${kotNotes.value}", )
+        Log.i(TAG, "editKot: ${chairCount.value}")
+        Log.e(TAG, "editKot: ${orderName.value}", )*/
+
+        viewModelScope.launch(Dispatchers.IO) {
+            val url = baseUrl.value+HttpRoutes.EDIT_KOT+kotMasterId.value
+            val kot = Kot(
+                fK_UserId = fKUserId.value,
+                kotDetails = kotItemList.toList(),
+                notes = kotNotes.value,
+                serialNo = serialNo.value,
+                terminal = deviceId,
+                tableId = tableId.value,
+                orderName = orderName.value,
+                chairCount = chairCount.value,
+                kotMasterId = kotMasterId.value
+            )
+            useCase.editKotUseCase(
+                url = url,
+                kot = kot
+            ){statusCode,statusMessage->
+                sendReviewScreenEvent(ReviewScreenEvent(UiEvent.CloseProgressBar))
+                if (statusCode in 200..299) {
+                    sendReviewScreenEvent(ReviewScreenEvent(UiEvent.ShowAlertDialog))
+                } else {
+                    sendReviewScreenEvent(ReviewScreenEvent(UiEvent.ShowSnackBar(message = "There have some error :- $statusMessage")))
+                }
+            }
         }
     }
 
@@ -779,9 +836,9 @@ open class RootViewModel @Inject constructor(
 
                         kotMasterId.value = value.kotMasterId
                         tableId.value = value.tableId
-                        kotNotes.value = value.notes
+                        kotNotes.value = value.notes ?: ""
                         chairCount.value = value.chairCount
-                        orderName.value = value.orderName
+                        orderName.value = value.orderName ?: ""
 
 
 
@@ -815,6 +872,8 @@ open class RootViewModel @Inject constructor(
             )
         }
     }
+
+
 
 
     // Miscellaneous
@@ -880,6 +939,8 @@ open class RootViewModel @Inject constructor(
             _showKotScreenEvent.send(ShowKotScreenUiEvent(uiEvent = uiEvent))
         }
     }
+
+
 
 
 }

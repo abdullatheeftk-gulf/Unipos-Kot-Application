@@ -17,6 +17,7 @@ import com.gulfappdeveloper.project3.usecases.remote_usecases.get.kot.GetKOTDeta
 import com.gulfappdeveloper.project3.usecases.remote_usecases.get.login.RegisterUserUseCase
 import com.gulfappdeveloper.project3.usecases.remote_usecases.get.product.ProductSearchUseCase
 import com.gulfappdeveloper.project3.usecases.remote_usecases.post.GenerateKotUseCase
+import com.gulfappdeveloper.project3.usecases.remote_usecases.put.EditKotUseCase
 
 data class UseCase(
     val updateOperationCountUseCase: UpdateOperationCountUseCase,
@@ -40,7 +41,10 @@ data class UseCase(
     val getTableListUseCase: GetTableListUseCase,
     val getTableOrderListUseCase: GetTableOrderListUseCase,
 
+    // Generate kot
     val generateKotUseCase:GenerateKotUseCase,
+    // Edit Kot
+    val editKotUseCase: EditKotUseCase,
     // Get KOT details for editing
     val getKOTDetailsUseCase: GetKOTDetailsUseCase,
     // Delete KOT

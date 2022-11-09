@@ -3,18 +3,18 @@ package com.gulfappdeveloper.project3.presentation.screens.review_screen.compone
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.gulfappdeveloper.project3.navigation.root.RootNavScreens
 import com.gulfappdeveloper.project3.navigation.root.RootViewModel
 import com.gulfappdeveloper.project3.ui.theme.MyPrimeColor
 import com.gulfappdeveloper.project3.ui.theme.ProgressBarColour
@@ -27,7 +27,10 @@ fun ReviewScreenBottomSheet(
     showProgressBar: Boolean
 ) {
     val itemCountInKot by rootViewModel.itemsCountInKot
+
     val kotNetAmount by rootViewModel.kotNetAmount
+
+    val editMode by rootViewModel.editMode
 
     Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
         Spacer(modifier = Modifier.height(20.dp))
@@ -93,11 +96,15 @@ fun ReviewScreenBottomSheet(
         ) {
             Button(
                 onClick = {
-                    navHostController.popBackStack()
+                    if (editMode) {
+                        navHostController.navigate(route = RootNavScreens.ProductDisplayScreen.route)
+                    } else {
+                        navHostController.popBackStack()
+                    }
                 },
                 modifier = Modifier.weight(4f),
                 colors = ButtonDefaults.buttonColors(
-                    backgroundColor = MaterialTheme.colors.background
+                    backgroundColor = Color(0xFF000000)
                 ),
                 enabled = !showProgressBar
             ) {
@@ -108,25 +115,33 @@ fun ReviewScreenBottomSheet(
                 )
                 Text(
                     text = "Add More Item",
-                    color = MaterialTheme.colors.ProgressBarColour
+                    color = MaterialTheme.colors.MyPrimeColor
                 )
             }
             Spacer(modifier = Modifier.width(20.dp))
+
             Button(
                 onClick = {
-                    rootViewModel.generateKot(deviceId = deviceId)
+                    if (editMode) {
+                        rootViewModel.editKot(deviceId = deviceId)
+                    } else {
+                        rootViewModel.generateKot(deviceId = deviceId)
+                    }
                 },
                 modifier = Modifier.weight(4f),
                 colors = ButtonDefaults.buttonColors(
-                    backgroundColor = MaterialTheme.colors.error
+                    backgroundColor = if (editMode) Color.Blue else MaterialTheme.colors.background
                 ),
                 enabled = !showProgressBar
             ) {
-                Text(text = "Generate KOT", color = MaterialTheme.colors.background)
+                Text(
+                    text = if (editMode) "Update KOT" else "Generate KOT",
+                    color = if (editMode) MaterialTheme.colors.background else MaterialTheme.colors.MyPrimeColor
+                )
                 Icon(
                     imageVector = Icons.Filled.KeyboardArrowRight,
                     contentDescription = null,
-                    tint = MaterialTheme.colors.MyPrimeColor
+                    tint = if (editMode) MaterialTheme.colors.background else MaterialTheme.colors.MyPrimeColor
                 )
             }
         }

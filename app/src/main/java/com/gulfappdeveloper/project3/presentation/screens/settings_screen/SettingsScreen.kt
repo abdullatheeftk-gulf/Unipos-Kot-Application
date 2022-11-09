@@ -52,7 +52,7 @@ fun SettingsScreen(
             when (value) {
                 is UiEvent.Navigate -> {
                     navHostController.popBackStack()
-                    //navHostController.navigate(value.route)
+
                 }
                 is UiEvent.ShowSnackBar -> {
                     scaffoldState.snackbarHostState.showSnackbar(
@@ -115,9 +115,10 @@ fun SettingsScreen(
                 ),
                 keyboardActions = KeyboardActions(
                     onDone = {
-                        rootViewModel.setIsInitialLoadingIsFinished()
+
                         hideKeyboard()
                         if (urlValidator(baseUrl = text)) {
+                            rootViewModel.setIsInitialLoadingIsNotFinished()
                             settingScreenViewModel.setBaseUrl(value = text)
                         } else {
                             settingScreenViewModel.onErrorUrl(url = text)
@@ -132,9 +133,10 @@ fun SettingsScreen(
             Spacer(modifier = Modifier.height(10.dp))
             Button(
                 onClick = {
-                    rootViewModel.setIsInitialLoadingIsFinished()
+
                     hideKeyboard()
                     if (urlValidator(baseUrl = text)) {
+                        rootViewModel.setIsInitialLoadingIsNotFinished()
                         settingScreenViewModel.setBaseUrl(value = text)
                     } else {
                         settingScreenViewModel.onErrorUrl(url = text)

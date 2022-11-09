@@ -180,6 +180,7 @@ fun ShowKOTScreen(
                 Spacer(modifier = Modifier.width(16.dp))
                 Button(
                     onClick = {
+                        rootViewModel.setEditMode(value = true)
                         navHostController.popBackStack(
                             route = RootNavScreens.EditingScreen.route,
                             inclusive = true

@@ -64,7 +64,7 @@ fun KotItemsDisplay(
                     .data(baseUrl+HttpRoutes.PRODUCT_IMAGE + "${kotItem.productId}")
                     .crossfade(true)
                     .build(),
-                placeholder = painterResource(id = R.drawable.no_image),
+                placeholder = painterResource(id = R.drawable.image_loading),
                 contentDescription = "Food item",
                 alignment = Alignment.Center,
                 error = painterResource(id = R.drawable.no_image),
@@ -89,7 +89,7 @@ fun KotItemsDisplay(
                         fontStyle = MaterialTheme.typography.subtitle1.fontStyle,
                         textAlign = TextAlign.Center
                     )
-                    if (kotItem.itemNote.isNotEmpty()){
+                    if (kotItem.itemNote?.isNotEmpty()!!){
                         Icon(
                             painter = painterResource(id = R.drawable.ic_baseline_notes_24),
                             contentDescription = null,

@@ -8,9 +8,9 @@ data class Kot(
     val fK_UserId: Int,
     val kotDetails: List<KotItem>,
     val kotMasterId: Int,
-    var notes: String ="",
-    val orderName: String="",
-    var remarks: String = "",
+    var notes: String? ="",
+    val orderName: String?="",
+    var remarks: String? = "",
     val serialNo: Int,
     val tableId: Int=0,
     val terminal: String

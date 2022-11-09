@@ -37,6 +37,8 @@ fun ProductDisplayScreen(
 
     val itemsCountInKot by rootViewModel.itemsCountInKot
 
+    val editMode by rootViewModel.editMode
+
 
     var showProgressBar by remember {
         mutableStateOf(false)
@@ -78,8 +80,12 @@ fun ProductDisplayScreen(
     }
 
     BackHandler(enabled = true) {
-        rootViewModel.resetKot()
-        navHostController.popBackStack()
+        if (editMode){
+            navHostController.popBackStack()
+        }else {
+            rootViewModel.resetKot()
+            navHostController.popBackStack()
+        }
     }
 
     Scaffold(
@@ -92,8 +98,12 @@ fun ProductDisplayScreen(
                         normalAndSearchTobBarToggle = false
                     },
                     onBackButtonClicked = {
-                        rootViewModel.resetKot()
-                        navHostController.popBackStack()
+                        if (editMode){
+                            navHostController.popBackStack()
+                        }else {
+                            rootViewModel.resetKot()
+                            navHostController.popBackStack()
+                        }
                     }
                 )
             } else {

@@ -62,8 +62,7 @@ fun SplashScreen(
                 is UiEvent.ShowSnackBar->{
                     Log.d(TAG, "SplashScreen: ")
                     scaffoldState.snackbarHostState.showSnackbar(
-                        message = event.uiEvent.message,
-                        duration = SnackbarDuration.Long
+                        message = event.uiEvent.message
                     )
                 }
                 else -> Unit

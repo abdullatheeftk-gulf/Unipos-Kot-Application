@@ -101,6 +101,7 @@ fun SetBaseUrlScreen(
                     onDone = {
                         hideKeyboard()
                         if (urlValidator(baseUrl = text)) {
+                            rootViewModel.setIsInitialLoadingIsNotFinished()
                             setBaseUrlScreenViewModel.setBaseUrl(value = text)
                         } else {
                             setBaseUrlScreenViewModel.onErrorUrl(url = text)
@@ -117,6 +118,7 @@ fun SetBaseUrlScreen(
                 onClick = {
                     hideKeyboard()
                     if (urlValidator(baseUrl = text)) {
+                        rootViewModel.setIsInitialLoadingIsNotFinished()
                         setBaseUrlScreenViewModel.setBaseUrl(value = text)
                     } else {
                         setBaseUrlScreenViewModel.onErrorUrl(url = text)

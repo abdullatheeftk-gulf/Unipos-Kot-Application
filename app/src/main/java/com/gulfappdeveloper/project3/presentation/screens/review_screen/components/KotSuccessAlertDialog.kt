@@ -7,16 +7,20 @@ import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.gulfappdeveloper.project3.navigation.root.RootViewModel
 import com.gulfappdeveloper.project3.ui.theme.MyPrimeColor
 
 @Composable
 fun KotSuccessAlertDialog(
+    rootViewModel: RootViewModel,
     onDismissRequest: () -> Unit,
 ) {
+    val editMode by rootViewModel.editMode
 
     AlertDialog(
         onDismissRequest = onDismissRequest,
@@ -28,7 +32,7 @@ fun KotSuccessAlertDialog(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "KOT generated Successfully!",
+                    text = if (editMode) "KOT updated Successfully" else "KOT generated Successfully!",
                     modifier = Modifier
                         .fillMaxWidth(),
                     textAlign = TextAlign.Center,
