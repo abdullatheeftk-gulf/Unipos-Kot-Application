@@ -12,12 +12,15 @@ import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.gulfappdeveloper.project3.domain.remote.get.TableOrder
 import com.gulfappdeveloper.project3.navigation.root.RootNavScreens
 import com.gulfappdeveloper.project3.navigation.root.RootViewModel
 import com.gulfappdeveloper.project3.presentation.presentation_util.UiEvent
+import com.gulfappdeveloper.project3.presentation.screens.table_selection_screen.components.AddNewOrderDialog
+import com.gulfappdeveloper.project3.presentation.screens.table_selection_screen.components.AddOrderView
 import com.gulfappdeveloper.project3.presentation.screens.table_selection_screen.components.OrderView
 import com.gulfappdeveloper.project3.ui.theme.ProgressBarColour
 import kotlinx.coroutines.flow.collectLatest
@@ -34,8 +37,15 @@ fun TableSelectionScreen(
     val selectedTable by rootViewModel.selectedTable
     val tableOrderList = rootViewModel.tableOrderList
 
+    val showNewOrderAddButton by rootViewModel.showNewTableOrderAddButton
+
+
 
     var showProgressBar by remember {
+        mutableStateOf(false)
+    }
+
+    var showAddNewOrderDialog by remember {
         mutableStateOf(false)
     }
 
@@ -55,7 +65,8 @@ fun TableSelectionScreen(
                     scaffoldState.snackbarHostState.showSnackbar(message = value.uiEvent.message)
                 }
                 is UiEvent.Navigate -> {
-
+                    //navHostController.popBackStack()
+                    navHostController.navigate(route = value.uiEvent.route)
                 }
                 is UiEvent.ShowEmptyList -> {
 
@@ -73,6 +84,17 @@ fun TableSelectionScreen(
         navHostController.popBackStack()
     }
 
+    if (showAddNewOrderDialog){
+        AddNewOrderDialog(
+            rootViewModel = rootViewModel,
+            hideKeyboard = hideKeyboard,
+            noOfSeatsRemaining =selectedTable?.noOfSeats!!-selectedTable?.occupied!!,
+            onDismissRequest = {
+                showAddNewOrderDialog = false
+            }
+        )
+    }
+
 
 
 
@@ -86,6 +108,7 @@ fun TableSelectionScreen(
                 navigationIcon = {
                     IconButton(onClick = {
                         navHostController.popBackStack()
+                        rootViewModel.removeTableOrder()
                     }) {
                         Icon(
                             imageVector = Icons.Filled.ArrowBack,
@@ -93,11 +116,9 @@ fun TableSelectionScreen(
                         )
                     }
                 },
-
             )
-
         },
-        floatingActionButtonPosition = FabPosition.Center,
+        /*floatingActionButtonPosition = FabPosition.Center,
         floatingActionButton = {
             ExtendedFloatingActionButton(
                 text = {
@@ -118,7 +139,7 @@ fun TableSelectionScreen(
                     navHostController.navigate(RootNavScreens.ProductDisplayScreen.route)
                 }
             )
-        }
+        }*/
     ) {
         it.calculateTopPadding()
 
@@ -148,6 +169,14 @@ fun TableSelectionScreen(
                     hideKeyboard = hideKeyboard
                 )
 
+            }
+            if (showNewOrderAddButton) {
+                item {
+                    AddOrderView(rootViewModel = rootViewModel,
+                    addNewOrder = {
+                        showAddNewOrderDialog = true
+                    })
+                }
             }
         }
 

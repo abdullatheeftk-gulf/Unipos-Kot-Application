@@ -17,6 +17,7 @@ import androidx.navigation.NavHostController
 import com.gulfappdeveloper.project3.R
 import com.gulfappdeveloper.project3.navigation.root.RootNavScreens
 import com.gulfappdeveloper.project3.navigation.root.RootViewModel
+import com.gulfappdeveloper.project3.presentation.presentation_util.OrderMode
 import com.gulfappdeveloper.project3.presentation.screens.home_screen.components.MenuCard
 
 private const val TAG = "HomeScreen"
@@ -63,6 +64,7 @@ fun HomeScreen(
                         when (menu) {
                             "DINE IN" -> {
                                 if (sectionList.isNotEmpty()) {
+                                    rootViewModel.setOrderMode(OrderMode.DINE_IN)
                                     navHostController.navigate(route = RootNavScreens.DineInScreen.route)
                                 } else {
                                     Toast.makeText(
@@ -74,6 +76,7 @@ fun HomeScreen(
                             }
                             "TAKE AWAY" -> {
                                 if (categoryList.isNotEmpty()) {
+                                    rootViewModel.setOrderMode(OrderMode.TAKE_AWAY)
                                     navHostController.navigate(route = RootNavScreens.ProductDisplayScreen.route)
                                 } else {
                                     Toast.makeText(

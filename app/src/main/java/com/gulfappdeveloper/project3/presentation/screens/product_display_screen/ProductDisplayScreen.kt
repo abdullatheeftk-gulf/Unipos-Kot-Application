@@ -17,6 +17,7 @@ import androidx.navigation.NavHostController
 import com.gulfappdeveloper.project3.R
 import com.gulfappdeveloper.project3.navigation.root.RootNavScreens
 import com.gulfappdeveloper.project3.navigation.root.RootViewModel
+import com.gulfappdeveloper.project3.presentation.presentation_util.OrderMode
 import com.gulfappdeveloper.project3.presentation.presentation_util.UiEvent
 import com.gulfappdeveloper.project3.presentation.screens.product_display_screen.components.category.CategoryListRow
 import com.gulfappdeveloper.project3.presentation.screens.product_display_screen.components.product.grid.GridViewScreen
@@ -31,11 +32,13 @@ import kotlinx.coroutines.flow.collectLatest
 fun ProductDisplayScreen(
     navHostController: NavHostController,
     rootViewModel: RootViewModel,
-    hideKeyboard:()->Unit,
+    hideKeyboard: () -> Unit,
 ) {
     val scaffoldState = rememberScaffoldState()
 
     val itemsCountInKot by rootViewModel.itemsCountInKot
+
+    val selectedOrderMode by rootViewModel.selectedOrderMode
 
     val editMode by rootViewModel.editMode
 
@@ -80,11 +83,15 @@ fun ProductDisplayScreen(
     }
 
     BackHandler(enabled = true) {
-        if (editMode){
+        if (editMode) {
             navHostController.popBackStack()
-        }else {
-            rootViewModel.resetKot()
-            navHostController.popBackStack()
+        } else {
+            if (selectedOrderMode == OrderMode.TAKE_AWAY) {
+                rootViewModel.resetKot()
+                navHostController.popBackStack()
+            } else {
+                navHostController.popBackStack()
+            }
         }
     }
 
@@ -98,11 +105,15 @@ fun ProductDisplayScreen(
                         normalAndSearchTobBarToggle = false
                     },
                     onBackButtonClicked = {
-                        if (editMode){
+                        if (editMode) {
                             navHostController.popBackStack()
-                        }else {
-                            rootViewModel.resetKot()
-                            navHostController.popBackStack()
+                        } else {
+                            if (selectedOrderMode == OrderMode.TAKE_AWAY) {
+                                rootViewModel.resetKot()
+                                navHostController.popBackStack()
+                            } else {
+                                navHostController.popBackStack()
+                            }
                         }
                     }
                 )

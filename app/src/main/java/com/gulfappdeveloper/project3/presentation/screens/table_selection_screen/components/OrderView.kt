@@ -1,5 +1,6 @@
 package com.gulfappdeveloper.project3.presentation.screens.table_selection_screen.components
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -13,7 +14,6 @@ import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
@@ -21,6 +21,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.gulfappdeveloper.project3.domain.remote.get.TableOrder
 import com.gulfappdeveloper.project3.navigation.root.RootViewModel
+
+private const val TAG = "OrderView"
 
 @Composable
 fun OrderView(
@@ -49,7 +51,6 @@ fun OrderView(
     }
 
 
-
     var showDropDownMenu by remember {
         mutableStateOf(false)
     }
@@ -58,6 +59,14 @@ fun OrderView(
         modifier = Modifier
             .width(128.dp)
             .padding(horizontal = 4.dp, vertical = 8.dp)
+            .clickable {
+                if (tableOrder.id == 0) {
+                    rootViewModel.onNewTableOrderSet()
+                } else {
+                    rootViewModel.onEditTableOrderSet(kotMasterId = tableOrder.fK_KOTInvoiceId)
+                }
+
+            }
     ) {
 
         Box(
@@ -91,8 +100,11 @@ fun OrderView(
                     shape = CircleShape
                 ) {}
             }
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(text = orderName)
+                Text(text = "Order Id:- ${tableOrder.fK_KOTInvoiceId}")
+            }
 
-            Text(text = orderName)
         }
 
         Surface(color = Color(0xFFF6D78B)) {
@@ -145,14 +157,46 @@ fun OrderView(
                 expanded = showDropDownMenu,
                 onDismissRequest = { showDropDownMenu = false }
             ) {
-                (1..chairRemaining).forEach {
-                    DropdownMenuItem(
-                        onClick = {
-                            rootViewModel.onChairCountChange(it)
-                            chairCount = it
-                            showDropDownMenu = false
-                        }) {
-                        Text(text = "$it")
+                if (selectedTable?.occupied!! == 0) {
+                    (1..chairRemaining).forEach {
+                        DropdownMenuItem(
+                            onClick = {
+                                rootViewModel.onChairCountChange(it)
+                                chairCount = it
+                                showDropDownMenu = false
+                            }) {
+                            Text(text = "$it")
+                        }
+                    }
+                }else if(selectedTable?.occupied!!>=selectedTable?.noOfSeats!!){
+                    DropdownMenuItem(onClick = {
+                        showDropDownMenu = false
+                    }) {
+                       Text(text = "No empty seat")
+                    }
+                }else{
+                    if (tableOrder.id == 0){
+                        (1..chairRemaining).forEach {
+                            DropdownMenuItem(
+                                onClick = {
+                                    rootViewModel.onChairCountChange(it)
+                                    chairCount = it
+                                    showDropDownMenu = false
+                                }) {
+                                Text(text = "$it")
+                            }
+                        }
+                    }else {
+                        (1..chairRemaining + 1).forEach {
+                            DropdownMenuItem(
+                                onClick = {
+                                    rootViewModel.onChairCountChange(it)
+                                    chairCount = it
+                                    showDropDownMenu = false
+                                }) {
+                                Text(text = "$it")
+                            }
+                        }
                     }
                 }
             }

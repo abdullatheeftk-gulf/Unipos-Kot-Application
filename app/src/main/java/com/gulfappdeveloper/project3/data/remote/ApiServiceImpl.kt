@@ -821,14 +821,19 @@ class ApiServiceImpl(
         return flow {
             try {
                 val httpResponse = client.get(urlString = url)
-                val statusCode = httpResponse.status.value
-                // Log.i(TAG, "status code $statusCode")
 
-                when (statusCode) {
+
+                when (val statusCode = httpResponse.status.value) {
                     in 200..299 -> {
-                        emit(
-                            GetDataFromRemote.Success(httpResponse.body())
-                        )
+                        if (statusCode == 204) {
+                            emit(
+                                GetDataFromRemote.Success(emptyList())
+                            )
+                        } else {
+                            emit(
+                                GetDataFromRemote.Success(httpResponse.body())
+                            )
+                        }
                     }
                     in 300..399 -> {
                         emit(
@@ -936,7 +941,7 @@ class ApiServiceImpl(
         kot: Kot,
         callBack: suspend (Int, String) -> Unit
     ) {
-        //Log.d(TAG, "generateKOT: $kot")
+        Log.d(TAG, "generateKOT: $kot")
         try {
             val httpResponse = client.post(url) {
                 contentType(ContentType.Application.Json)
@@ -984,11 +989,11 @@ class ApiServiceImpl(
             try {
                 val httpResponse = client.get(urlString = url)
                 val statusCode = httpResponse.status.value
-                Log.i(TAG, "status code $statusCode")
+                // Log.i(TAG, "status code $statusCode")
 
                 when (statusCode) {
                     in 200..299 -> {
-                        Log.w(TAG, "getKOTDetails: $statusCode")
+                        //Log.w(TAG, "getKOTDetails: $statusCode")
                         if (statusCode == 204) {
                             emit(
                                 GetDataFromRemote.Success(null)
@@ -1107,7 +1112,7 @@ class ApiServiceImpl(
             val httpResponse = client.delete(urlString = url)
             val statusCode = httpResponse.status.value
             val statusMessage = httpResponse.status.description
-            Log.d(TAG, "deleteKOT: $statusCode")
+            //Log.d(TAG, "deleteKOT: $statusCode")
             callBack(statusCode, statusMessage)
         } catch (e: Exception) {
             Log.e(TAG, "deleteKOT: ")

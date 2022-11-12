@@ -7,14 +7,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.Card
-import androidx.compose.material.ContentAlpha
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -36,29 +34,19 @@ fun TableDisplay(
     val baseUrl by rootViewModel.baseUrl
 
     Card(
-        modifier = if (table.occupied >= table.noOfSeats)
-            Modifier
-                .size(128.dp)
-                .padding(all = 8.dp)
-                .alpha(ContentAlpha.disabled)
-                .clickable {
-                    rootViewModel.filledTableClicked()
-                }
-        else
-            Modifier
-                .size(128.dp)
-                .padding(all = 8.dp)
-                .clickable {
-                    rootViewModel.setSelectedTable(table = table)
-                },
-
+        modifier = Modifier
+            .size(128.dp)
+            .padding(all = 8.dp)
+            .clickable {
+                rootViewModel.setSelectedTable(table = table)
+            },
         border = BorderStroke(
             width = 1.dp,
             color = MaterialTheme.colors.MyPrimeColor
         ),
         elevation = 0.dp,
         shape = MaterialTheme.shapes.medium,
-        ) {
+    ) {
 
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
