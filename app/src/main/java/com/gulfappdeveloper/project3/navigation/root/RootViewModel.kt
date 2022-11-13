@@ -1,11 +1,16 @@
 package com.gulfappdeveloper.project3.navigation.root
 
+import android.content.Context
+import android.util.DisplayMetrics
 import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.dantsu.escposprinter.EscPosPrinter
+import com.dantsu.escposprinter.textparser.PrinterTextParserImg
+import com.gulfappdeveloper.project3.R
 import com.gulfappdeveloper.project3.data.remote.HttpRoutes
 import com.gulfappdeveloper.project3.domain.remote.get.GetDataFromRemote
 import com.gulfappdeveloper.project3.domain.remote.get.TableOrder
@@ -24,8 +29,10 @@ import com.gulfappdeveloper.project3.presentation.screens.review_screen.util.Rev
 import com.gulfappdeveloper.project3.presentation.screens.show_kot_screen.util.ShowKotScreenUiEvent
 import com.gulfappdeveloper.project3.presentation.screens.splash_screen.util.SplashScreenEvent
 import com.gulfappdeveloper.project3.presentation.screens.table_selection_screen.TableSelectionUiEvent
+import com.gulfappdeveloper.project3.print.Printer
 import com.gulfappdeveloper.project3.usecases.UseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
@@ -38,7 +45,8 @@ private const val TAG = "RootViewModel"
 
 @HiltViewModel
 open class RootViewModel @Inject constructor(
-    private val useCase: UseCase
+    private val useCase: UseCase,
+    @ApplicationContext private val context: Context
 ) : ViewModel() {
 
     private var isInitialLoadingFinished = false
@@ -151,6 +159,15 @@ open class RootViewModel @Inject constructor(
         private set
 
 
+    // Ip address and Port use case
+
+    var ipAddress = mutableStateOf("")
+        private set
+
+    var port = mutableStateOf("")
+        private set
+
+
     init {
 
         sendSplashScreenEvent(SplashScreenEvent(UiEvent.ShowProgressBar))
@@ -158,6 +175,8 @@ open class RootViewModel @Inject constructor(
         readOperationCount()
         readSerialNo()
         readBaseUrl()
+        readIpAddress()
+        readPortAddress()
 
     }
 
@@ -209,6 +228,22 @@ open class RootViewModel @Inject constructor(
                 // Log.d(TAG, "readSerialNo: $it")
                 serialNo.value = it
 
+            }
+        }
+    }
+
+    fun readIpAddress() {
+        viewModelScope.launch {
+            useCase.readIpAddressUseCase().collectLatest { ip ->
+                ipAddress.value = ip
+            }
+        }
+    }
+
+    fun readPortAddress() {
+        viewModelScope.launch {
+            useCase.readPortAddressUseCase().collectLatest { value ->
+                port.value = value
             }
         }
     }
@@ -736,10 +771,12 @@ open class RootViewModel @Inject constructor(
 
         Log.i(TAG, "generateKot: ${kotItemList.toList()}")
         Log.d(TAG, "generateKot: ${kotMasterId.value}")
-        Log.e(TAG, "generateKot: ${tableId.value}", )
-        Log.w(TAG, "generateKot: ${kotNotes.value}", )
+        Log.e(TAG, "generateKot: ${tableId.value}")
+        Log.w(TAG, "generateKot: ${kotNotes.value}")
         Log.i(TAG, "generateKot: ${chairCount.value}")
-        Log.e(TAG, "generateKot: ${orderName.value}", )
+        Log.e(TAG, "generateKot: ${orderName.value}")
+        Log.w(TAG, "generateKot: ip address ${ipAddress.value}")
+        Log.i(TAG, "generateKot: port address ${port.value}")
 
         // Log.d(TAG, "generateKot: $kot")
         viewModelScope.launch(Dispatchers.IO) {
@@ -750,6 +787,22 @@ open class RootViewModel @Inject constructor(
                 sendReviewScreenEvent(ReviewScreenEvent(UiEvent.CloseProgressBar))
                 if (statusCode in 200..299) {
                     sendReviewScreenEvent(ReviewScreenEvent(UiEvent.ShowAlertDialog))
+
+                    if (ipAddress.value.isNotEmpty() && ipAddress.value.isNotBlank() && port.value.isNotEmpty() && port.value.isNotEmpty()) {
+
+                        val printer = Printer(
+                            address = ipAddress.value,
+                            port = port.value.toInt(),
+                            timeOut = 30
+                        )
+                        val p = printer.pr
+
+                        val text = getPrintText(print = p)
+                        printer.printKot(text)
+
+
+                    }
+
                 } else {
                     sendReviewScreenEvent(ReviewScreenEvent(UiEvent.ShowSnackBar(message = "There have some error :- $message")))
                 }
@@ -774,10 +827,10 @@ open class RootViewModel @Inject constructor(
 
         Log.i(TAG, "editKot: ${kotItemList.toList()}")
         Log.d(TAG, "editKot: ${kotMasterId.value}")
-        Log.e(TAG, "editKot: ${tableId.value}", )
-        Log.w(TAG, "editKot: ${kotNotes.value}", )
+        Log.e(TAG, "editKot: ${tableId.value}")
+        Log.w(TAG, "editKot: ${kotNotes.value}")
         Log.i(TAG, "editKot: ${chairCount.value}")
-        Log.e(TAG, "editKot: ${orderName.value}", )
+        Log.e(TAG, "editKot: ${orderName.value}")
 
         viewModelScope.launch(Dispatchers.IO) {
             val url = baseUrl.value + HttpRoutes.EDIT_KOT + kotMasterId.value
@@ -847,7 +900,7 @@ open class RootViewModel @Inject constructor(
                         } catch (e: Exception) {
                             Log.e(TAG, "getKOTDetails: ${e.message}")
                         }
-                        Log.e(TAG, "getKOTDetails: ${chairCount.value}", )
+                        Log.e(TAG, "getKOTDetails: ${chairCount.value}")
                         Log.d(TAG, "getKOTDetails: ${orderName.value}")
 
                         kotMasterId.value = value.kotMasterId
@@ -861,13 +914,15 @@ open class RootViewModel @Inject constructor(
                         orderName.value = orderName.value.ifEmpty {
                             value.orderName ?: ""
                         }
-                        Log.w(TAG, "getKOTDetails: ---------------", )
-                        Log.e(TAG, "getKOTDetails: ${chairCount.value}", )
+                        Log.w(TAG, "getKOTDetails: ---------------")
+                        Log.e(TAG, "getKOTDetails: ${chairCount.value}")
                         Log.d(TAG, "getKOTDetails: ${orderName.value}")
 
 
 
                         sendEditScreenEvent(UiEvent.Navigate(RootNavScreens.ShowKotScreen.route))
+
+
                     }
                     // Log.d(TAG, "getKOTDetails: ${result.data}")
                 }
@@ -1007,6 +1062,26 @@ open class RootViewModel @Inject constructor(
         // reset selected order mode
         selectedOrderMode.value = OrderMode.NONE
 
+    }
+
+    private fun getPrintText(print: EscPosPrinter): String {
+        val res = context.resources.getDrawableForDensity(
+            R.drawable.unipospro_logo_full,
+            DisplayMetrics.DENSITY_MEDIUM
+        )
+        var kotItemsString = ""
+        kotItemList.forEachIndexed { index, kotItem ->
+            kotItemsString += "[L]${index + 1}, ${kotItem.productName}[R]${kotItem.quantity}\n"
+        }
+
+        return "[C]<img>" + PrinterTextParserImg.bitmapToHexadecimalString(
+            print,
+            res
+        ) + "</img>\n" +
+                "[C]<u>font size='big'>UNIPOSPRO</u>\n" +
+                "[L]\n" +
+                "[C]============================================" +
+                kotItemsString
     }
 
 

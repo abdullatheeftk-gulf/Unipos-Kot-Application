@@ -22,6 +22,14 @@ class DataStoreRepository @Inject constructor(
         dataStoreService.updateSerialNo()
     }
 
+    suspend fun saveIpAddress(ipAddress:String){
+        dataStoreService.saveIpAddress(ipAddress = ipAddress)
+    }
+
+    suspend fun savePortAddress(portAddress:String){
+        dataStoreService.savePortAddress(portAddress = portAddress)
+    }
+
 
     fun readOperationCount(): Flow<Int> {
         return dataStoreService.readOperationCount()
@@ -33,6 +41,14 @@ class DataStoreRepository @Inject constructor(
 
     fun readSerialNo():Flow<Int>{
         return dataStoreService.readSerialNo()
+    }
+
+    fun readIpAddress():Flow<String>{
+        return dataStoreService.readIpaddress()
+    }
+
+    fun readPortAddress():Flow<String>{
+        return dataStoreService.readPortAddress()
     }
 
 

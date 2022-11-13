@@ -15,6 +15,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -35,19 +36,30 @@ fun SettingsScreen(
     var text by remember {
         mutableStateOf("")
     }
+    
+    var ipAddress by remember {
+        mutableStateOf("")
+    }
+    
+    var portAddress by remember {
+        mutableStateOf("")
+    }
 
     var showProgressBar by remember {
         mutableStateOf(false)
     }
+    
+    val ip by rootViewModel.ipAddress
+    val port by rootViewModel.port
 
-    val focusRequester by remember {
+    /*val focusRequester by remember {
         mutableStateOf(FocusRequester())
-    }
+    }*/
 
     val currentBaseUrl by rootViewModel.baseUrl
 
     LaunchedEffect(key1 = true) {
-        focusRequester.requestFocus()
+      //  focusRequester.requestFocus()
         settingScreenViewModel.uiEvent.collectLatest { value: UiEvent ->
             when (value) {
                 is UiEvent.Navigate -> {
@@ -126,8 +138,8 @@ fun SettingsScreen(
                     }
                 ),
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .focusRequester(focusRequester = focusRequester),
+                    .fillMaxWidth(),
+                    //.focusRequester(focusRequester = focusRequester),
                 enabled = !showProgressBar
             )
             Spacer(modifier = Modifier.height(10.dp))
@@ -145,6 +157,71 @@ fun SettingsScreen(
                 enabled = !showProgressBar
             ) {
                 Text(text = "Set Base Url")
+            }
+            Spacer(modifier = Modifier.height(30.dp))
+            Text(
+                text = "Set Printer Properties",
+                textDecoration = TextDecoration.Underline,
+                fontSize = MaterialTheme.typography.h6.fontSize,
+                fontStyle = MaterialTheme.typography.h6.fontStyle,
+                fontWeight = MaterialTheme.typography.h6.fontWeight
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+            Row(modifier = Modifier.fillMaxWidth()) {
+                OutlinedTextField(
+                    value = ipAddress, 
+                    onValueChange = {typedValue->
+                        ipAddress = typedValue
+                    },
+                    modifier = Modifier.weight(2f),
+                    label = {
+                        Text(text = "Ip Address")
+                    },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Number,
+                        imeAction = ImeAction.Done
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            hideKeyboard()
+                        }
+                    ),
+                    placeholder = {
+                        Text(text = ip)
+                    }
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+                OutlinedTextField(
+                    value = portAddress,
+                    onValueChange = {typedValue->
+                        portAddress = typedValue
+                    },
+                    modifier = Modifier.weight(1f),
+                    label = {
+                        Text(text = "Port")
+                    },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Number,
+                        imeAction = ImeAction.Done
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            hideKeyboard()
+                        }
+                    ),
+                    placeholder = {
+                        Text(text = port)
+                    }
+                )
+            }
+            Spacer(modifier = Modifier.height(20.dp))
+            Button(onClick = {
+                settingScreenViewModel.saveIpAddress(ipAddress = ipAddress)
+                settingScreenViewModel.savePortAddress(portAddress = portAddress)
+                rootViewModel.readPortAddress()
+                rootViewModel.readIpAddress()
+            }) {
+               Text(text = "Save Printer Address")
             }
         }
 

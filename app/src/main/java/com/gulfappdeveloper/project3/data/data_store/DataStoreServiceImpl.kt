@@ -19,6 +19,8 @@ class DataStoreServiceImpl(context: Context) : DataStoreService {
         val operationCountKey = intPreferencesKey(name = DataStoreConstants.OPERATION_COUNT_KEY)
         val baseUrlKey = stringPreferencesKey(name = DataStoreConstants.BASE_URL_KEY)
         val serialNoKey = intPreferencesKey(name = DataStoreConstants.SERIAL_NO_KEY)
+        val ipAddressKey = stringPreferencesKey(name = DataStoreConstants.IP_ADDRESS_KEY)
+        val portAddressKey = stringPreferencesKey(name = DataStoreConstants.PORT_KEY)
     }
 
     private val dataStore = context.dataStore
@@ -40,6 +42,18 @@ class DataStoreServiceImpl(context: Context) : DataStoreService {
         dataStore.edit { preference ->
             val count = preference[PreferenceKeys.serialNoKey] ?: 0
             preference[PreferenceKeys.serialNoKey] = count + 1
+        }
+    }
+
+    override suspend fun saveIpAddress(ipAddress:String) {
+        dataStore.edit { preference->
+            preference[PreferenceKeys.ipAddressKey] = ipAddress
+        }
+    }
+
+    override suspend fun savePortAddress(portAddress:String) {
+        dataStore.edit { preference->
+            preference[PreferenceKeys.portAddressKey] = portAddress
         }
     }
 
@@ -82,6 +96,34 @@ class DataStoreServiceImpl(context: Context) : DataStoreService {
             .map { preferences ->
                 val serialNoCount = preferences[PreferenceKeys.serialNoKey] ?: 0
                 serialNoCount
+            }
+    }
+
+    override fun readIpaddress(): Flow<String> {
+        return dataStore.data
+            .catch { exception ->
+                if (exception is IOException)
+                    emit(emptyPreferences())
+                else
+                    throw exception
+            }
+            .map { preferences ->
+                val ipAddress = preferences[PreferenceKeys.ipAddressKey] ?: ""
+               ipAddress
+            }
+    }
+
+    override fun readPortAddress(): Flow<String> {
+        return dataStore.data
+            .catch { exception ->
+                if (exception is IOException)
+                    emit(emptyPreferences())
+                else
+                    throw exception
+            }
+            .map { preferences ->
+                val portAddress = preferences[PreferenceKeys.portAddressKey] ?: ""
+                portAddress
             }
     }
 }

@@ -31,6 +31,20 @@ class SettingScreenViewModel @Inject constructor(
         }
     }
 
+    fun saveIpAddress(ipAddress:String){
+        viewModelScope.launch {
+            useCase.saveIpAddressUseCase(ipAddress = ipAddress)
+        }
+    }
+
+    fun savePortAddress(portAddress:String){
+        viewModelScope.launch {
+            useCase.savePortAddressUseCase(
+                portAddress = portAddress
+            )
+        }
+    }
+
     private fun getWelcomeMessage(url: String) {
         sendUiEvent(UiEvent.ShowProgressBar)
         viewModelScope.launch {

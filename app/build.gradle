@@ -99,4 +99,7 @@ dependencies {
 
     // DataStore Preferences
     implementation("androidx.datastore:datastore-preferences:1.0.0")
+
+    // Thermal printer
+    implementation 'com.github.DantSu:ESCPOS-ThermalPrinter-Android:3.2.0'
 }
