@@ -5,6 +5,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -39,6 +40,10 @@ fun ReviewScreen(
 
     val kotItemList = rootViewModel.kotItemList
 
+   /* kotItemList.forEach {
+        Log.e(TAG, "ReviewScreen: $it", )
+    }*/
+
     val editMode by rootViewModel.editMode
 
     var showAddNoteToKotItemAlertDialog by remember {
@@ -49,6 +54,10 @@ fun ReviewScreen(
 
     var kotItemSelectedForAddingNote: KotItem? by remember {
         mutableStateOf(null)
+    }
+
+    var kotItemIndexSelectedForAddingNote by remember{
+        mutableStateOf(-1)
     }
 
     var showAddNoteToKotAlertDialog by remember {
@@ -100,7 +109,8 @@ fun ReviewScreen(
                     kotItemSelectedForAddingNote = null
                 },
                 rootViewModel = rootViewModel,
-                kotItem = it
+                kotItem = it,
+                index = kotItemIndexSelectedForAddingNote
             )
         }
     }
@@ -258,12 +268,25 @@ fun ReviewScreen(
             item {
                 Spacer(modifier = Modifier.height(10.dp))
             }
-            items(kotItemList) { item: KotItem ->
+           /* items(kotItemList) { item: KotItem ->
                 KotItemsDisplay(
                     kotItem = item,
                     rootViewModel = rootViewModel,
                     onItemClicked = { kotItem ->
                         kotItemSelectedForAddingNote = kotItem
+                        showAddNoteToKotItemAlertDialog = true
+                    }
+                )
+            }*/
+
+            itemsIndexed(kotItemList){index,item:KotItem->
+                KotItemsDisplay(
+                    kotItem = item,
+                    index = index,
+                    rootViewModel = rootViewModel,
+                    onItemClicked = { kotItem,i ->
+                        kotItemSelectedForAddingNote = kotItem
+                        kotItemIndexSelectedForAddingNote = i
                         showAddNoteToKotItemAlertDialog = true
                     }
                 )

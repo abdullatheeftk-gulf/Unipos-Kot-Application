@@ -39,6 +39,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.inject.Inject
 
 private const val TAG = "RootViewModel"
@@ -686,9 +688,17 @@ open class RootViewModel @Inject constructor(
 
     }
 
-    fun onIncrementAndDecrementKotItemClicked(count: Int, productId: Int) {
-        kotItemList.map { kotItem ->
+    fun onIncrementAndDecrementKotItemClicked(count: Int, productId: Int,index:Int) {
+       /* kotItemList.map { kotItem ->
             if (kotItem.productId == productId) {
+                kotNetAmount.value -= kotItem.netAmount
+                kotItem.quantity = count.toFloat()
+                kotItem.netAmount = count * kotItem.rate
+                kotNetAmount.value += kotItem.netAmount
+            }
+        }*/
+        kotItemList.mapIndexed { i, kotItem ->
+            if (i ==  index && kotItem.productId == productId){
                 kotNetAmount.value -= kotItem.netAmount
                 kotItem.quantity = count.toFloat()
                 kotItem.netAmount = count * kotItem.rate
@@ -697,25 +707,32 @@ open class RootViewModel @Inject constructor(
         }
     }
 
-    fun onDeleteItemFromKotItemClicked(kotItem: KotItem) {
-        kotItemList.removeAll {
-            if (it.productId == kotItem.productId) {
+    fun onDeleteItemFromKotItemClicked(kotItem: KotItem, index: Int) {
+        Log.e(TAG, "onDeleteItemFromKotItemClicked: $index")
+        /*kotItemList.removeAll {
+            if (it.productId == kotItem.productId && it.quantity == kotItem.quantity) {
                 kotNetAmount.value -= it.netAmount
                 itemsCountInKot.value -= 1
                 true
             } else {
                 false
             }
-        }
+        }*/
+
+        kotItemList.removeAt(index = index)
+        kotNetAmount.value -= kotItem.netAmount
+        itemsCountInKot.value -= 1
+
+
     }
 
     fun addKotNotes(value: String) {
         kotNotes.value = value
     }
 
-    fun addNoteToKotItem(kotItem: KotItem, note: String) {
-        kotItemList.map { item ->
-            if (item.productId == kotItem.productId) {
+    fun addNoteToKotItem(kotItem: KotItem, note: String,index:Int) {
+        kotItemList.mapIndexed { i,item ->
+            if (item.productId == kotItem.productId && i==index) {
                 item.itemNote = note
             }
         }
@@ -769,14 +786,14 @@ open class RootViewModel @Inject constructor(
             kotMasterId = 1
         )
 
-        Log.i(TAG, "generateKot: ${kotItemList.toList()}")
-        Log.d(TAG, "generateKot: ${kotMasterId.value}")
-        Log.e(TAG, "generateKot: ${tableId.value}")
-        Log.w(TAG, "generateKot: ${kotNotes.value}")
-        Log.i(TAG, "generateKot: ${chairCount.value}")
-        Log.e(TAG, "generateKot: ${orderName.value}")
-        Log.w(TAG, "generateKot: ip address ${ipAddress.value}")
-        Log.i(TAG, "generateKot: port address ${port.value}")
+        /* Log.i(TAG, "generateKot: ${kotItemList.toList()}")
+         Log.d(TAG, "generateKot: ${kotMasterId.value}")
+         Log.e(TAG, "generateKot: ${tableId.value}")
+         Log.w(TAG, "generateKot: ${kotNotes.value}")
+         Log.i(TAG, "generateKot: ${chairCount.value}")
+         Log.e(TAG, "generateKot: ${orderName.value}")
+         Log.w(TAG, "generateKot: ip address ${ipAddress.value}")
+         Log.i(TAG, "generateKot: port address ${port.value}")*/
 
         // Log.d(TAG, "generateKot: $kot")
         viewModelScope.launch(Dispatchers.IO) {
@@ -825,13 +842,13 @@ open class RootViewModel @Inject constructor(
         }
         sendReviewScreenEvent(ReviewScreenEvent(UiEvent.ShowProgressBar))
 
-        Log.i(TAG, "editKot: ${kotItemList.toList()}")
-        Log.d(TAG, "editKot: ${kotMasterId.value}")
-        Log.e(TAG, "editKot: ${tableId.value}")
-        Log.w(TAG, "editKot: ${kotNotes.value}")
-        Log.i(TAG, "editKot: ${chairCount.value}")
-        Log.e(TAG, "editKot: ${orderName.value}")
-
+        /* Log.i(TAG, "editKot: ${kotItemList.toList()}")
+         Log.d(TAG, "editKot: ${kotMasterId.value}")
+         Log.e(TAG, "editKot: ${tableId.value}")
+         Log.w(TAG, "editKot: ${kotNotes.value}")
+         Log.i(TAG, "editKot: ${chairCount.value}")
+         Log.e(TAG, "editKot: ${orderName.value}")
+ */
         viewModelScope.launch(Dispatchers.IO) {
             val url = baseUrl.value + HttpRoutes.EDIT_KOT + kotMasterId.value
             val kot = Kot(
@@ -1065,6 +1082,7 @@ open class RootViewModel @Inject constructor(
     }
 
     private fun getPrintText(print: EscPosPrinter): String {
+        val date = SimpleDateFormat("dd/MM/yyyy h:mm:ss a", Locale.getDefault()).format(Date())
         val res = context.resources.getDrawableForDensity(
             R.drawable.unipospro_logo_full,
             DisplayMetrics.DENSITY_MEDIUM
@@ -1079,9 +1097,12 @@ open class RootViewModel @Inject constructor(
             res
         ) + "</img>\n" +
                 "[C]<u>font size='big'>UNIPOSPRO</u>\n" +
+                "[C]Date:- $date\n" +
                 "[L]\n" +
-                "[C]============================================" +
-                kotItemsString
+                "[C]============================================\n" +
+                kotItemsString + "\n" +
+                "[C]<barcode type='ean13' height='10'>831254784551</barcode>\n" +
+                "[C]<qrcode size='25'>123456789</qrcode>"
     }
 
 

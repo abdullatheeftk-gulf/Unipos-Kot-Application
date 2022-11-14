@@ -1,5 +1,6 @@
 package com.gulfappdeveloper.project3.presentation.screens.editing_screen
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -63,6 +64,10 @@ fun EditingScreen(
                 else -> Unit
             }
         }
+    }
+    BackHandler(true) {
+        rootViewModel.resetKot()
+        navHostController.popBackStack()
     }
 
     Scaffold(

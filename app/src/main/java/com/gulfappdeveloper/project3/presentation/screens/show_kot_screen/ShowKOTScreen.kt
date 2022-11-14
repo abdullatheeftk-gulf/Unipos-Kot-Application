@@ -52,10 +52,15 @@ fun ShowKOTScreen(
                     showProgressBar = false
                 }
                 is UiEvent.Navigate -> {
-                    navHostController.popBackStack(
-                        route = RootNavScreens.EditingScreen.route,
-                        inclusive = true
-                    )
+
+                    navHostController.navigate(
+                        route = RootNavScreens.HomeScreen.route
+                    ){
+                        popUpTo(route=RootNavScreens.HomeScreen.route){
+                            inclusive = true
+                        }
+                    }
+                    rootViewModel.resetKot()
 
                 }
                 is UiEvent.ShowSnackBar -> {

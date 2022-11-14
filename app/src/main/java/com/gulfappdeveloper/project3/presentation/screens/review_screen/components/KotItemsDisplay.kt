@@ -1,5 +1,6 @@
 package com.gulfappdeveloper.project3.presentation.screens.review_screen.components
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -31,18 +32,26 @@ import com.gulfappdeveloper.project3.navigation.root.RootViewModel
 import com.gulfappdeveloper.project3.ui.theme.MyPrimeColor
 import com.gulfappdeveloper.project3.ui.theme.ProgressBarColour
 
+private const val TAG = "KotItemsDisplay"
 @Composable
 fun KotItemsDisplay(
     kotItem: KotItem,
+    index:Int,
     rootViewModel: RootViewModel,
-    onItemClicked: (KotItem) -> Unit
+    onItemClicked: (KotItem,Int) -> Unit
 ) {
 
+
     var itemCount by remember {
-        mutableStateOf(kotItem.quantity.toInt())
+        mutableStateOf(0)
     }
 
+    itemCount = kotItem.quantity.toInt()
+    Log.e(TAG, "KotItemsDisplay: $itemCount", )
+
     val baseUrl by rootViewModel.baseUrl
+
+
 
     Card(
         modifier = Modifier
@@ -77,7 +86,7 @@ fun KotItemsDisplay(
                     modifier = Modifier
                         .weight(0.6f)
                         .clickable {
-                            onItemClicked(kotItem)
+                            onItemClicked(kotItem,index)
                         },
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
@@ -125,7 +134,8 @@ fun KotItemsDisplay(
                             itemCount++
                             rootViewModel.onIncrementAndDecrementKotItemClicked(
                                 count = itemCount,
-                                productId = kotItem.productId
+                                productId = kotItem.productId,
+                                index = index
                             )
                         },
                     text = "+"
@@ -144,7 +154,8 @@ fun KotItemsDisplay(
                                 itemCount--
                                 rootViewModel.onIncrementAndDecrementKotItemClicked(
                                     count = itemCount,
-                                    productId = kotItem.productId
+                                    productId = kotItem.productId,
+                                    index = index
                                 )
                             }
                         },
@@ -158,7 +169,7 @@ fun KotItemsDisplay(
                     .background(Color.Magenta)
                     .weight(0.15f)
                     .clickable {
-                        rootViewModel.onDeleteItemFromKotItemClicked(kotItem = kotItem)
+                        rootViewModel.onDeleteItemFromKotItemClicked(kotItem = kotItem, index = index)
                     },
                 contentAlignment = Alignment.Center
 

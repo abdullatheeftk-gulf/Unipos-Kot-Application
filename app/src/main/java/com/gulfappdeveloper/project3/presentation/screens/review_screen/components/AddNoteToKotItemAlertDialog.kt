@@ -18,6 +18,7 @@ import com.gulfappdeveloper.project3.navigation.root.RootViewModel
 fun AddNoteToKotItemAlertDialog(
     onDismissRequest: () -> Unit,
     rootViewModel: RootViewModel,
+    index:Int,
     kotItem: KotItem
 ) {
     var typedText by remember {
@@ -46,7 +47,7 @@ fun AddNoteToKotItemAlertDialog(
                 Spacer(modifier = Modifier.height(10.dp))
                 Button(
                     onClick = {
-                        rootViewModel.addNoteToKotItem(kotItem = kotItem, note = typedText ?: "")
+                        rootViewModel.addNoteToKotItem(kotItem = kotItem, note = typedText ?: "", index = index)
                         onDismissRequest()
                     }
                 ) {
