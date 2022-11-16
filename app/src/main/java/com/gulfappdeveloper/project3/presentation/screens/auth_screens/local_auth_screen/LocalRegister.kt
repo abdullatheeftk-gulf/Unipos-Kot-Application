@@ -31,7 +31,7 @@ fun LocalRegister(
 
     val scaffoldState = rememberScaffoldState()
 
-    val baseUrl by rootViewModel.baseUrl
+   // val baseUrl by rootViewModel.baseUrl
 
     var text by remember {
         mutableStateOf("")
@@ -125,7 +125,7 @@ fun LocalRegister(
                         hideKeyboard()
                         if (text.isNotEmpty()) {
                             rootViewModel.onRegisterLocally(
-                                baseUrl = baseUrl,
+                              //  baseUrl = baseUrl,
                                 password = text
                             )
                         } else {
@@ -144,7 +144,7 @@ fun LocalRegister(
                     hideKeyboard()
                     if (text.isNotEmpty()) {
                         rootViewModel.onRegisterLocally(
-                            baseUrl = baseUrl,
+                          //  baseUrl = baseUrl,
                             password = text
                         )
                     } else {

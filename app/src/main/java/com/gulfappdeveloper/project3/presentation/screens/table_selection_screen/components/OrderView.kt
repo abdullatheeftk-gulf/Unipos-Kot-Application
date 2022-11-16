@@ -1,6 +1,5 @@
 package com.gulfappdeveloper.project3.presentation.screens.table_selection_screen.components
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -35,7 +34,11 @@ fun OrderView(
 
     val selectedTable by rootViewModel.selectedTable
 
-    val chairRemaining = selectedTable?.noOfSeats!! - selectedTable?.occupied!!
+    var chairRemaining by remember {
+        mutableStateOf(0)
+    }
+
+    chairRemaining = selectedTable?.noOfSeats!! - selectedTable?.occupied!!
 
 
     var colorChange by remember {
@@ -43,12 +46,15 @@ fun OrderView(
     }
 
     var orderName by remember {
-        mutableStateOf(tableOrder.orderName)
+        mutableStateOf("")
+    }
+    orderName = tableOrder.orderName
+
+    var chairCount: Int? by remember {
+        mutableStateOf(0)
     }
 
-    var chairCount by remember {
-        mutableStateOf(tableOrder.chairCount)
-    }
+    chairCount = tableOrder.chairCount
 
 
     var showDropDownMenu by remember {
@@ -161,21 +167,22 @@ fun OrderView(
                     (1..chairRemaining).forEach {
                         DropdownMenuItem(
                             onClick = {
-                                rootViewModel.onChairCountChange(it)
-                                chairCount = it
+                                rootViewModel.onChairCountChange(it + chairCount!!)
+                                chairCount = it + chairCount!!
+                                chairRemaining -= it
                                 showDropDownMenu = false
                             }) {
                             Text(text = "$it")
                         }
                     }
-                }else if(selectedTable?.occupied!!>=selectedTable?.noOfSeats!!){
+                } else if (selectedTable?.occupied!! >= selectedTable?.noOfSeats!!) {
                     DropdownMenuItem(onClick = {
                         showDropDownMenu = false
                     }) {
-                       Text(text = "No empty seat")
+                        Text(text = "No empty seat")
                     }
-                }else{
-                    if (tableOrder.id == 0){
+                } else {
+                    if (tableOrder.id == 0) {
                         (1..chairRemaining).forEach {
                             DropdownMenuItem(
                                 onClick = {
@@ -186,7 +193,7 @@ fun OrderView(
                                 Text(text = "$it")
                             }
                         }
-                    }else {
+                    } else {
                         (1..chairRemaining + 1).forEach {
                             DropdownMenuItem(
                                 onClick = {

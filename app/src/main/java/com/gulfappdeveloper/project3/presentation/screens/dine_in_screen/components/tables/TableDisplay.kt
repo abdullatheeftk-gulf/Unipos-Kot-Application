@@ -25,6 +25,8 @@ import com.gulfappdeveloper.project3.domain.remote.get.dine_in.Table
 import com.gulfappdeveloper.project3.navigation.root.RootViewModel
 import com.gulfappdeveloper.project3.ui.theme.MyPrimeColor
 
+private const val TAG = "TableDisplay"
+
 @Composable
 fun TableDisplay(
     rootViewModel: RootViewModel,
@@ -32,6 +34,7 @@ fun TableDisplay(
 ) {
 
     val baseUrl by rootViewModel.baseUrl
+    // Log.i(TAG, "TableDisplay: ${table.tableName} ${table.tableName.length}")
 
     Card(
         modifier = Modifier
@@ -63,11 +66,13 @@ fun TableDisplay(
         )
 
         Box(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 4.dp),
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = table.tableName,
+                text = table.tableName.trim(),
                 color =
                 if (table.occupied > 0 && table.occupied < table.noOfSeats)
                     Color.Blue

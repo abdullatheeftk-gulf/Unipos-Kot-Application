@@ -80,7 +80,8 @@ fun GridViewItem(
             ) {
                 Box(
                     modifier = Modifier
-                        .height(34.dp),
+                        .height(60.dp)
+                        .padding(horizontal = 4.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
@@ -88,8 +89,8 @@ fun GridViewItem(
                         textAlign = TextAlign.Center,
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis,
-
-                        )
+                        fontSize = 16.sp
+                    )
                 }
                 Spacer(modifier = Modifier.height(5.dp))
                 Text(

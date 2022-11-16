@@ -183,7 +183,7 @@ open class RootViewModel @Inject constructor(
     }
 
     fun setIsInitialLoadingIsNotFinished() {
-        isInitialLoadingFinished = false
+
         try {
             categoryList.removeAll {
                 true
@@ -198,6 +198,9 @@ open class RootViewModel @Inject constructor(
                 true
             }
             readBaseUrl()
+            isInitialLoadingFinished = false
+
+           // Log.d(TAG, "setIsInitialLoadingIsNotFinished: $categoryList")
 
         } catch (e: Exception) {
             Log.e(TAG, "setInitialLoadingIsFinished:${e.message} ")
@@ -375,6 +378,7 @@ open class RootViewModel @Inject constructor(
             productList.removeAll {
                 true
             }
+            selectedCategory.value = value
         } catch (e: Exception) {
             // Log.e(TAG, "getProductList: ${e.message}")
         }
@@ -410,7 +414,7 @@ open class RootViewModel @Inject constructor(
                 }
                 if (result is GetDataFromRemote.Failed) {
                     sendProductDisplayEvent(ProductDisplayScreenEvent(UiEvent.ShowEmptyList))
-                    // Log.e(TAG, "getProductList: ${result.error.message} $url")
+                     Log.e(TAG, "getProductList: ${result.error.message} ${result.error.code} $url")
                 }
 
             }
@@ -509,6 +513,7 @@ open class RootViewModel @Inject constructor(
                 tableList.removeAll {
                     true
                 }
+                selectedSection.value = value
             } catch (e: Exception) {
                 // Log.e(TAG, "getTableList: ${e.message}")
             }
@@ -580,7 +585,7 @@ open class RootViewModel @Inject constructor(
                     tableOrderList.addAll(result.data)
                 }
                 if (result is GetDataFromRemote.Failed) {
-                    sendTableSelectionUiEvent(TableSelectionUiEvent(UiEvent.ShowSnackBar("There have some Error :- ${result.error.message}")))
+                    sendTableSelectionUiEvent(TableSelectionUiEvent(UiEvent.ShowSnackBar("There have some Error :- ${result.error.message} code: ${result.error.code} url:- ${baseUrl.value}${HttpRoutes.TABLE_ORDER}$id")))
 
                     //  Log.e(TAG, "getTableOrderList: ${result.error}")
                 }
@@ -636,12 +641,12 @@ open class RootViewModel @Inject constructor(
 
 
     //login local server
-    fun onRegisterLocally(baseUrl: String, password: String) {
+    fun onRegisterLocally( password: String) {
 
         sendLocalRegisterEvent(UiEvent.ShowProgressBar)
 
         viewModelScope.launch(Dispatchers.IO) {
-            useCase.registerUserUseCase(url = baseUrl + HttpRoutes.LOGIN + password)
+            useCase.registerUserUseCase(url = baseUrl.value + HttpRoutes.LOGIN + password)
                 .collectLatest { result ->
 
                     sendLocalRegisterEvent(UiEvent.CloseProgressBar)
@@ -654,7 +659,7 @@ open class RootViewModel @Inject constructor(
                     }
                     if (result is GetDataFromRemote.Failed) {
                         //  Log.e(TAG, "onRegisterLocally: ${result.error} ")
-                        sendLocalRegisterEvent(UiEvent.ShowSnackBar(message = "There Have Some Error :- ${result.error.message}"))
+                        sendLocalRegisterEvent(UiEvent.ShowSnackBar(message = "There Have Some Error :- ${result.error.message} code:-  ${result.error.code}+ url:- ${baseUrl.value}${HttpRoutes.LOGIN}${password}"))
                     }
                 }
         }
@@ -1041,6 +1046,8 @@ open class RootViewModel @Inject constructor(
     }
 
     fun resetKot() {
+
+
         try {
             kotItemList.removeAll {
                 true

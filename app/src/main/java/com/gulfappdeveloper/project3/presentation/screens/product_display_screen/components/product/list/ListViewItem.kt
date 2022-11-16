@@ -78,7 +78,7 @@ fun ListViewItem(
                 Text(
                     modifier = Modifier.weight(0.6f),
                     text = product.name,
-                    fontSize = 20.sp,
+                    fontSize = 18.sp,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                     fontStyle = MaterialTheme.typography.subtitle1.fontStyle,

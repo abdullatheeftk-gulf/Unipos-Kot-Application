@@ -21,6 +21,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -94,9 +95,11 @@ fun KotItemsDisplay(
                 ) {
                     Text(
                         text = kotItem.productName,
-                        fontSize = 20.sp,
+                        fontSize = 18.sp,
                         fontStyle = MaterialTheme.typography.subtitle1.fontStyle,
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
                     )
                     if (kotItem.itemNote?.isNotEmpty()!!){
                         Icon(
