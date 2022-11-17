@@ -200,7 +200,7 @@ open class RootViewModel @Inject constructor(
             readBaseUrl()
             isInitialLoadingFinished = false
 
-           // Log.d(TAG, "setIsInitialLoadingIsNotFinished: $categoryList")
+            // Log.d(TAG, "setIsInitialLoadingIsNotFinished: $categoryList")
 
         } catch (e: Exception) {
             Log.e(TAG, "setInitialLoadingIsFinished:${e.message} ")
@@ -266,7 +266,7 @@ open class RootViewModel @Inject constructor(
                     getCategoryList()
                     getProductList(value = 0)
                     getSectionList()
-                    getTableList(value = 1, callFromDiningScreen = false)
+                   // getTableList(value = 1, callFromDiningScreen = false)
                     isInitialLoadingFinished = true
                 }
 
@@ -414,7 +414,7 @@ open class RootViewModel @Inject constructor(
                 }
                 if (result is GetDataFromRemote.Failed) {
                     sendProductDisplayEvent(ProductDisplayScreenEvent(UiEvent.ShowEmptyList))
-                     Log.e(TAG, "getProductList: ${result.error.message} ${result.error.code} $url")
+                    Log.e(TAG, "getProductList: ${result.error.message} ${result.error.code} $url")
                 }
 
             }
@@ -517,10 +517,10 @@ open class RootViewModel @Inject constructor(
         } catch (e: Exception) {
             Log.e(TAG, "getTableList: ${e.message}")
         }
-       // if (!callFromDiningScreen) {
+        // if (!callFromDiningScreen) {
 
-            sendDineInScreenEvent(DineInScreenEvent(UiEvent.ShowProgressBar))
-       // }
+        sendDineInScreenEvent(DineInScreenEvent(UiEvent.ShowProgressBar))
+        // }
 
 
         val url = baseUrl.value + HttpRoutes.TABLE_LIST + "${selectedSection.value}"
@@ -536,7 +536,7 @@ open class RootViewModel @Inject constructor(
                     }
 
                 } catch (e: Exception) {
-                     Log.e(TAG, "getTableList: ${e.message}")
+                    Log.e(TAG, "getTableList: ${e.message}")
                 }
 
 
@@ -544,7 +544,7 @@ open class RootViewModel @Inject constructor(
 
 
                 if (result is GetDataFromRemote.Success) {
-                    Log.i(TAG, "getTableList: ${result.data}")
+                  //  Log.i(TAG, "getTableList: ${result.data}")
                     tableList.addAll(result.data)
                     selectedSection.value = value
                     if (result.data.isEmpty()) {
@@ -555,7 +555,7 @@ open class RootViewModel @Inject constructor(
                 }
                 if (result is GetDataFromRemote.Failed) {
                     sendDineInScreenEvent(DineInScreenEvent(UiEvent.ShowEmptyList))
-                     Log.e(TAG, "getTableList: ${result.error.message} $url")
+                    Log.e(TAG, "getTableList: ${result.error.message} $url")
                 }
 
             }
@@ -645,7 +645,7 @@ open class RootViewModel @Inject constructor(
 
 
     //login local server
-    fun onRegisterLocally( password: String) {
+    fun onRegisterLocally(password: String) {
 
         sendLocalRegisterEvent(UiEvent.ShowProgressBar)
 
@@ -697,17 +697,17 @@ open class RootViewModel @Inject constructor(
 
     }
 
-    fun onIncrementAndDecrementKotItemClicked(count: Int, productId: Int,index:Int) {
-       /* kotItemList.map { kotItem ->
-            if (kotItem.productId == productId) {
-                kotNetAmount.value -= kotItem.netAmount
-                kotItem.quantity = count.toFloat()
-                kotItem.netAmount = count * kotItem.rate
-                kotNetAmount.value += kotItem.netAmount
-            }
-        }*/
+    fun onIncrementAndDecrementKotItemClicked(count: Int, productId: Int, index: Int) {
+        /* kotItemList.map { kotItem ->
+             if (kotItem.productId == productId) {
+                 kotNetAmount.value -= kotItem.netAmount
+                 kotItem.quantity = count.toFloat()
+                 kotItem.netAmount = count * kotItem.rate
+                 kotNetAmount.value += kotItem.netAmount
+             }
+         }*/
         kotItemList.mapIndexed { i, kotItem ->
-            if (i ==  index && kotItem.productId == productId){
+            if (i == index && kotItem.productId == productId) {
                 kotNetAmount.value -= kotItem.netAmount
                 kotItem.quantity = count.toFloat()
                 kotItem.netAmount = count * kotItem.rate
@@ -739,9 +739,9 @@ open class RootViewModel @Inject constructor(
         kotNotes.value = value
     }
 
-    fun addNoteToKotItem(kotItem: KotItem, note: String,index:Int) {
-        kotItemList.mapIndexed { i,item ->
-            if (item.productId == kotItem.productId && i==index) {
+    fun addNoteToKotItem(kotItem: KotItem, note: String, index: Int) {
+        kotItemList.mapIndexed { i, item ->
+            if (item.productId == kotItem.productId && i == index) {
                 item.itemNote = note
             }
         }
