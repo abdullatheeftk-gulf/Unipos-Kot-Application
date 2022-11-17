@@ -508,14 +508,15 @@ open class RootViewModel @Inject constructor(
     }
 
     fun getTableList(value: Int, callFromDiningScreen: Boolean) {
+        selectedSection.value = value
         if (!callFromDiningScreen) {
             try {
                 tableList.removeAll {
                     true
                 }
-                selectedSection.value = value
+
             } catch (e: Exception) {
-                // Log.e(TAG, "getTableList: ${e.message}")
+                 Log.e(TAG, "getTableList: ${e.message}")
             }
             sendDineInScreenEvent(DineInScreenEvent(UiEvent.ShowProgressBar))
         }
@@ -532,9 +533,9 @@ open class RootViewModel @Inject constructor(
                     tableList.removeAll {
                         true
                     }
-                    selectedSection.value = value
+
                 } catch (e: Exception) {
-                    // Log.e(TAG, "getTableList: ${e.message}")
+                     Log.e(TAG, "getTableList: ${e.message}")
                 }
 
 
@@ -542,7 +543,9 @@ open class RootViewModel @Inject constructor(
 
 
                 if (result is GetDataFromRemote.Success) {
+                    Log.i(TAG, "getTableList: ${result.data}")
                     tableList.addAll(result.data)
+                    selectedSection.value = value
                     if (result.data.isEmpty()) {
                         sendDineInScreenEvent(DineInScreenEvent(UiEvent.ShowEmptyList))
                     } else {
@@ -551,7 +554,7 @@ open class RootViewModel @Inject constructor(
                 }
                 if (result is GetDataFromRemote.Failed) {
                     sendDineInScreenEvent(DineInScreenEvent(UiEvent.ShowEmptyList))
-                    // Log.e(TAG, "getTableList: ${result.error.message} $url")
+                     Log.e(TAG, "getTableList: ${result.error.message} $url")
                 }
 
             }
