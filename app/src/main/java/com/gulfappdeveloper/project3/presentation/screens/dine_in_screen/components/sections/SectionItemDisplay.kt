@@ -24,7 +24,7 @@ fun SectionItemDisplay(
 
     Card(
         modifier = Modifier.clickable {
-            rootViewModel.setSelectedSection(value = section.id)
+            rootViewModel.getTableList(value = section.id)
         },
         elevation = 4.dp,
         backgroundColor = if (selectedSection == section.id) MaterialTheme.colors.CategoryBackGroundClicked else MaterialTheme.colors.CategoryBackGround,

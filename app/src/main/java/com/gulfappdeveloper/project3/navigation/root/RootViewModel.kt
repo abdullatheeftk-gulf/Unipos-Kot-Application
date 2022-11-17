@@ -502,12 +502,9 @@ open class RootViewModel @Inject constructor(
         }
     }
 
-    fun setSelectedSection(value: Int) {
-        selectedSection.value = value
-        getTableList(value = value, callFromDiningScreen = false)
-    }
 
-    fun getTableList(value: Int, callFromDiningScreen: Boolean) {
+
+    fun getTableList(value: Int) {
         selectedSection.value = value
         try {
             tableList.removeAll {
@@ -517,11 +514,8 @@ open class RootViewModel @Inject constructor(
         } catch (e: Exception) {
             Log.e(TAG, "getTableList: ${e.message}")
         }
-        // if (!callFromDiningScreen) {
 
         sendDineInScreenEvent(DineInScreenEvent(UiEvent.ShowProgressBar))
-        // }
-
 
         val url = baseUrl.value + HttpRoutes.TABLE_LIST + "${selectedSection.value}"
 

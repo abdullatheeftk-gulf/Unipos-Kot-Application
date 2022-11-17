@@ -37,7 +37,7 @@ fun DineInScreen(
     }
 
     LaunchedEffect(key1 = true) {
-        rootViewModel.getTableList(value = 1,callFromDiningScreen = true)
+        rootViewModel.getTableList(value = 1)
         rootViewModel.dineInScreenEvent.collectLatest { value: DineInScreenEvent ->
             when (value.uiEvent) {
                 is UiEvent.ShowProgressBar -> {
