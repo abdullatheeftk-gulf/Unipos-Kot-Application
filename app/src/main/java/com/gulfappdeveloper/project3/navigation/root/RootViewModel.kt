@@ -509,17 +509,18 @@ open class RootViewModel @Inject constructor(
 
     fun getTableList(value: Int, callFromDiningScreen: Boolean) {
         selectedSection.value = value
-        if (!callFromDiningScreen) {
-            try {
-                tableList.removeAll {
-                    true
-                }
-
-            } catch (e: Exception) {
-                 Log.e(TAG, "getTableList: ${e.message}")
+        try {
+            tableList.removeAll {
+                true
             }
-            sendDineInScreenEvent(DineInScreenEvent(UiEvent.ShowProgressBar))
+
+        } catch (e: Exception) {
+            Log.e(TAG, "getTableList: ${e.message}")
         }
+       // if (!callFromDiningScreen) {
+
+            sendDineInScreenEvent(DineInScreenEvent(UiEvent.ShowProgressBar))
+       // }
 
 
         val url = baseUrl.value + HttpRoutes.TABLE_LIST + "${selectedSection.value}"
