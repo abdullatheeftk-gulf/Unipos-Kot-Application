@@ -19,6 +19,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.gulfappdeveloper.project3.domain.remote.get.TableOrder
+import com.gulfappdeveloper.project3.domain.remote.get.dine_in.Table
 import com.gulfappdeveloper.project3.navigation.root.RootViewModel
 
 private const val TAG = "OrderView"

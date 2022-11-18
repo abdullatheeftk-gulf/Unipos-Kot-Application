@@ -24,6 +24,7 @@ import com.gulfappdeveloper.project3.usecases.remote_usecases.get.product.GetCat
 import com.gulfappdeveloper.project3.usecases.remote_usecases.get.product.GetProductListUseCase
 import com.gulfappdeveloper.project3.usecases.remote_usecases.get.product.ProductSearchUseCase
 import com.gulfappdeveloper.project3.usecases.remote_usecases.post.GenerateKotUseCase
+import com.gulfappdeveloper.project3.usecases.remote_usecases.put.EditKotBasicUseCase
 import com.gulfappdeveloper.project3.usecases.remote_usecases.put.EditKotUseCase
 import dagger.Module
 import dagger.Provides
@@ -70,6 +71,7 @@ object RepositoryModule {
 
             generateKotUseCase = GenerateKotUseCase(remoteRepository = remoteRepository),
             editKotUseCase = EditKotUseCase(remoteRepository = remoteRepository),
+            editKotBasicUseCase = EditKotBasicUseCase(remoteRepository = remoteRepository),
             getKOTDetailsUseCase = GetKOTDetailsUseCase(remoteRepository = remoteRepository),
             deleteKotUseCase = DeleteKotUseCase(remoteRepository = remoteRepository)
 

@@ -11,6 +11,7 @@ import com.gulfappdeveloper.project3.domain.remote.get.product.Category
 import com.gulfappdeveloper.project3.domain.remote.get.product.Product
 import com.gulfappdeveloper.project3.domain.remote.get.welcome.WelcomeMessage
 import com.gulfappdeveloper.project3.domain.remote.post.Kot
+import com.gulfappdeveloper.project3.domain.remote.put.EditKOTBasic
 import com.gulfappdeveloper.project3.domain.services.ApiService
 import io.ktor.client.*
 import io.ktor.client.call.*
@@ -975,6 +976,26 @@ class ApiServiceImpl(
             val statusMessage = httpResponse.status.description
             callBack(statusCode, statusMessage)
 
+        } catch (e: Exception) {
+            callBack(404, e.toString())
+        }
+    }
+
+    override suspend fun editKOTBasics(
+        url: String,
+        editKOTBasic: EditKOTBasic,
+        callBack: suspend (Int, String) -> Unit
+    ) {
+        try {
+            val httpResponse = client.put(urlString = url) {
+                contentType(ContentType.Application.Json)
+                setBody(body = editKOTBasic)
+            }
+            val statusCode = httpResponse.status.value
+            val statusMessage = httpResponse.status.description
+            val editedOrder = httpResponse.body<TableOrder>()
+            Log.w(TAG, "editKOTBasics: $editKOTBasic $url $editedOrder", )
+            callBack(statusCode, statusMessage)
         } catch (e: Exception) {
             callBack(404, e.toString())
         }

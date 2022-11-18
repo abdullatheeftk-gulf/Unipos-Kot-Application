@@ -33,7 +33,7 @@ fun AddOrderView(
             contentAlignment = Alignment.Center,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(188.dp)
+                .height(180.dp)
 
         ) {
             Column(

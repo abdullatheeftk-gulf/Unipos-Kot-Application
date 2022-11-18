@@ -19,4 +19,5 @@ object HttpRoutes {
     const val GENERATE_KOT = "/api/kichenorder"
 
     const val EDIT_KOT = "/api/kichenorder/"
+    const val EDIT_ORDER_NAME_AND_CHAIR_COUNT = "/api/tableorder/"
 }

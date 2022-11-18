@@ -9,6 +9,7 @@ import com.gulfappdeveloper.project3.domain.remote.get.product.Category
 import com.gulfappdeveloper.project3.domain.remote.get.product.Product
 import com.gulfappdeveloper.project3.domain.remote.get.welcome.WelcomeMessage
 import com.gulfappdeveloper.project3.domain.remote.post.Kot
+import com.gulfappdeveloper.project3.domain.remote.put.EditKOTBasic
 import com.gulfappdeveloper.project3.domain.services.ApiService
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -62,6 +63,10 @@ class RemoteRepository @Inject constructor(
     // Put Kot
     suspend fun editKot(url: String, kot: Kot, callBack: suspend (Int, String) -> Unit) {
         apiService.editKOTDetails(url = url, kot = kot, callBack = callBack)
+    }
+
+    suspend fun editKOTBasics(url: String, editKOTBasic: EditKOTBasic, callBack: suspend (Int, String) -> Unit) {
+        apiService.editKOTBasics(url = url, editKOTBasic = editKOTBasic, callBack = callBack)
     }
 
     // Get kot

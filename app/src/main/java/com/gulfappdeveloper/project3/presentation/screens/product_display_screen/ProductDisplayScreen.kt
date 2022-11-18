@@ -91,6 +91,7 @@ fun ProductDisplayScreen(
                 navHostController.popBackStack()
             } else {
                 navHostController.popBackStack()
+                rootViewModel.removeUnOrderedTableOrder()
             }
         }
     }
@@ -113,6 +114,7 @@ fun ProductDisplayScreen(
                                 navHostController.popBackStack()
                             } else {
                                 navHostController.popBackStack()
+                                rootViewModel.removeUnOrderedTableOrder()
                             }
                         }
                     }

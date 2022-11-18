@@ -9,6 +9,7 @@ import com.gulfappdeveloper.project3.domain.remote.get.product.Category
 import com.gulfappdeveloper.project3.domain.remote.get.product.Product
 import com.gulfappdeveloper.project3.domain.remote.get.welcome.WelcomeMessage
 import com.gulfappdeveloper.project3.domain.remote.post.Kot
+import com.gulfappdeveloper.project3.domain.remote.put.EditKOTBasic
 import kotlinx.coroutines.flow.Flow
 
 interface ApiService {
@@ -37,6 +38,7 @@ interface ApiService {
 
     // Put edited kot
     suspend fun editKOTDetails(url: String,kot: Kot,callBack: suspend (Int, String) -> Unit)
+    suspend fun editKOTBasics(url: String,editKOTBasic: EditKOTBasic,callBack: suspend (Int, String) -> Unit)
 
     // Delete kot
     suspend fun deleteKOT(url: String,callBack: suspend (Int, String) -> Unit)

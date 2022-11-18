@@ -67,6 +67,7 @@ fun EditingScreen(
     }
     BackHandler(true) {
         rootViewModel.resetKot()
+        rootViewModel.removeUnOrderedTableOrder()
         navHostController.popBackStack()
     }
 
@@ -80,6 +81,7 @@ fun EditingScreen(
                 navigationIcon = {
                     IconButton(onClick = {
                         rootViewModel.resetKot()
+                        rootViewModel.removeUnOrderedTableOrder()
                         navHostController.popBackStack()
                     }) {
                         Icon(

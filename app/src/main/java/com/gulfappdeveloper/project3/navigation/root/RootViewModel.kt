@@ -20,6 +20,7 @@ import com.gulfappdeveloper.project3.domain.remote.get.product.Category
 import com.gulfappdeveloper.project3.domain.remote.get.product.Product
 import com.gulfappdeveloper.project3.domain.remote.post.Kot
 import com.gulfappdeveloper.project3.domain.remote.post.KotItem
+import com.gulfappdeveloper.project3.domain.remote.put.EditKOTBasic
 import com.gulfappdeveloper.project3.presentation.presentation_util.OrderMode
 import com.gulfappdeveloper.project3.presentation.presentation_util.UiEvent
 import com.gulfappdeveloper.project3.presentation.screens.dine_in_screen.components.util.DineInScreenEvent
@@ -266,7 +267,7 @@ open class RootViewModel @Inject constructor(
                     getCategoryList()
                     getProductList(value = 0)
                     getSectionList()
-                   // getTableList(value = 1, callFromDiningScreen = false)
+                    // getTableList(value = 1, callFromDiningScreen = false)
                     isInitialLoadingFinished = true
                 }
 
@@ -503,7 +504,6 @@ open class RootViewModel @Inject constructor(
     }
 
 
-
     fun getTableList(value: Int) {
         selectedSection.value = value
         try {
@@ -538,7 +538,7 @@ open class RootViewModel @Inject constructor(
 
 
                 if (result is GetDataFromRemote.Success) {
-                  //  Log.i(TAG, "getTableList: ${result.data}")
+                    //  Log.i(TAG, "getTableList: ${result.data}")
                     tableList.addAll(result.data)
                     selectedSection.value = value
                     if (result.data.isEmpty()) {
@@ -611,6 +611,9 @@ open class RootViewModel @Inject constructor(
             orderName = orderName,
             remarks = null
         )
+        tableOrderList.removeAll {
+            it.fK_KOTInvoiceId ==0
+        }
         tableOrderList.add(
             element = newTableOrder.value!!
         )
@@ -879,6 +882,58 @@ open class RootViewModel @Inject constructor(
         }
     }
 
+    fun editOrderNameAndChairCount(
+        id: Int,
+        orderName: String,
+        chairSelected: Int,
+        tableId:Int
+    ) {
+        sendProductDisplayEvent(
+            ProductDisplayScreenEvent(
+                uiEvent = UiEvent.ShowProgressBar
+            )
+        )
+        val url = baseUrl.value + HttpRoutes.EDIT_ORDER_NAME_AND_CHAIR_COUNT + id
+        val editKOTBasic = EditKOTBasic(
+            orderName = orderName,
+            chairCount = chairSelected
+        )
+        viewModelScope.launch(Dispatchers.IO) {
+            useCase.editKotBasicUseCase(
+                url = url,
+                editKOTBasic = editKOTBasic
+            ) { statusCode, statusMessage ->
+
+                if (statusCode in 200..299) {
+                    sendProductDisplayEvent(
+                        ProductDisplayScreenEvent(
+                            uiEvent = UiEvent.ShowAlertDialog
+                        )
+                    )
+                    getTableOrderList(id = tableId)
+                    Log.i(TAG, "editOrderNameAndChairCount: $statusCode $statusMessage")
+                } else {
+                    sendProductDisplayEvent(
+                        ProductDisplayScreenEvent(
+                            uiEvent = UiEvent.CloseProgressBar
+                        )
+                    )
+                    sendProductDisplayEvent(
+                        ProductDisplayScreenEvent(
+                            uiEvent = UiEvent.ShowSnackBar(
+                                message = "$statusCode $statusMessage"
+                            )
+                        )
+                    )
+                    Log.e(TAG, "editOrderNameAndChairCount: $statusCode $statusMessage")
+                    Log.w(TAG, "editOrderNameAndChairCount: $url", )
+                    Log.d(TAG, "editOrderNameAndChairCount: $editKOTBasic")
+                }
+            }
+        }
+
+    }
+
 
     // Get KOT
     fun getKOTDetails(kotNumber: Int) {
@@ -1041,6 +1096,12 @@ open class RootViewModel @Inject constructor(
 
     fun setOrderMode(orderMode: OrderMode) {
         selectedOrderMode.value = orderMode
+    }
+
+    fun removeUnOrderedTableOrder(){
+        tableOrderList.removeAll {
+            it.fK_KOTInvoiceId == 0
+        }
     }
 
     fun resetKot() {
