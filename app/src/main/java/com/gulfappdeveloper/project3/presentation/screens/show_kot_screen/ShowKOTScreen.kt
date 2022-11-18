@@ -1,5 +1,6 @@
 package com.gulfappdeveloper.project3.presentation.screens.show_kot_screen
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -43,6 +44,7 @@ fun ShowKOTScreen(
     }
 
     LaunchedEffect(key1 = true) {
+
         rootViewModel.showKotScreenUiEvent.collectLatest { value ->
             when (value.uiEvent) {
                 is UiEvent.ShowProgressBar -> {
@@ -80,6 +82,11 @@ fun ShowKOTScreen(
         )
 
     }
+    BackHandler(true) {
+        rootViewModel.removeUnOrderedTableOrder()
+        navHostController.popBackStack()
+
+    }
 
 
 
@@ -93,6 +100,7 @@ fun ShowKOTScreen(
                 navigationIcon = {
                     IconButton(
                         onClick = {
+                            rootViewModel.removeUnOrderedTableOrder()
                             navHostController.popBackStack()
                         }
                     ) {

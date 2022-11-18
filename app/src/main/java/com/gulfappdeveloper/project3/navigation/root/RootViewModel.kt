@@ -612,7 +612,7 @@ open class RootViewModel @Inject constructor(
             remarks = null
         )
         tableOrderList.removeAll {
-            it.fK_KOTInvoiceId ==0
+            it.fK_KOTInvoiceId == 0
         }
         tableOrderList.add(
             element = newTableOrder.value!!
@@ -620,15 +620,15 @@ open class RootViewModel @Inject constructor(
         showNewTableOrderAddButton.value = false
     }
 
-    fun onOrderNameChange(orderName: String) {
-        newTableOrder.value = newTableOrder.value?.copy(orderName = orderName)
-        this.orderName.value = orderName
-    }
+    /*  fun onOrderNameChange(orderName: String) {
+          newTableOrder.value = newTableOrder.value?.copy(orderName = orderName)
+          this.orderName.value = orderName
+      }
 
-    fun onChairCountChange(chairCount: Int) {
-        newTableOrder.value = newTableOrder.value?.copy(chairCount = chairCount)
-        this.chairCount.value = chairCount
-    }
+      fun onChairCountChange(chairCount: Int) {
+          newTableOrder.value = newTableOrder.value?.copy(chairCount = chairCount)
+          this.chairCount.value = chairCount
+      }*/
 
     fun removeTableOrder() {
         try {
@@ -759,7 +759,7 @@ open class RootViewModel @Inject constructor(
     }
 
     fun onEditTableOrderSet(kotMasterId: Int) {
-        getKOTDetails(kotNumber = kotMasterId)
+        getKOTDetails(kotNumber = kotMasterId, isOrderFromEditScreen = false)
         sendTableSelectionUiEvent(
             TableSelectionUiEvent(
                 UiEvent.Navigate(
@@ -886,7 +886,7 @@ open class RootViewModel @Inject constructor(
         id: Int,
         orderName: String,
         chairSelected: Int,
-        tableId:Int
+        tableId: Int
     ) {
         sendProductDisplayEvent(
             ProductDisplayScreenEvent(
@@ -926,7 +926,7 @@ open class RootViewModel @Inject constructor(
                         )
                     )
                     Log.e(TAG, "editOrderNameAndChairCount: $statusCode $statusMessage")
-                    Log.w(TAG, "editOrderNameAndChairCount: $url", )
+                    Log.w(TAG, "editOrderNameAndChairCount: $url")
                     Log.d(TAG, "editOrderNameAndChairCount: $editKOTBasic")
                 }
             }
@@ -936,7 +936,7 @@ open class RootViewModel @Inject constructor(
 
 
     // Get KOT
-    fun getKOTDetails(kotNumber: Int) {
+    fun getKOTDetails(kotNumber: Int, isOrderFromEditScreen: Boolean) {
         try {
             kotItemList.removeAll {
                 true
@@ -944,18 +944,24 @@ open class RootViewModel @Inject constructor(
         } catch (e: Exception) {
             Log.e(TAG, "getKOTDetails: ")
         }
-        sendEditScreenEvent(UiEvent.ShowProgressBar)
+        if (isOrderFromEditScreen) {
+            sendEditScreenEvent(UiEvent.ShowProgressBar)
+        }
         sendShowKotUiEvent(UiEvent.ShowProgressBar)
         viewModelScope.launch(Dispatchers.IO) {
             useCase.getKOTDetailsUseCase(
                 url = baseUrl.value + HttpRoutes.EDIT_KOT + kotNumber
             ).collectLatest { result ->
-                sendEditScreenEvent(UiEvent.CloseProgressBar)
+                if (isOrderFromEditScreen) {
+                    sendEditScreenEvent(UiEvent.CloseProgressBar)
+                }
                 sendShowKotUiEvent(UiEvent.CloseProgressBar)
                 if (result is GetDataFromRemote.Success) {
                     val value = result.data
                     if (value == null) {
-                        sendEditScreenEvent(UiEvent.ShowEmptyList)
+                        if (isOrderFromEditScreen) {
+                            sendEditScreenEvent(UiEvent.ShowEmptyList)
+                        }
                     } else {
                         try {
                             kotItemList.removeAll {
@@ -994,9 +1000,9 @@ open class RootViewModel @Inject constructor(
                         Log.d(TAG, "getKOTDetails: ${orderName.value}")
 
 
-
-                        sendEditScreenEvent(UiEvent.Navigate(RootNavScreens.ShowKotScreen.route))
-
+                        if (isOrderFromEditScreen) {
+                            sendEditScreenEvent(UiEvent.Navigate(RootNavScreens.ShowKotScreen.route))
+                        }
 
                     }
                     // Log.d(TAG, "getKOTDetails: ${result.data}")
@@ -1098,7 +1104,7 @@ open class RootViewModel @Inject constructor(
         selectedOrderMode.value = orderMode
     }
 
-    fun removeUnOrderedTableOrder(){
+    fun removeUnOrderedTableOrder() {
         tableOrderList.removeAll {
             it.fK_KOTInvoiceId == 0
         }

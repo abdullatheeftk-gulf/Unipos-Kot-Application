@@ -25,6 +25,7 @@ class SettingScreenViewModel @Inject constructor(
 
     fun setBaseUrl(value: String) {
        // Log.d(TAG, "setBaseUrl: ")
+        sendUiEvent(UiEvent.ShowProgressBar)
         viewModelScope.launch {
             useCase.saveBaseUrlUseCase(baseUrl = value)
             getWelcomeMessage(url = value + HttpRoutes.WELCOME_MESSAGE)
@@ -46,7 +47,7 @@ class SettingScreenViewModel @Inject constructor(
     }
 
     private fun getWelcomeMessage(url: String) {
-        sendUiEvent(UiEvent.ShowProgressBar)
+
         viewModelScope.launch {
             useCase.getWelcomeMessageUseCase(url = url).collectLatest { result ->
                 sendUiEvent(UiEvent.CloseProgressBar)

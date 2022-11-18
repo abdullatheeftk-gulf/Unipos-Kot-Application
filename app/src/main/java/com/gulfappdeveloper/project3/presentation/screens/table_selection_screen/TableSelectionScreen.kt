@@ -166,7 +166,7 @@ fun TableSelectionScreen(
 
             ) {
             items(tableOrderList) { item: TableOrder ->
-                OrderView2(
+                OrderView(
                     tableOrder = item,
                     rootViewModel = rootViewModel,
                     onEditButtonClicked = {tableOrder->

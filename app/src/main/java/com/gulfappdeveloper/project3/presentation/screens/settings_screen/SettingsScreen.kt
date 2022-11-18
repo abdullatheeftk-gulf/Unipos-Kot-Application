@@ -2,6 +2,7 @@ package com.gulfappdeveloper.project3.presentation.screens.settings_screen
 
 import android.util.Patterns
 import android.webkit.URLUtil
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -21,6 +22,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.gulfappdeveloper.project3.navigation.root.RootViewModel
 import com.gulfappdeveloper.project3.presentation.presentation_util.UiEvent
+import com.gulfappdeveloper.project3.ui.theme.ProgressBarColour
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -52,9 +54,7 @@ fun SettingsScreen(
     val ip by rootViewModel.ipAddress
     val port by rootViewModel.port
 
-    /*val focusRequester by remember {
-        mutableStateOf(FocusRequester())
-    }*/
+
 
     val currentBaseUrl by rootViewModel.baseUrl
 
@@ -83,6 +83,12 @@ fun SettingsScreen(
         }
     }
 
+    BackHandler(true) {
+        if (!showProgressBar) {
+            navHostController.popBackStack()
+        }
+    }
+
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = {
@@ -92,7 +98,9 @@ fun SettingsScreen(
                 },
                 navigationIcon = {
                     IconButton(onClick = {
-                        navHostController.popBackStack()
+                        if (!showProgressBar) {
+                            navHostController.popBackStack()
+                        }
                     }) {
                         Icon(
                             imageVector = Icons.Filled.ArrowBack,
@@ -105,6 +113,7 @@ fun SettingsScreen(
 
         ) {
         it.calculateTopPadding()
+
 
         Column(
             modifier = Modifier
@@ -147,11 +156,13 @@ fun SettingsScreen(
                 onClick = {
 
                     hideKeyboard()
-                    if (urlValidator(baseUrl = text)) {
-                        rootViewModel.setIsInitialLoadingIsNotFinished()
-                        settingScreenViewModel.setBaseUrl(value = text)
-                    } else {
-                        settingScreenViewModel.onErrorUrl(url = text)
+                    if (!showProgressBar) {
+                        if (urlValidator(baseUrl = text)) {
+                            rootViewModel.setIsInitialLoadingIsNotFinished()
+                            settingScreenViewModel.setBaseUrl(value = text)
+                        } else {
+                            settingScreenViewModel.onErrorUrl(url = text)
+                        }
                     }
                 },
                 enabled = !showProgressBar
@@ -215,13 +226,27 @@ fun SettingsScreen(
                 )
             }
             Spacer(modifier = Modifier.height(20.dp))
-            Button(onClick = {
+            Button(
+                onClick = {
+                hideKeyboard()
                 settingScreenViewModel.saveIpAddress(ipAddress = ipAddress)
                 settingScreenViewModel.savePortAddress(portAddress = portAddress)
                 rootViewModel.readPortAddress()
                 rootViewModel.readIpAddress()
             }) {
                Text(text = "Save Printer Address")
+            }
+        }
+
+        if (showProgressBar){
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ){
+                CircularProgressIndicator(
+                    strokeWidth = 1.dp,
+                    color = MaterialTheme.colors.ProgressBarColour,
+                )
             }
         }
 

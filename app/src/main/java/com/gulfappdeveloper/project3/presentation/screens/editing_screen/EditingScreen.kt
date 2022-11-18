@@ -1,5 +1,6 @@
 package com.gulfappdeveloper.project3.presentation.screens.editing_screen
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
@@ -14,12 +15,15 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.gulfappdeveloper.project3.navigation.root.RootNavScreens
 import com.gulfappdeveloper.project3.navigation.root.RootViewModel
 import com.gulfappdeveloper.project3.presentation.presentation_util.UiEvent
 import com.gulfappdeveloper.project3.ui.theme.ProgressBarColour
+import kotlinx.coroutines.flow.collectIndexed
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
+private const val TAG = "EditingScreen"
 @Composable
 fun EditingScreen(
     rootViewModel: RootViewModel,
@@ -32,6 +36,8 @@ fun EditingScreen(
         mutableStateOf("")
     }
 
+    
+
     var showProgressBar by remember {
         mutableStateOf(false)
     }
@@ -43,7 +49,8 @@ fun EditingScreen(
     val scope = rememberCoroutineScope()
 
     LaunchedEffect(key1 = true) {
-        rootViewModel.editingScreenEvent.collectLatest { value ->
+        rootViewModel.editingScreenEvent.collectIndexed { index, value ->
+            Log.e(TAG, "EditingScreen: $index", )
             when (value.uiEvent) {
                 is UiEvent.ShowProgressBar -> {
                     showProgressBar = true
@@ -56,7 +63,10 @@ fun EditingScreen(
                 }
 
                 is UiEvent.Navigate -> {
-                    navHostController.navigate(value.uiEvent.route)
+                    Log.i(TAG, "EditingScreen: ${value.uiEvent.route}")
+                    
+                        navHostController.navigate(RootNavScreens.ShowKotScreen.route)
+                    
                 }
                 is UiEvent.ShowSnackBar -> {
                     scaffoldState.snackbarHostState.showSnackbar(value.uiEvent.message)
@@ -128,7 +138,8 @@ fun EditingScreen(
                 keyboardActions = KeyboardActions(
                     onDone = {
                         rootViewModel.getKOTDetails(
-                            kotNumber = kotMasterId.toInt()
+                            kotNumber = kotMasterId.toInt(),
+                            isOrderFromEditScreen = true
                         )
                         hideKeyboard()
                     }
@@ -160,7 +171,8 @@ fun EditingScreen(
                     try {
                         kotNumber = kotMasterId.toInt()
                         rootViewModel.getKOTDetails(
-                            kotNumber = kotNumber
+                            kotNumber = kotNumber,
+                            isOrderFromEditScreen = true
                         )
                         hideKeyboard()
                     } catch (e: Exception) {
