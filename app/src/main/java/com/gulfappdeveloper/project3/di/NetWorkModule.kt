@@ -39,8 +39,8 @@ object NetWorkModule {
             install(HttpCache)
 
             engine {
-                connectTimeout = 30_000
-                socketTimeout = 30_000
+                connectTimeout = 60_000
+                socketTimeout = 60_000
             }
         }
     }

@@ -18,7 +18,9 @@ import com.gulfappdeveloper.project3.usecases.remote_usecases.get.dine_in.GetSec
 import com.gulfappdeveloper.project3.usecases.remote_usecases.get.dine_in.GetTableListUseCase
 import com.gulfappdeveloper.project3.usecases.remote_usecases.get.dine_in.GetTableOrderListUseCase
 import com.gulfappdeveloper.project3.usecases.remote_usecases.get.kot.GetKOTDetailsUseCase
+import com.gulfappdeveloper.project3.usecases.remote_usecases.get.kot_pending_list.GetListOfPendingKOTs
 import com.gulfappdeveloper.project3.usecases.remote_usecases.get.login.RegisterUserUseCase
+import com.gulfappdeveloper.project3.usecases.remote_usecases.get.product.GetMultiSizeProduct
 import com.gulfappdeveloper.project3.usecases.remote_usecases.get.product.ProductSearchUseCase
 import com.gulfappdeveloper.project3.usecases.remote_usecases.post.GenerateKotUseCase
 import com.gulfappdeveloper.project3.usecases.remote_usecases.put.EditKotBasicUseCase
@@ -45,6 +47,7 @@ data class UseCase(
     val getCategoryListUseCase: GetCategoryListUseCase,
     val getProductListUseCase: GetProductListUseCase,
     val productSearchUseCase : ProductSearchUseCase,
+    val getMultiSizeProduct: GetMultiSizeProduct,
 
     val getSectionListUseCase:GetSectionListUseCase,
     val getTableListUseCase: GetTableListUseCase,
@@ -55,6 +58,8 @@ data class UseCase(
     // Edit Kot
     val editKotUseCase: EditKotUseCase,
     val editKotBasicUseCase: EditKotBasicUseCase,
+    // get list of pending KOTs
+    val getListOfPendingKOTs: GetListOfPendingKOTs,
     // Get KOT details for editing
     val getKOTDetailsUseCase: GetKOTDetailsUseCase,
     // Delete KOT

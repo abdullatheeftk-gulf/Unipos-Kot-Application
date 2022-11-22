@@ -87,6 +87,7 @@ fun HomeScreen(
                                 }
                             }
                             "EDIT" -> {
+                                rootViewModel.getListOfPendingKOTs()
                                 navHostController.navigate(RootNavScreens.EditingScreen.route)
                             }
                             "SETTINGS" -> {

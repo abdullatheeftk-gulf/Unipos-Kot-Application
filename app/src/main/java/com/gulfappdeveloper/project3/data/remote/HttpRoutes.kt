@@ -10,6 +10,8 @@ object HttpRoutes {
     const val PRODUCT_LIST = "/api/product/"
     const val PRODUCT_IMAGE = "/api/proimage/"
     const val PRODUCT_SEARCH = "/api/productsearch/"
+    const val MULTI_SIZE_PRODUCT = "/api/multisize/"
+    const val MULTI_SIZE_PRODUCT_IMAGE = "/api/multiimage/"
 
     const val SECTION_LIST = "/api/section"
     const val TABLE_LIST = "/api/table/"
@@ -20,4 +22,5 @@ object HttpRoutes {
 
     const val EDIT_KOT = "/api/kichenorder/"
     const val EDIT_ORDER_NAME_AND_CHAIR_COUNT = "/api/tableorder/"
+    const val LIST_KOT_OF_USER = "/api/supplierorder/"
 }

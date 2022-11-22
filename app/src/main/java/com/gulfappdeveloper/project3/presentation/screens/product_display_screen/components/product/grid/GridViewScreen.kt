@@ -4,7 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.MaterialTheme
@@ -26,7 +26,10 @@ import com.gulfappdeveloper.project3.ui.theme.ProgressBarColour
 fun GridViewScreen(
     rootViewModel: RootViewModel,
     showProgressBar: Boolean,
-    showEmptyList: Boolean
+    showEmptyList: Boolean,
+    selectedIndex: Int,
+    showProgressBarInItem: Boolean,
+    openMultiSizeProduct: (productId: Int, categoryId: Int, index: Int) -> Unit
 ) {
 
     val productList = rootViewModel.productList
@@ -76,10 +79,14 @@ fun GridViewScreen(
                 contentPadding = PaddingValues(10.dp)
             ) {
 
-                items(productList) { product ->
+                itemsIndexed(productList) { index, product ->
                     GridViewItem(
                         rootViewModel = rootViewModel,
-                        product = product
+                        product = product,
+                        openMultiSizeProduct = openMultiSizeProduct,
+                        index = index,
+                        selectedIndex = selectedIndex,
+                        showProgressBarInItem = showProgressBarInItem
                     )
                 }
                 if (productList.size % 3 == 0) {

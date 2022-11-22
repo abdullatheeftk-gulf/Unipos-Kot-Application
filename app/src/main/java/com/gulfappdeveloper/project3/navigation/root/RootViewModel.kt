@@ -16,7 +16,9 @@ import com.gulfappdeveloper.project3.domain.remote.get.GetDataFromRemote
 import com.gulfappdeveloper.project3.domain.remote.get.TableOrder
 import com.gulfappdeveloper.project3.domain.remote.get.dine_in.Section
 import com.gulfappdeveloper.project3.domain.remote.get.dine_in.Table
+import com.gulfappdeveloper.project3.domain.remote.get.kot_list.UserOrder
 import com.gulfappdeveloper.project3.domain.remote.get.product.Category
+import com.gulfappdeveloper.project3.domain.remote.get.product.MultiSizeProduct
 import com.gulfappdeveloper.project3.domain.remote.get.product.Product
 import com.gulfappdeveloper.project3.domain.remote.post.Kot
 import com.gulfappdeveloper.project3.domain.remote.post.KotItem
@@ -47,7 +49,7 @@ import javax.inject.Inject
 private const val TAG = "RootViewModel"
 
 @HiltViewModel
-open class RootViewModel @Inject constructor(
+class RootViewModel @Inject constructor(
     private val useCase: UseCase,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
@@ -99,6 +101,8 @@ open class RootViewModel @Inject constructor(
 
     val categoryList = mutableStateListOf<Category>()
     val productList = mutableStateListOf<Product>()
+    val multiSizeProductList = mutableStateListOf<MultiSizeProduct>()
+
 
     var productSearchText = mutableStateOf("")
         private set
@@ -156,6 +160,8 @@ open class RootViewModel @Inject constructor(
 
     var editMode = mutableStateOf(false)
         private set
+
+    val kotPendingList = mutableStateListOf<UserOrder>()
 
     //Dine In and Take Away
     var selectedOrderMode = mutableStateOf(OrderMode.NONE)
@@ -418,6 +424,28 @@ open class RootViewModel @Inject constructor(
                     Log.e(TAG, "getProductList: ${result.error.message} ${result.error.code} $url")
                 }
 
+            }
+        }
+    }
+
+    fun getMultiSizeProduct(id: Int) {
+        try {
+            multiSizeProductList.removeAll { true }
+        }catch (e:Exception){
+            Log.e(TAG, "getMultiSizeProduct: ${e.message}", )
+        }
+
+
+        val url = baseUrl.value+HttpRoutes.MULTI_SIZE_PRODUCT+id
+        viewModelScope.launch(Dispatchers.IO) {
+            useCase.getMultiSizeProduct(url = url).collectLatest {
+                if (it is GetDataFromRemote.Success){
+                    Log.w(TAG, "getMultiSizeProduct: $url ${it.data}", )
+                    multiSizeProductList.addAll(it.data)
+                }
+                if (it is GetDataFromRemote.Failed){
+                    Log.e(TAG, "getMultiSizeProduct: ${it.error}", )
+                }
             }
         }
     }
@@ -774,6 +802,7 @@ open class RootViewModel @Inject constructor(
         tableId.value = 0
     }
 
+    // kot generation
     fun generateKot(deviceId: String) {
         if (kotItemList.isEmpty()) {
             sendReviewScreenEvent(ReviewScreenEvent(UiEvent.ShowSnackBar("No item in kot")))
@@ -827,6 +856,7 @@ open class RootViewModel @Inject constructor(
                     }
 
                 } else {
+                   // Log.e(TAG, "generateKot: $", )
                     sendReviewScreenEvent(ReviewScreenEvent(UiEvent.ShowSnackBar(message = "There have some error :- $message")))
                 }
             }
@@ -944,24 +974,24 @@ open class RootViewModel @Inject constructor(
         } catch (e: Exception) {
             Log.e(TAG, "getKOTDetails: ")
         }
-        if (isOrderFromEditScreen) {
+        /*if (isOrderFromEditScreen) {
             sendEditScreenEvent(UiEvent.ShowProgressBar)
-        }
+        }*/
         sendShowKotUiEvent(UiEvent.ShowProgressBar)
         viewModelScope.launch(Dispatchers.IO) {
             useCase.getKOTDetailsUseCase(
                 url = baseUrl.value + HttpRoutes.EDIT_KOT + kotNumber
             ).collectLatest { result ->
-                if (isOrderFromEditScreen) {
+                /*if (isOrderFromEditScreen) {
                     sendEditScreenEvent(UiEvent.CloseProgressBar)
-                }
+                }*/
                 sendShowKotUiEvent(UiEvent.CloseProgressBar)
                 if (result is GetDataFromRemote.Success) {
                     val value = result.data
                     if (value == null) {
-                        if (isOrderFromEditScreen) {
+                        /*if (isOrderFromEditScreen) {
                             sendEditScreenEvent(UiEvent.ShowEmptyList)
-                        }
+                        }*/
                     } else {
                         try {
                             kotItemList.removeAll {
@@ -1000,10 +1030,10 @@ open class RootViewModel @Inject constructor(
                         Log.d(TAG, "getKOTDetails: ${orderName.value}")
 
 
-                        if (isOrderFromEditScreen) {
+                        /*if (isOrderFromEditScreen) {
                             sendEditScreenEvent(UiEvent.Navigate(RootNavScreens.ShowKotScreen.route))
                         }
-
+*/
                     }
                     // Log.d(TAG, "getKOTDetails: ${result.data}")
                 }
@@ -1175,6 +1205,43 @@ open class RootViewModel @Inject constructor(
                 kotItemsString + "\n" +
                 "[C]<barcode type='ean13' height='10'>831254784551</barcode>\n" +
                 "[C]<qrcode size='25'>123456789</qrcode>"
+    }
+
+
+    fun getListOfPendingKOTs() {
+        try {
+            kotPendingList.removeAll {
+                true
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "getListOfPendingKOTs: ${e.message}")
+        }
+        sendEditScreenEvent(UiEvent.ShowProgressBar)
+        val url = baseUrl.value + HttpRoutes.LIST_KOT_OF_USER + fKUserId.value
+        viewModelScope.launch(Dispatchers.IO) {
+            useCase.getListOfPendingKOTs(url = url).collectLatest { result ->
+                sendEditScreenEvent(UiEvent.CloseProgressBar)
+                if (result is GetDataFromRemote.Success) {
+                    kotPendingList.addAll(result.data)
+                    sendEditScreenEvent(UiEvent.ShowList)
+                }
+                if (result is GetDataFromRemote.Failed) {
+                    Log.e(
+                        TAG,
+                        "getListOfPendingKOTs: url:- $url, error:- ${result.error.message} code:- ${result.error.code}",
+                    )
+                    sendEditScreenEvent(UiEvent.ShowSnackBar("There have some Error:-url:- $url, error:- ${result.error.message} code:- ${result.error.code} "))
+                    sendEditScreenEvent(UiEvent.ShowEmptyList)
+                }
+            }
+        }
+    }
+
+    fun kotSearch(value: String) {
+        val id = value.toInt()
+        kotPendingList.removeAll {
+            it.kotMasterId != id
+        }
     }
 
 

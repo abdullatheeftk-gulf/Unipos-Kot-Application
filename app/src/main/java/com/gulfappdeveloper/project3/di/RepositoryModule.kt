@@ -19,8 +19,10 @@ import com.gulfappdeveloper.project3.usecases.remote_usecases.get.dine_in.GetSec
 import com.gulfappdeveloper.project3.usecases.remote_usecases.get.dine_in.GetTableListUseCase
 import com.gulfappdeveloper.project3.usecases.remote_usecases.get.dine_in.GetTableOrderListUseCase
 import com.gulfappdeveloper.project3.usecases.remote_usecases.get.kot.GetKOTDetailsUseCase
+import com.gulfappdeveloper.project3.usecases.remote_usecases.get.kot_pending_list.GetListOfPendingKOTs
 import com.gulfappdeveloper.project3.usecases.remote_usecases.get.login.RegisterUserUseCase
 import com.gulfappdeveloper.project3.usecases.remote_usecases.get.product.GetCategoryListUseCase
+import com.gulfappdeveloper.project3.usecases.remote_usecases.get.product.GetMultiSizeProduct
 import com.gulfappdeveloper.project3.usecases.remote_usecases.get.product.GetProductListUseCase
 import com.gulfappdeveloper.project3.usecases.remote_usecases.get.product.ProductSearchUseCase
 import com.gulfappdeveloper.project3.usecases.remote_usecases.post.GenerateKotUseCase
@@ -64,6 +66,7 @@ object RepositoryModule {
             getCategoryListUseCase = GetCategoryListUseCase(remoteRepository = remoteRepository),
             getProductListUseCase = GetProductListUseCase(remoteRepository = remoteRepository),
             productSearchUseCase = ProductSearchUseCase(remoteRepository = remoteRepository),
+            getMultiSizeProduct = GetMultiSizeProduct(remoteRepository = remoteRepository),
 
             getSectionListUseCase = GetSectionListUseCase(remoteRepository = remoteRepository),
             getTableListUseCase = GetTableListUseCase(remoteRepository = remoteRepository),
@@ -72,6 +75,7 @@ object RepositoryModule {
             generateKotUseCase = GenerateKotUseCase(remoteRepository = remoteRepository),
             editKotUseCase = EditKotUseCase(remoteRepository = remoteRepository),
             editKotBasicUseCase = EditKotBasicUseCase(remoteRepository = remoteRepository),
+            getListOfPendingKOTs = GetListOfPendingKOTs(remoteRepository = remoteRepository),
             getKOTDetailsUseCase = GetKOTDetailsUseCase(remoteRepository = remoteRepository),
             deleteKotUseCase = DeleteKotUseCase(remoteRepository = remoteRepository)
 

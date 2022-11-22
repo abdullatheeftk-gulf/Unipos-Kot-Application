@@ -4,8 +4,10 @@ import com.gulfappdeveloper.project3.domain.remote.get.GetDataFromRemote
 import com.gulfappdeveloper.project3.domain.remote.get.TableOrder
 import com.gulfappdeveloper.project3.domain.remote.get.dine_in.Section
 import com.gulfappdeveloper.project3.domain.remote.get.dine_in.Table
+import com.gulfappdeveloper.project3.domain.remote.get.kot_list.UserOrder
 import com.gulfappdeveloper.project3.domain.remote.get.login.User
 import com.gulfappdeveloper.project3.domain.remote.get.product.Category
+import com.gulfappdeveloper.project3.domain.remote.get.product.MultiSizeProduct
 import com.gulfappdeveloper.project3.domain.remote.get.product.Product
 import com.gulfappdeveloper.project3.domain.remote.get.welcome.WelcomeMessage
 import com.gulfappdeveloper.project3.domain.remote.post.Kot
@@ -42,6 +44,10 @@ class RemoteRepository @Inject constructor(
         return apiService.productSearch(url = url)
     }
 
+    suspend fun getMultiSizeProducts(url: String):Flow<GetDataFromRemote<List<MultiSizeProduct>>>{
+        return apiService.getMultiSizeProduct(url = url)
+    }
+
     suspend fun getSectionList(url: String): Flow<GetDataFromRemote<List<Section>>> {
         return apiService.getSectionList(url = url)
     }
@@ -67,6 +73,10 @@ class RemoteRepository @Inject constructor(
 
     suspend fun editKOTBasics(url: String, editKOTBasic: EditKOTBasic, callBack: suspend (Int, String) -> Unit) {
         apiService.editKOTBasics(url = url, editKOTBasic = editKOTBasic, callBack = callBack)
+    }
+
+    suspend fun getListOfPendingKOTs(url: String): Flow<GetDataFromRemote<List<UserOrder>>> {
+        return apiService.getListOfPendingKOTs(url = url)
     }
 
     // Get kot

@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.MaterialTheme
@@ -25,7 +26,10 @@ import com.gulfappdeveloper.project3.ui.theme.ProgressBarColour
 fun ListViewScreen(
     rootViewModel: RootViewModel,
     showProgressBar: Boolean,
-    showEmptyList: Boolean
+    showEmptyList: Boolean,
+    selectedIndex:Int,
+    showProgressBarInItem:Boolean,
+    openMultiSizeProduct:(productId:Int,categoryId:Int,index:Int)->Unit
 ) {
 
     val productList = rootViewModel.productList
@@ -77,10 +81,14 @@ fun ListViewScreen(
 
                 item { Spacer(modifier = Modifier.height(7.dp)) }
 
-                items(productList) { product ->
+                itemsIndexed(productList) {index, product ->
                     ListViewItem(
                         rootViewModel = rootViewModel,
-                        product = product
+                        product = product,
+                        openMultiSizeProduct = openMultiSizeProduct,
+                        index = index,
+                        selectedIndex = selectedIndex,
+                        showProgressBarInItem = showProgressBarInItem
                     )
                 }
 

@@ -71,7 +71,7 @@ fun KotItemsDisplay(
                     .weight(.25f)
                     .padding(all = 5.dp),
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data(baseUrl+HttpRoutes.PRODUCT_IMAGE + "${kotItem.productId}")
+                    .data(baseUrl+HttpRoutes.PRODUCT_IMAGE + kotItem.barcode)
                     .crossfade(true)
                     .build(),
                 placeholder = painterResource(id = R.drawable.image_loading),
@@ -85,7 +85,7 @@ fun KotItemsDisplay(
             ) {
                 Column(
                     modifier = Modifier
-                        .weight(0.6f)
+                        .weight(0.7f)
                         .clickable {
                             onItemClicked(kotItem,index)
                         },
@@ -113,7 +113,7 @@ fun KotItemsDisplay(
                 }
 
                 Text(
-                    modifier = Modifier.weight(0.4f),
+                    modifier = Modifier.weight(0.3f),
                     text = "${kotItem.rate * itemCount}",
                     fontSize = 20.sp,
                     color = MaterialTheme.colors.MyPrimeColor,

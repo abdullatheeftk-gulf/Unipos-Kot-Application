@@ -4,8 +4,10 @@ import com.gulfappdeveloper.project3.domain.remote.get.GetDataFromRemote
 import com.gulfappdeveloper.project3.domain.remote.get.TableOrder
 import com.gulfappdeveloper.project3.domain.remote.get.dine_in.Section
 import com.gulfappdeveloper.project3.domain.remote.get.dine_in.Table
+import com.gulfappdeveloper.project3.domain.remote.get.kot_list.UserOrder
 import com.gulfappdeveloper.project3.domain.remote.get.login.User
 import com.gulfappdeveloper.project3.domain.remote.get.product.Category
+import com.gulfappdeveloper.project3.domain.remote.get.product.MultiSizeProduct
 import com.gulfappdeveloper.project3.domain.remote.get.product.Product
 import com.gulfappdeveloper.project3.domain.remote.get.welcome.WelcomeMessage
 import com.gulfappdeveloper.project3.domain.remote.post.Kot
@@ -24,6 +26,7 @@ interface ApiService {
     suspend fun getCategory(url: String):Flow<GetDataFromRemote<List<Category>>>
     suspend fun getProducts(url:String):Flow<GetDataFromRemote<List<Product>>>
     suspend fun productSearch(url: String):Flow<GetDataFromRemote<List<Product>>>
+    suspend fun getMultiSizeProduct(url: String):Flow<GetDataFromRemote<List<MultiSizeProduct>>>
 
     // Dine in
     suspend fun getSectionList(url:String):Flow<GetDataFromRemote<List<Section>>>
@@ -39,6 +42,8 @@ interface ApiService {
     // Put edited kot
     suspend fun editKOTDetails(url: String,kot: Kot,callBack: suspend (Int, String) -> Unit)
     suspend fun editKOTBasics(url: String,editKOTBasic: EditKOTBasic,callBack: suspend (Int, String) -> Unit)
+
+    suspend fun getListOfPendingKOTs(url:String):Flow<GetDataFromRemote<List<UserOrder>>>
 
     // Delete kot
     suspend fun deleteKOT(url: String,callBack: suspend (Int, String) -> Unit)

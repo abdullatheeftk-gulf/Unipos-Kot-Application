@@ -9,7 +9,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.max
 import com.gulfappdeveloper.project3.domain.remote.get.TableOrder
 import com.gulfappdeveloper.project3.navigation.root.RootViewModel
 
@@ -79,12 +82,18 @@ fun OrderView(
                 ) {}
             }
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(text = "KOT id:- ${tableOrder.fK_KOTInvoiceId}")
+                Text(
+                    text = "KOT id:- ${tableOrder.fK_KOTInvoiceId}"
+                )
                 Text(
                     text = orderName,
                     fontSize = MaterialTheme.typography.h6.fontSize,
                     fontWeight = MaterialTheme.typography.h6.fontWeight,
-                    fontStyle = MaterialTheme.typography.h6.fontStyle
+                    fontStyle = MaterialTheme.typography.h6.fontStyle,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(4.dp),
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
                 )
                 Text(text = "$chairCount seats")
             }

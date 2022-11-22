@@ -19,6 +19,7 @@ import com.gulfappdeveloper.project3.navigation.root.RootNavScreens
 import com.gulfappdeveloper.project3.navigation.root.RootViewModel
 import com.gulfappdeveloper.project3.presentation.presentation_util.OrderMode
 import com.gulfappdeveloper.project3.presentation.presentation_util.UiEvent
+import com.gulfappdeveloper.project3.presentation.screens.product_display_screen.components.alert_dialogs.MultiSizeAlertDialog
 import com.gulfappdeveloper.project3.presentation.screens.product_display_screen.components.category.CategoryListRow
 import com.gulfappdeveloper.project3.presentation.screens.product_display_screen.components.product.grid.GridViewScreen
 import com.gulfappdeveloper.project3.presentation.screens.product_display_screen.components.product.list.ListViewScreen
@@ -40,7 +41,29 @@ fun ProductDisplayScreen(
 
     val selectedOrderMode by rootViewModel.selectedOrderMode
 
+    val multiSizeProductList = rootViewModel.multiSizeProductList
+
     val editMode by rootViewModel.editMode
+
+    var multiSizeProductId by remember {
+        mutableStateOf(-1)
+    }
+
+    var selectedIndex by remember {
+        mutableStateOf(-1)
+    }
+
+    var showProgressBarInItem by remember {
+        mutableStateOf(false)
+    }
+
+    var multiSizeCategoryId by remember {
+        mutableStateOf(-1)
+    }
+
+    var showAlertDialog by remember {
+        mutableStateOf(false)
+    }
 
 
     var showProgressBar by remember {
@@ -79,6 +102,22 @@ fun ProductDisplayScreen(
                 }
                 else -> Unit
             }
+        }
+    }
+
+    if (showAlertDialog) {
+        showProgressBarInItem = true
+        if (multiSizeProductList.isNotEmpty()) {
+
+            MultiSizeAlertDialog(
+                rootViewModel = rootViewModel,
+                onDismissRequest = {
+                    showProgressBarInItem = false
+                    showAlertDialog = false
+                },
+                multiSizeProductList = multiSizeProductList,
+                parentCategoryId = multiSizeCategoryId
+            )
         }
     }
 
@@ -221,13 +260,31 @@ fun ProductDisplayScreen(
                 ListViewScreen(
                     rootViewModel = rootViewModel,
                     showProgressBar = showProgressBar,
-                    showEmptyList = showEmptyList
+                    showEmptyList = showEmptyList,
+                    selectedIndex = selectedIndex,
+                    showProgressBarInItem = showProgressBarInItem,
+                    openMultiSizeProduct = { productId, categoryId ,index->
+                        multiSizeProductId = productId
+                        selectedIndex = index
+                        rootViewModel.getMultiSizeProduct(id = productId)
+                        multiSizeCategoryId = categoryId
+                        showAlertDialog = true
+                    }
                 )
             } else {
                 GridViewScreen(
                     rootViewModel = rootViewModel,
                     showProgressBar = showProgressBar,
-                    showEmptyList = showEmptyList
+                    showEmptyList = showEmptyList,
+                    openMultiSizeProduct = { productId, categoryId,index ->
+                        multiSizeProductId = productId
+                        selectedIndex = index
+                        rootViewModel.getMultiSizeProduct(id = productId)
+                        multiSizeCategoryId = categoryId
+                        showAlertDialog = true
+                    },
+                    selectedIndex = selectedIndex,
+                    showProgressBarInItem = showProgressBarInItem
                 )
             }
 

@@ -4,12 +4,11 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Card
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -26,24 +25,43 @@ import com.gulfappdeveloper.project3.data.remote.HttpRoutes
 import com.gulfappdeveloper.project3.domain.remote.get.product.Product
 import com.gulfappdeveloper.project3.navigation.root.RootViewModel
 import com.gulfappdeveloper.project3.ui.theme.MyPrimeColor
+import com.gulfappdeveloper.project3.ui.theme.ProgressBarColour
 
 @Composable
 fun ListViewItem(
     rootViewModel: RootViewModel,
-    product: Product
+    product: Product,
+    selectedIndex: Int,
+    showProgressBarInItem: Boolean,
+    index: Int,
+    openMultiSizeProduct: (productId: Int, categoryId: Int, index: Int) -> Unit
 ) {
 
     var orderCount by remember {
         mutableStateOf(1)
     }
 
+
     val baseUrl by rootViewModel.baseUrl
 
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(100.dp)
-            .padding(5.dp),
+        modifier = if (product.multiSizeCount > 0) {
+
+            Modifier
+                .fillMaxWidth()
+                .height(100.dp)
+                .padding(5.dp)
+                .clickable {
+
+                    openMultiSizeProduct(product.id, product.categoryId, index)
+                }
+        } else {
+            Modifier
+                .fillMaxWidth()
+                .height(100.dp)
+                .padding(5.dp)
+        },
+
         elevation = 6.dp,
         border = BorderStroke(
             width = 0.5.dp,
@@ -57,9 +75,10 @@ fun ListViewItem(
             AsyncImage(
                 modifier = Modifier
                     .weight(.25f)
-                    .padding(vertical = 5.dp),
+                    .padding(vertical = 5.dp)
+                    .alpha(alpha = if (showProgressBarInItem && selectedIndex == index) ContentAlpha.disabled else ContentAlpha.high),
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data(baseUrl + HttpRoutes.PRODUCT_IMAGE + "${product.id}")
+                    .data(baseUrl + HttpRoutes.PRODUCT_IMAGE + product.barcode)
                     .crossfade(true)
                     .build(),
                 placeholder = painterResource(id = R.drawable.image_loading),
@@ -75,17 +94,46 @@ fun ListViewItem(
                 modifier = Modifier.weight(.5f),
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                if (product.multiSizeCount > 0) {
+                    BadgedBox(
+                        modifier = Modifier.weight(0.7f),
+                        badge = {
+                            Badge(modifier = Modifier.alpha(alpha = if (showProgressBarInItem && selectedIndex == index) ContentAlpha.disabled else ContentAlpha.high)) {
+                                Text(text = product.multiSizeCount.toString())
+                            }
+                        }
+                    ) {
+                        Text(
+                            modifier = Modifier.alpha(alpha = if (showProgressBarInItem && selectedIndex == index) ContentAlpha.disabled else ContentAlpha.high),
+                            text = product.name,
+                            fontSize = 18.sp,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis,
+                            fontStyle = MaterialTheme.typography.subtitle1.fontStyle,
+                            textAlign = TextAlign.Center
+                        )
+                        if (selectedIndex == index && showProgressBarInItem) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(20.dp),
+                                color = MaterialTheme.colors.ProgressBarColour,
+                                strokeWidth = 1.dp
+                            )
+                        }
+                    }
+                } else {
+                    Text(
+                        modifier = Modifier.weight(0.7f),
+                        text = product.name,
+                        fontSize = 18.sp,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                        fontStyle = MaterialTheme.typography.subtitle1.fontStyle,
+                        textAlign = TextAlign.Center
+                    )
+                }
+
                 Text(
-                    modifier = Modifier.weight(0.6f),
-                    text = product.name,
-                    fontSize = 18.sp,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                    fontStyle = MaterialTheme.typography.subtitle1.fontStyle,
-                    textAlign = TextAlign.Center
-                )
-                Text(
-                    modifier = Modifier.weight(0.4f),
+                    modifier = Modifier.weight(0.3f),
                     text = product.rate.toString(),
                     fontSize = 20.sp,
                     color = MaterialTheme.colors.MyPrimeColor,
