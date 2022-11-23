@@ -67,12 +67,12 @@ fun KOTDetailsDisplay(
                     .padding(horizontal = 8.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Text(
+                /*Text(
                     text = "KOT Id:- ",
                     fontSize = 14.sp,
                     modifier = Modifier.weight(1f),
                     textAlign = TextAlign.Center
-                )
+                )*/
                 Text(
                     text = userOrder.kotMasterId.toString(),
                     fontStyle = MaterialTheme.typography.h5.fontStyle,
@@ -91,13 +91,13 @@ fun KOTDetailsDisplay(
                     .padding(horizontal = 8.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Text(
+               /* Text(
                     text = "KOT Type:- ",
                     fontSize = 14.sp,
                     modifier = Modifier
                         .weight(1f),
                     textAlign = TextAlign.Center
-                )
+                )*/
                 Text(
                     text = if (userOrder.orderType == "Dinein") "DINE IN" else "TAKE AWAY",
                     fontSize = 14.sp,

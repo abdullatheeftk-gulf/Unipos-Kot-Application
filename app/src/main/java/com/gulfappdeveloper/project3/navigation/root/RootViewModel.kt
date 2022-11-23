@@ -591,6 +591,7 @@ class RootViewModel @Inject constructor(
     }
 
     private fun getTableOrderList(id: Int) {
+        var chairs = 0
         // Log.w(TAG, "getTableOrderList: $id")
         sendTableSelectionUiEvent(TableSelectionUiEvent(UiEvent.ShowProgressBar))
         try {
@@ -608,6 +609,15 @@ class RootViewModel @Inject constructor(
                 sendTableSelectionUiEvent(TableSelectionUiEvent(UiEvent.CloseProgressBar))
 
                 if (result is GetDataFromRemote.Success) {
+                    
+                    result.data.forEach{
+                        chairs+=it.chairCount!!
+                    }
+                    showNewTableOrderAddButton.value = selectedTable.value?.noOfSeats!!>chairs
+
+                    Log.d(TAG, "getTableOrderList: ${showNewTableOrderAddButton.value}")
+                    Log.e(TAG, "getTableOrderList: ${selectedTable.value}", )
+                    Log.i(TAG, "getTableOrderList: $chairs")
                     tableOrderList.addAll(result.data)
                 }
                 if (result is GetDataFromRemote.Failed) {
@@ -820,6 +830,7 @@ class RootViewModel @Inject constructor(
             chairCount = chairCount.value,
             kotMasterId = 1
         )
+        val url = baseUrl.value + HttpRoutes.GENERATE_KOT
 
         /* Log.i(TAG, "generateKot: ${kotItemList.toList()}")
          Log.d(TAG, "generateKot: ${kotMasterId.value}")
@@ -833,31 +844,31 @@ class RootViewModel @Inject constructor(
         // Log.d(TAG, "generateKot: $kot")
         viewModelScope.launch(Dispatchers.IO) {
             useCase.generateKotUseCase(
-                url = baseUrl.value + HttpRoutes.GENERATE_KOT,
+                url = url,
                 kot = kot
             ) { statusCode, message ->
                 sendReviewScreenEvent(ReviewScreenEvent(UiEvent.CloseProgressBar))
                 if (statusCode in 200..299) {
                     sendReviewScreenEvent(ReviewScreenEvent(UiEvent.ShowAlertDialog))
 
-                    if (ipAddress.value.isNotEmpty() && ipAddress.value.isNotBlank() && port.value.isNotEmpty() && port.value.isNotEmpty()) {
+                   /* if (ipAddress.value.isNotEmpty() && ipAddress.value.isNotBlank() && port.value.isNotEmpty() && port.value.isNotEmpty()) {
 
                         val printer = Printer(
                             address = ipAddress.value,
                             port = port.value.toInt(),
                             timeOut = 30
                         )
-                        val p = printer.pr
+                       // val p = printer.pr
 
-                        val text = getPrintText(print = p)
-                        printer.printKot(text)
+                       // val text = getPrintText(print = p)
+                      //  printer.printKot(text)
 
 
-                    }
+                    }*/
 
                 } else {
                    // Log.e(TAG, "generateKot: $", )
-                    sendReviewScreenEvent(ReviewScreenEvent(UiEvent.ShowSnackBar(message = "There have some error :- $message")))
+                    sendReviewScreenEvent(ReviewScreenEvent(UiEvent.ShowSnackBar(message = "There have some error Error:- code = $statusCode,$message \nurl:- $url\nkot:- $kot" )))
                 }
             }
 

@@ -114,7 +114,7 @@ fun ReviewScreenBottomSheet(
                     tint = MaterialTheme.colors.MyPrimeColor
                 )
                 Text(
-                    text = "Add More Item",
+                    text = "Add More",
                     color = MaterialTheme.colors.MyPrimeColor
                 )
             }
