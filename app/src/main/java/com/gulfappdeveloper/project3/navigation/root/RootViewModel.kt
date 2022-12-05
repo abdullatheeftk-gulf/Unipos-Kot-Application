@@ -1,16 +1,11 @@
 package com.gulfappdeveloper.project3.navigation.root
 
-import android.content.Context
-import android.util.DisplayMetrics
 import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.dantsu.escposprinter.EscPosPrinter
-import com.dantsu.escposprinter.textparser.PrinterTextParserImg
-import com.gulfappdeveloper.project3.R
 import com.gulfappdeveloper.project3.data.remote.HttpRoutes
 import com.gulfappdeveloper.project3.domain.remote.get.GetDataFromRemote
 import com.gulfappdeveloper.project3.domain.remote.get.TableOrder
@@ -32,18 +27,14 @@ import com.gulfappdeveloper.project3.presentation.screens.review_screen.util.Rev
 import com.gulfappdeveloper.project3.presentation.screens.show_kot_screen.util.ShowKotScreenUiEvent
 import com.gulfappdeveloper.project3.presentation.screens.splash_screen.util.SplashScreenEvent
 import com.gulfappdeveloper.project3.presentation.screens.table_selection_screen.TableSelectionUiEvent
-import com.gulfappdeveloper.project3.print.Printer
 import com.gulfappdeveloper.project3.usecases.UseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.*
 import javax.inject.Inject
 
 private const val TAG = "RootViewModel"
@@ -51,7 +42,7 @@ private const val TAG = "RootViewModel"
 @HiltViewModel
 class RootViewModel @Inject constructor(
     private val useCase: UseCase,
-    @ApplicationContext private val context: Context
+    // @ApplicationContext private val context: Context
 ) : ViewModel() {
 
     private var isInitialLoadingFinished = false
@@ -431,20 +422,20 @@ class RootViewModel @Inject constructor(
     fun getMultiSizeProduct(id: Int) {
         try {
             multiSizeProductList.removeAll { true }
-        }catch (e:Exception){
-            Log.e(TAG, "getMultiSizeProduct: ${e.message}", )
+        } catch (e: Exception) {
+            Log.e(TAG, "getMultiSizeProduct: ${e.message}")
         }
 
 
-        val url = baseUrl.value+HttpRoutes.MULTI_SIZE_PRODUCT+id
+        val url = baseUrl.value + HttpRoutes.MULTI_SIZE_PRODUCT + id
         viewModelScope.launch(Dispatchers.IO) {
             useCase.getMultiSizeProduct(url = url).collectLatest {
-                if (it is GetDataFromRemote.Success){
-                    Log.w(TAG, "getMultiSizeProduct: $url ${it.data}", )
+                if (it is GetDataFromRemote.Success) {
+                    Log.w(TAG, "getMultiSizeProduct: $url ${it.data}")
                     multiSizeProductList.addAll(it.data)
                 }
-                if (it is GetDataFromRemote.Failed){
-                    Log.e(TAG, "getMultiSizeProduct: ${it.error}", )
+                if (it is GetDataFromRemote.Failed) {
+                    Log.e(TAG, "getMultiSizeProduct: ${it.error}")
                 }
             }
         }
@@ -609,14 +600,14 @@ class RootViewModel @Inject constructor(
                 sendTableSelectionUiEvent(TableSelectionUiEvent(UiEvent.CloseProgressBar))
 
                 if (result is GetDataFromRemote.Success) {
-                    
-                    result.data.forEach{
-                        chairs+=it.chairCount!!
+
+                    result.data.forEach {
+                        chairs += it.chairCount!!
                     }
-                    showNewTableOrderAddButton.value = selectedTable.value?.noOfSeats!!>chairs
+                    showNewTableOrderAddButton.value = selectedTable.value?.noOfSeats!! > chairs
 
                     Log.d(TAG, "getTableOrderList: ${showNewTableOrderAddButton.value}")
-                    Log.e(TAG, "getTableOrderList: ${selectedTable.value}", )
+                    Log.e(TAG, "getTableOrderList: ${selectedTable.value}")
                     Log.i(TAG, "getTableOrderList: $chairs")
                     tableOrderList.addAll(result.data)
                 }
@@ -851,24 +842,24 @@ class RootViewModel @Inject constructor(
                 if (statusCode in 200..299) {
                     sendReviewScreenEvent(ReviewScreenEvent(UiEvent.ShowAlertDialog))
 
-                   /* if (ipAddress.value.isNotEmpty() && ipAddress.value.isNotBlank() && port.value.isNotEmpty() && port.value.isNotEmpty()) {
+                    /* if (ipAddress.value.isNotEmpty() && ipAddress.value.isNotBlank() && port.value.isNotEmpty() && port.value.isNotEmpty()) {
 
-                        val printer = Printer(
-                            address = ipAddress.value,
-                            port = port.value.toInt(),
-                            timeOut = 30
-                        )
-                       // val p = printer.pr
+                         val printer = Printer(
+                             address = ipAddress.value,
+                             port = port.value.toInt(),
+                             timeOut = 30
+                         )
+                        // val p = printer.pr
 
-                       // val text = getPrintText(print = p)
-                      //  printer.printKot(text)
+                        // val text = getPrintText(print = p)
+                       //  printer.printKot(text)
 
 
-                    }*/
+                     }*/
 
                 } else {
-                   // Log.e(TAG, "generateKot: $", )
-                    sendReviewScreenEvent(ReviewScreenEvent(UiEvent.ShowSnackBar(message = "There have some error Error:- code = $statusCode,$message \nurl:- $url\nkot:- $kot" )))
+                    // Log.e(TAG, "generateKot: $", )
+                    sendReviewScreenEvent(ReviewScreenEvent(UiEvent.ShowSnackBar(message = "There have some error Error:- code = $statusCode,$message \nurl:- $url\nkot:- $kot")))
                 }
             }
 
@@ -1194,7 +1185,7 @@ class RootViewModel @Inject constructor(
 
     }
 
-    private fun getPrintText(print: EscPosPrinter): String {
+    /*private fun getPrintText(print: EscPosPrinter): String {
         val date = SimpleDateFormat("dd/MM/yyyy h:mm:ss a", Locale.getDefault()).format(Date())
         val res = context.resources.getDrawableForDensity(
             R.drawable.unipospro_logo_full,
@@ -1216,7 +1207,7 @@ class RootViewModel @Inject constructor(
                 kotItemsString + "\n" +
                 "[C]<barcode type='ean13' height='10'>831254784551</barcode>\n" +
                 "[C]<qrcode size='25'>123456789</qrcode>"
-    }
+    }*/
 
 
     fun getListOfPendingKOTs() {

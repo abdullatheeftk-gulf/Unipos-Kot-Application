@@ -25,7 +25,7 @@ fun CancelKotAlertDialog(
         shape = RoundedCornerShape(corner = CornerSize(10.dp)),
         title = {
             Text(
-                text = "Cancel KOT",
+                text = "Cancel KOT Generation",
                 color = MaterialTheme.colors.error,
                 textAlign = TextAlign.Center,
                 fontStyle = MaterialTheme.typography.h4.fontStyle,
