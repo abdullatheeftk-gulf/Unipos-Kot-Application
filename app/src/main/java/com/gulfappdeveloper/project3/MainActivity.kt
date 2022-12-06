@@ -3,6 +3,8 @@ package com.gulfappdeveloper.project3
 import android.content.Context
 import android.os.Bundle
 import android.provider.Settings
+import android.telephony.TelephonyManager
+import android.util.Log
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -10,11 +12,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.intl.Locale
 import androidx.core.content.ContextCompat
 import androidx.navigation.compose.rememberNavController
 import com.gulfappdeveloper.project3.navigation.root.RootNavGraph
 import com.gulfappdeveloper.project3.ui.theme.Project3Theme
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.Objects
 
 private const val TAG = "MainActivity"
 
@@ -24,6 +28,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         val deviceId = Settings.Secure.getString(this.contentResolver, Settings.Secure.ANDROID_ID)
+
 
         setContent {
             Project3Theme {

@@ -1,6 +1,7 @@
 package com.gulfappdeveloper.project3.di
 
 import com.gulfappdeveloper.project3.repositories.DataStoreRepository
+import com.gulfappdeveloper.project3.repositories.FirebaseRepository
 import com.gulfappdeveloper.project3.repositories.RemoteRepository
 import com.gulfappdeveloper.project3.usecases.UseCase
 import com.gulfappdeveloper.project3.usecases.data_store_usecases.base_url_usecases.ReadBaseUrlUseCase
@@ -13,6 +14,7 @@ import com.gulfappdeveloper.project3.usecases.data_store_usecases.printer_usecas
 import com.gulfappdeveloper.project3.usecases.data_store_usecases.printer_usecases.port_address_usecase.SavePortAddressUseCase
 import com.gulfappdeveloper.project3.usecases.data_store_usecases.serial_counter_usecases.ReadSerialNoCountUseCase
 import com.gulfappdeveloper.project3.usecases.data_store_usecases.serial_counter_usecases.UpdateSerialNoUseCase
+import com.gulfappdeveloper.project3.usecases.firebase_usecases.InsertErrorDataToFireStoreUseCase
 import com.gulfappdeveloper.project3.usecases.remote_usecases.delete.DeleteKotUseCase
 import com.gulfappdeveloper.project3.usecases.remote_usecases.get.GetWelcomeMessageUseCase
 import com.gulfappdeveloper.project3.usecases.remote_usecases.get.dine_in.GetSectionListUseCase
@@ -44,6 +46,7 @@ object RepositoryModule {
     fun provideUseCase(
         remoteRepository: RemoteRepository,
         dataStoreRepository: DataStoreRepository,
+        firebaseRepository: FirebaseRepository
     ): UseCase {
         return UseCase(
 
@@ -77,7 +80,10 @@ object RepositoryModule {
             editKotBasicUseCase = EditKotBasicUseCase(remoteRepository = remoteRepository),
             getListOfPendingKOTs = GetListOfPendingKOTs(remoteRepository = remoteRepository),
             getKOTDetailsUseCase = GetKOTDetailsUseCase(remoteRepository = remoteRepository),
-            deleteKotUseCase = DeleteKotUseCase(remoteRepository = remoteRepository)
+            deleteKotUseCase = DeleteKotUseCase(remoteRepository = remoteRepository),
+
+
+            insertErrorDataToFireStoreUseCase = InsertErrorDataToFireStoreUseCase(firebaseRepository = firebaseRepository)
 
         )
     }

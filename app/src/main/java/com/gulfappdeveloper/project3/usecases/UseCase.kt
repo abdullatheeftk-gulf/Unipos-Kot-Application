@@ -10,6 +10,7 @@ import com.gulfappdeveloper.project3.usecases.data_store_usecases.printer_usecas
 import com.gulfappdeveloper.project3.usecases.data_store_usecases.printer_usecases.port_address_usecase.SavePortAddressUseCase
 import com.gulfappdeveloper.project3.usecases.data_store_usecases.serial_counter_usecases.ReadSerialNoCountUseCase
 import com.gulfappdeveloper.project3.usecases.data_store_usecases.serial_counter_usecases.UpdateSerialNoUseCase
+import com.gulfappdeveloper.project3.usecases.firebase_usecases.InsertErrorDataToFireStoreUseCase
 import com.gulfappdeveloper.project3.usecases.remote_usecases.delete.DeleteKotUseCase
 import com.gulfappdeveloper.project3.usecases.remote_usecases.get.product.GetCategoryListUseCase
 import com.gulfappdeveloper.project3.usecases.remote_usecases.get.product.GetProductListUseCase
@@ -63,7 +64,10 @@ data class UseCase(
     // Get KOT details for editing
     val getKOTDetailsUseCase: GetKOTDetailsUseCase,
     // Delete KOT
-    val deleteKotUseCase: DeleteKotUseCase
+    val deleteKotUseCase: DeleteKotUseCase,
 
+
+    // firebase
+    val insertErrorDataToFireStoreUseCase: InsertErrorDataToFireStoreUseCase
 
 )

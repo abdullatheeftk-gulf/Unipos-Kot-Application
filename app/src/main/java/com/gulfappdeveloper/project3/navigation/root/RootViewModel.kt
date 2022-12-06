@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gulfappdeveloper.project3.data.remote.HttpRoutes
+import com.gulfappdeveloper.project3.domain.firebase.FirebaseError
 import com.gulfappdeveloper.project3.domain.remote.get.GetDataFromRemote
 import com.gulfappdeveloper.project3.domain.remote.get.TableOrder
 import com.gulfappdeveloper.project3.domain.remote.get.dine_in.Section
@@ -35,6 +36,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import java.util.*
 import javax.inject.Inject
 
 private const val TAG = "RootViewModel"
@@ -168,6 +170,10 @@ class RootViewModel @Inject constructor(
         private set
 
 
+    //firebase
+    private val collectionName = "ErrorDataDev"
+
+
     init {
 
         sendSplashScreenEvent(SplashScreenEvent(UiEvent.ShowProgressBar))
@@ -201,7 +207,18 @@ class RootViewModel @Inject constructor(
             // Log.d(TAG, "setIsInitialLoadingIsNotFinished: $categoryList")
 
         } catch (e: Exception) {
-            Log.e(TAG, "setInitialLoadingIsFinished:${e.message} ")
+            //Log.e(TAG, "setInitialLoadingIsFinished:${e.message} ")
+            viewModelScope.launch(Dispatchers.IO) {
+                useCase.insertErrorDataToFireStoreUseCase(
+                    collectionName = collectionName,
+                    documentName = "setIsInitialLoadingIsNotFinished,${Date()}",
+                    errorData = FirebaseError(
+                        errorMessage = e.message ?: "",
+                        ipAddress = ""
+                    ),
+                )
+            }
+
         }
 
         //Log.w(TAG, "setIsInitialLoadingIsNotFinished: $isInitialLoadingFinished", )
@@ -218,7 +235,7 @@ class RootViewModel @Inject constructor(
         // Log.i(TAG, "readOperationCount: ")
         viewModelScope.launch {
             useCase.readOperationCountUseCase().collect {
-                //  Log.d(TAG, "readOperationCount: $it")
+                Log.d(TAG, "readOperationCount: $it")
                 operationCount.value = it
             }
         }
@@ -286,6 +303,7 @@ class RootViewModel @Inject constructor(
                         // isInitialLoadingFinished = true
                     }
                     if (result is GetDataFromRemote.Failed) {
+
                         isInitialLoadingFinished = false
                         // Log.e(TAG, "getWelcomeMessage: ${result.error.code}")
                         when (result.error.code) {
@@ -333,6 +351,16 @@ class RootViewModel @Inject constructor(
                             }
 
                         }
+                        useCase.insertErrorDataToFireStoreUseCase(
+                            collectionName = collectionName,
+                            documentName = "getWelcomeMessage,${Date()}",
+                            errorData = FirebaseError(
+                                errorMessage = result.error.message ?: "",
+                                errorCode = result.error.code,
+                                url = baseUrl.value + HttpRoutes.WELCOME_MESSAGE,
+                                ipAddress = ""
+                            )
+                        )
                     }
                 }
         }
@@ -355,7 +383,17 @@ class RootViewModel @Inject constructor(
                     }
                     if (result is GetDataFromRemote.Failed) {
                         isInitialLoadingFinished = false
-                        // Log.e(TAG, "getCategoryList: ${result.error.code}")
+                        useCase.insertErrorDataToFireStoreUseCase(
+                            collectionName = collectionName,
+                            documentName = "getCategoryList,${Date()}",
+                            errorData = FirebaseError(
+                                errorMessage = result.error.message ?: "",
+                                errorCode = result.error.code,
+                                url = baseUrl.value + baseUrl.value + HttpRoutes.CATEGORY_LIST,
+                                ipAddress = ""
+                            )
+                        )
+
                     }
 
                 }
@@ -378,6 +416,16 @@ class RootViewModel @Inject constructor(
             }
             selectedCategory.value = value
         } catch (e: Exception) {
+            viewModelScope.launch(Dispatchers.IO) {
+                useCase.insertErrorDataToFireStoreUseCase(
+                    collectionName = collectionName,
+                    documentName = "getProductList,${Date()}",
+                    errorData = FirebaseError(
+                        errorMessage = e.message ?: "",
+                        ipAddress = ""
+                    )
+                )
+            }
             // Log.e(TAG, "getProductList: ${e.message}")
         }
 
@@ -412,7 +460,17 @@ class RootViewModel @Inject constructor(
                 }
                 if (result is GetDataFromRemote.Failed) {
                     sendProductDisplayEvent(ProductDisplayScreenEvent(UiEvent.ShowEmptyList))
-                    Log.e(TAG, "getProductList: ${result.error.message} ${result.error.code} $url")
+                    //Log.e(TAG, "getProductList: ${result.error.message} ${result.error.code} $url")
+                    useCase.insertErrorDataToFireStoreUseCase(
+                        collectionName = collectionName,
+                        documentName = "getProductList,${Date()}",
+                        errorData = FirebaseError(
+                            errorMessage = result.error.message ?: "",
+                            errorCode = result.error.code,
+                            url = baseUrl.value + baseUrl.value + HttpRoutes.PRODUCT_LIST,
+                            ipAddress = ""
+                        )
+                    )
                 }
 
             }
@@ -429,13 +487,23 @@ class RootViewModel @Inject constructor(
 
         val url = baseUrl.value + HttpRoutes.MULTI_SIZE_PRODUCT + id
         viewModelScope.launch(Dispatchers.IO) {
-            useCase.getMultiSizeProduct(url = url).collectLatest {
-                if (it is GetDataFromRemote.Success) {
-                    Log.w(TAG, "getMultiSizeProduct: $url ${it.data}")
-                    multiSizeProductList.addAll(it.data)
+            useCase.getMultiSizeProduct(url = url).collectLatest {result->
+                if (result is GetDataFromRemote.Success) {
+                   // Log.w(TAG, "getMultiSizeProduct: $url ${it.data}")
+                    multiSizeProductList.addAll(result.data)
                 }
-                if (it is GetDataFromRemote.Failed) {
-                    Log.e(TAG, "getMultiSizeProduct: ${it.error}")
+                if (result is GetDataFromRemote.Failed) {
+                   // Log.e(TAG, "getMultiSizeProduct: ${it.error}")
+                    useCase.insertErrorDataToFireStoreUseCase(
+                        collectionName = collectionName,
+                        documentName = "getMultiSizeProduct,${Date()}",
+                        errorData = FirebaseError(
+                            errorMessage = result.error.message ?: "",
+                            errorCode = result.error.code,
+                            url = baseUrl.value + HttpRoutes.MULTI_SIZE_PRODUCT + id,
+                            ipAddress = ""
+                        )
+                    )
                 }
             }
         }
@@ -482,6 +550,16 @@ class RootViewModel @Inject constructor(
                 if (result is GetDataFromRemote.Failed) {
                     sendProductDisplayEvent(ProductDisplayScreenEvent(UiEvent.ShowEmptyList))
                     // Log.e(TAG, "product Search: ${result.error.message} $url")
+                    useCase.insertErrorDataToFireStoreUseCase(
+                        collectionName = collectionName,
+                        documentName = "productSearch,${Date()}",
+                        errorData = FirebaseError(
+                            errorMessage = result.error.message ?: "",
+                            errorCode = result.error.code,
+                            url = baseUrl.value + HttpRoutes.PRODUCT_SEARCH + productSearchText.value,
+                            ipAddress = ""
+                        )
+                    )
                 }
 
             }
@@ -516,6 +594,16 @@ class RootViewModel @Inject constructor(
                 if (result is GetDataFromRemote.Failed) {
                     isInitialLoadingFinished = false
                     // Log.e(TAG, "getSectionList: ${result.error}")
+                    useCase.insertErrorDataToFireStoreUseCase(
+                        collectionName = collectionName,
+                        documentName = "getSectionList,${Date()}",
+                        errorData = FirebaseError(
+                            errorMessage = result.error.message ?: "",
+                            errorCode = result.error.code,
+                            url = baseUrl.value + HttpRoutes.SECTION_LIST,
+                            ipAddress = ""
+                        )
+                    )
                 }
 
             }
@@ -568,7 +656,17 @@ class RootViewModel @Inject constructor(
                 }
                 if (result is GetDataFromRemote.Failed) {
                     sendDineInScreenEvent(DineInScreenEvent(UiEvent.ShowEmptyList))
-                    Log.e(TAG, "getTableList: ${result.error.message} $url")
+                   // Log.e(TAG, "getTableList: ${result.error.message} $url")
+                    useCase.insertErrorDataToFireStoreUseCase(
+                        collectionName = collectionName,
+                        documentName = "getTableList,${Date()}",
+                        errorData = FirebaseError(
+                            errorMessage = result.error.message ?: "",
+                            errorCode = result.error.code,
+                            url = url,
+                            ipAddress = ""
+                        )
+                    )
                 }
 
             }
@@ -606,14 +704,23 @@ class RootViewModel @Inject constructor(
                     }
                     showNewTableOrderAddButton.value = selectedTable.value?.noOfSeats!! > chairs
 
-                    Log.d(TAG, "getTableOrderList: ${showNewTableOrderAddButton.value}")
-                    Log.e(TAG, "getTableOrderList: ${selectedTable.value}")
-                    Log.i(TAG, "getTableOrderList: $chairs")
+                   // Log.d(TAG, "getTableOrderList: ${showNewTableOrderAddButton.value}")
+                  //  Log.e(TAG, "getTableOrderList: ${selectedTable.value}")
+                  //  Log.i(TAG, "getTableOrderList: $chairs")
                     tableOrderList.addAll(result.data)
                 }
                 if (result is GetDataFromRemote.Failed) {
                     sendTableSelectionUiEvent(TableSelectionUiEvent(UiEvent.ShowSnackBar("There have some Error :- ${result.error.message} code: ${result.error.code} url:- ${baseUrl.value}${HttpRoutes.TABLE_ORDER}$id")))
-
+                    useCase.insertErrorDataToFireStoreUseCase(
+                        collectionName = collectionName,
+                        documentName = "getTableOrderList,${Date()}",
+                        errorData = FirebaseError(
+                            errorMessage = result.error.message ?: "",
+                            errorCode = result.error.code,
+                            url = baseUrl.value + HttpRoutes.TABLE_ORDER + id,
+                            ipAddress = ""
+                        )
+                    )
                     //  Log.e(TAG, "getTableOrderList: ${result.error}")
                 }
             }
@@ -670,7 +777,7 @@ class RootViewModel @Inject constructor(
     }
 
 
-    //login local server
+    // login local server
     fun onRegisterLocally(password: String) {
 
         sendLocalRegisterEvent(UiEvent.ShowProgressBar)
@@ -690,6 +797,16 @@ class RootViewModel @Inject constructor(
                     if (result is GetDataFromRemote.Failed) {
                         //  Log.e(TAG, "onRegisterLocally: ${result.error} ")
                         sendLocalRegisterEvent(UiEvent.ShowSnackBar(message = "There Have Some Error :- ${result.error.message} code:-  ${result.error.code}+ url:- ${baseUrl.value}${HttpRoutes.LOGIN}${password}"))
+                        useCase.insertErrorDataToFireStoreUseCase(
+                            collectionName = collectionName,
+                            documentName = "onRegisterLocally,${Date()}",
+                            errorData = FirebaseError(
+                                errorCode = result.error.code,
+                                errorMessage = result.error.message!!,
+                                url = "${baseUrl.value}${HttpRoutes.LOGIN}${password}",
+                                ipAddress = ""
+                            )
+                        )
                     }
                 }
         }
@@ -860,6 +977,16 @@ class RootViewModel @Inject constructor(
                 } else {
                     // Log.e(TAG, "generateKot: $", )
                     sendReviewScreenEvent(ReviewScreenEvent(UiEvent.ShowSnackBar(message = "There have some error Error:- code = $statusCode,$message \nurl:- $url\nkot:- $kot")))
+                    useCase.insertErrorDataToFireStoreUseCase(
+                        collectionName = collectionName,
+                        documentName = "generateKot,${Date()}",
+                        errorData = FirebaseError(
+                            errorCode = statusCode,
+                            errorMessage = message,
+                            url = url,
+                            ipAddress = ""
+                        )
+                    )
                 }
             }
 
@@ -908,6 +1035,16 @@ class RootViewModel @Inject constructor(
                 if (statusCode in 200..299) {
                     sendReviewScreenEvent(ReviewScreenEvent(UiEvent.ShowAlertDialog))
                 } else {
+                    useCase.insertErrorDataToFireStoreUseCase(
+                        collectionName = collectionName,
+                        documentName = "editKot,${Date()}",
+                        errorData = FirebaseError(
+                            errorCode = statusCode,
+                            errorMessage = statusMessage,
+                            url = url,
+                            ipAddress = ""
+                        )
+                    )
                     sendReviewScreenEvent(ReviewScreenEvent(UiEvent.ShowSnackBar(message = "There have some error :- $statusMessage")))
                 }
             }
@@ -943,7 +1080,7 @@ class RootViewModel @Inject constructor(
                         )
                     )
                     getTableOrderList(id = tableId)
-                    Log.i(TAG, "editOrderNameAndChairCount: $statusCode $statusMessage")
+                    //Log.i(TAG, "editOrderNameAndChairCount: $statusCode $statusMessage")
                 } else {
                     sendProductDisplayEvent(
                         ProductDisplayScreenEvent(
@@ -957,9 +1094,19 @@ class RootViewModel @Inject constructor(
                             )
                         )
                     )
-                    Log.e(TAG, "editOrderNameAndChairCount: $statusCode $statusMessage")
-                    Log.w(TAG, "editOrderNameAndChairCount: $url")
-                    Log.d(TAG, "editOrderNameAndChairCount: $editKOTBasic")
+                    useCase.insertErrorDataToFireStoreUseCase(
+                        collectionName = collectionName,
+                        documentName = "editOrderNameAndChairCount,${Date()}",
+                        errorData = FirebaseError(
+                            errorCode = statusCode,
+                            errorMessage = statusMessage,
+                            url = url,
+                            ipAddress = ""
+                        )
+                    )
+                  //  Log.e(TAG, "editOrderNameAndChairCount: $statusCode $statusMessage")
+                  //  Log.w(TAG, "editOrderNameAndChairCount: $url")
+                   // Log.d(TAG, "editOrderNameAndChairCount: $editKOTBasic")
                 }
             }
         }
@@ -1013,8 +1160,8 @@ class RootViewModel @Inject constructor(
                         } catch (e: Exception) {
                             Log.e(TAG, "getKOTDetails: ${e.message}")
                         }
-                        Log.e(TAG, "getKOTDetails: ${chairCount.value}")
-                        Log.d(TAG, "getKOTDetails: ${orderName.value}")
+                       // Log.e(TAG, "getKOTDetails: ${chairCount.value}")
+                       // Log.d(TAG, "getKOTDetails: ${orderName.value}")
 
                         kotMasterId.value = value.kotMasterId
                         tableId.value = value.tableId
@@ -1027,9 +1174,9 @@ class RootViewModel @Inject constructor(
                         orderName.value = orderName.value.ifEmpty {
                             value.orderName ?: ""
                         }
-                        Log.w(TAG, "getKOTDetails: ---------------")
+                       /* Log.w(TAG, "getKOTDetails: ---------------")
                         Log.e(TAG, "getKOTDetails: ${chairCount.value}")
-                        Log.d(TAG, "getKOTDetails: ${orderName.value}")
+                        Log.d(TAG, "getKOTDetails: ${orderName.value}")*/
 
 
                         /*if (isOrderFromEditScreen) {
@@ -1042,6 +1189,16 @@ class RootViewModel @Inject constructor(
                 if (result is GetDataFromRemote.Failed) {
                     // Log.e(TAG, "getKOTDetails: ${result.error}")
                     sendEditScreenEvent(UiEvent.ShowSnackBar("There have Some error:- ${result.error.message}"))
+                    useCase.insertErrorDataToFireStoreUseCase(
+                        collectionName = collectionName,
+                        documentName = "getKOTDetails,${Date()}",
+                        errorData = FirebaseError(
+                            errorCode = result.error.code,
+                            errorMessage = result.error.message ?: "",
+                            url = baseUrl.value + HttpRoutes.EDIT_KOT + kotNumber,
+                            ipAddress = ""
+                        )
+                    )
                 }
             }
         }
@@ -1052,14 +1209,24 @@ class RootViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             useCase.deleteKotUseCase(
                 url = baseUrl.value + HttpRoutes.EDIT_KOT + kotMasterId.value,
-                callBack = { statusCade, statusMessage ->
+                callBack = { statusCode, statusMessage ->
                     sendShowKotUiEvent(UiEvent.CloseProgressBar)
-                    if (statusCade == 204) {
+                    if (statusCode == 204) {
                         resetKot()
                         sendShowKotUiEvent(UiEvent.ShowSnackBar("Deleted kot successfully "))
                         sendShowKotUiEvent(UiEvent.Navigate(route = RootNavScreens.HomeScreen.route))
                     } else {
                         sendShowKotUiEvent(UiEvent.ShowSnackBar("There have some Error with message : $statusMessage"))
+                        useCase.insertErrorDataToFireStoreUseCase(
+                            collectionName = collectionName,
+                            documentName = "getKOTDetails,${Date()}",
+                            errorData = FirebaseError(
+                                errorCode = statusCode,
+                                errorMessage = statusMessage ?: "",
+                                url = baseUrl.value + HttpRoutes.EDIT_KOT + kotMasterId.value,
+                                ipAddress = ""
+                            )
+                        )
                     }
                 }
             )
@@ -1234,6 +1401,17 @@ class RootViewModel @Inject constructor(
                     )
                     sendEditScreenEvent(UiEvent.ShowSnackBar("There have some Error:-url:- $url, error:- ${result.error.message} code:- ${result.error.code} "))
                     sendEditScreenEvent(UiEvent.ShowEmptyList)
+                    useCase.insertErrorDataToFireStoreUseCase(
+                        collectionName = collectionName,
+                        documentName = "getKOTDetails,${Date()}",
+                        errorData = FirebaseError(
+                            errorCode = result.error.code,
+                            errorMessage = result.error.message ?: "",
+                            url = url,
+                            ipAddress = ""
+                        )
+                    )
+
                 }
             }
         }

@@ -4,6 +4,7 @@ plugins {
     id 'kotlinx-serialization'
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
+    id 'com.google.gms.google-services'
 }
 
 android {
@@ -102,4 +103,9 @@ dependencies {
 
     // Thermal printer
     implementation 'com.github.DantSu:ESCPOS-ThermalPrinter-Android:3.2.0'
+
+    // firebase
+    implementation platform('com.google.firebase:firebase-bom:31.1.0')
+    implementation 'com.google.firebase:firebase-analytics-ktx'
+    implementation 'com.google.firebase:firebase-firestore'
 }

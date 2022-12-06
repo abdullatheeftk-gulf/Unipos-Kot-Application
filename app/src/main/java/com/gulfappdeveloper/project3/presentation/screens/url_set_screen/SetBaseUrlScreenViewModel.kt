@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gulfappdeveloper.project3.data.remote.HttpRoutes
+import com.gulfappdeveloper.project3.domain.firebase.FirebaseError
 import com.gulfappdeveloper.project3.domain.remote.get.GetDataFromRemote
 import com.gulfappdeveloper.project3.navigation.root.RootNavScreens
 import com.gulfappdeveloper.project3.presentation.presentation_util.UiEvent
@@ -13,6 +14,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import java.util.*
 import javax.inject.Inject
 
 private const val TAG = "SetBaseUrlScreenViewMod"
@@ -42,6 +44,16 @@ class SetBaseUrlScreenViewModel @Inject constructor(
                 }
                 if (result is GetDataFromRemote.Failed) {
                     sendUiEvent(UiEvent.ShowSnackBar(message = "This Server with $url is down"))
+                    useCase.insertErrorDataToFireStoreUseCase(
+                        collectionName = "ErrorDataDev",
+                        documentName = "UrlSettingScreen,getWelcomeMessage,${Date()}",
+                        errorData = FirebaseError(
+                            errorCode = result.error.code,
+                            errorMessage = result.error.message ?: "",
+                            url = url,
+                            ipAddress = ""
+                        )
+                    )
                 }
             }
         }

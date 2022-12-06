@@ -1,9 +1,9 @@
 package com.gulfappdeveloper.project3.presentation.screens.settings_screen
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gulfappdeveloper.project3.data.remote.HttpRoutes
+import com.gulfappdeveloper.project3.domain.firebase.FirebaseError
 import com.gulfappdeveloper.project3.domain.remote.get.GetDataFromRemote
 import com.gulfappdeveloper.project3.navigation.root.RootNavScreens
 import com.gulfappdeveloper.project3.presentation.presentation_util.UiEvent
@@ -13,18 +13,23 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import java.util.*
 import javax.inject.Inject
 
 private const val TAG = "SettingScreenViewModel"
+
 @HiltViewModel
 class SettingScreenViewModel @Inject constructor(
     private val useCase: UseCase
-):ViewModel() {
+) : ViewModel() {
     private val _uiEvent = Channel<UiEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
 
+    //firebase
+    private val collectionName = "ErrorDataDev"
+
     fun setBaseUrl(value: String) {
-       // Log.d(TAG, "setBaseUrl: ")
+        // Log.d(TAG, "setBaseUrl: ")
         sendUiEvent(UiEvent.ShowProgressBar)
         viewModelScope.launch {
             useCase.saveBaseUrlUseCase(baseUrl = value)
@@ -32,13 +37,13 @@ class SettingScreenViewModel @Inject constructor(
         }
     }
 
-    fun saveIpAddress(ipAddress:String){
+    fun saveIpAddress(ipAddress: String) {
         viewModelScope.launch {
             useCase.saveIpAddressUseCase(ipAddress = ipAddress)
         }
     }
 
-    fun savePortAddress(portAddress:String){
+    fun savePortAddress(portAddress: String) {
         viewModelScope.launch {
             useCase.savePortAddressUseCase(
                 portAddress = portAddress
@@ -56,6 +61,16 @@ class SettingScreenViewModel @Inject constructor(
                 }
                 if (result is GetDataFromRemote.Failed) {
                     sendUiEvent(UiEvent.ShowSnackBar(message = "This Server with $url is down"))
+                    useCase.insertErrorDataToFireStoreUseCase(
+                        collectionName = collectionName,
+                        documentName = "SettingScreen,getWelcomeMessage,${Date()}",
+                        errorData = FirebaseError(
+                            errorCode = result.error.code,
+                            errorMessage = result.error.message ?: "",
+                            url = url,
+                            ipAddress = ""
+                        )
+                    )
                 }
             }
         }

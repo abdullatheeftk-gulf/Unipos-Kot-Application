@@ -1,7 +1,10 @@
 package com.gulfappdeveloper.project3.di
 
+import com.google.firebase.firestore.FirebaseFirestore
+import com.gulfappdeveloper.project3.data.firebase.FirebaseServiceImpl
 import com.gulfappdeveloper.project3.data.remote.ApiServiceImpl
 import com.gulfappdeveloper.project3.domain.services.ApiService
+import com.gulfappdeveloper.project3.domain.services.FirebaseService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -51,4 +54,6 @@ object NetWorkModule {
     fun provideApiService(client: HttpClient): ApiService {
         return ApiServiceImpl(client)
     }
+
+
 }
