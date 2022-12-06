@@ -154,7 +154,7 @@ class RootViewModel @Inject constructor(
 
     val kotPendingList = mutableStateListOf<UserOrder>()
 
-    //Dine In and Take Away
+    // Dine In and Take Away
     var selectedOrderMode = mutableStateOf(OrderMode.NONE)
         private set
 
