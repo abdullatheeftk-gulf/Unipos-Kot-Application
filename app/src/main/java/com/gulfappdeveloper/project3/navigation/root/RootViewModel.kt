@@ -47,6 +47,7 @@ class RootViewModel @Inject constructor(
     // @ApplicationContext private val context: Context
 ) : ViewModel() {
 
+
     private var isInitialLoadingFinished = false
 
     private val _splashScreenEvent = Channel<SplashScreenEvent>()

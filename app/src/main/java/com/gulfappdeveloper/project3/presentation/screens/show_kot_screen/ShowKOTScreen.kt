@@ -152,11 +152,12 @@ fun ShowKOTScreen(
             }
 
             item {
+
                 Canvas(modifier = Modifier) {
                     drawLine(
                         color = Color.Black,
                         start = Offset(x = 0f, y = 0f),
-                        end = Offset(x = 1000f, y = 0f)
+                        end = Offset(x = 2000f, y = 0f)
                     )
                 }
             }
