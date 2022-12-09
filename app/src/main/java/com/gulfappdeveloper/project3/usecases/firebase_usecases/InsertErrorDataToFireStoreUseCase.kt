@@ -7,15 +7,15 @@ class InsertErrorDataToFireStoreUseCase(
     private val firebaseRepository: FirebaseRepository
 ) {
 
-   suspend operator fun invoke(
-       collectionName:String,
-       documentName:String,
-       errorData:FirebaseError
-   ){
-       firebaseRepository.insertErrorDataToFireStore(
-           collectionName = collectionName,
-           documentName = documentName,
-           error = errorData
-       )
-   }
+    suspend operator fun invoke(
+        collectionName: String,
+        documentName: String,
+        errorData: FirebaseError
+    ) {
+        firebaseRepository.insertErrorDataToFireStore(
+            collectionName = collectionName,
+            documentName = documentName,
+            error = errorData
+        )
+    }
 }

@@ -47,7 +47,7 @@ fun EditSearchTopBar(
                 },
                 keyboardActions = KeyboardActions(
                     onSearch = {
-                       rootViewModel.kotSearch(value = searchText)
+                        rootViewModel.kotSearch(value = searchText)
                         hideKeyboard()
                     }
                 ),

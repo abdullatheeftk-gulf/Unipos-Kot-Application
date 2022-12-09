@@ -12,7 +12,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.gulfappdeveloper.project3.navigation.root.RootViewModel
-import com.gulfappdeveloper.project3.presentation.screens.product_display_screen.components.category.CategoryItemDisplay
 
 @Composable
 fun SectionListRow(
@@ -25,18 +24,17 @@ fun SectionListRow(
         elevation = 6.dp,
         modifier = Modifier
             .fillMaxWidth()
-            //.padding(top = 5.dp, bottom = 5.dp)
     ) {
         LazyRow(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(vertical = 8.dp)
-        ){
+        ) {
 
             item {
                 Spacer(modifier = Modifier.width(8.dp))
             }
 
-            items(sectionList){section->
+            items(sectionList) { section ->
                 SectionItemDisplay(
                     rootViewModel = rootViewModel,
                     section = section

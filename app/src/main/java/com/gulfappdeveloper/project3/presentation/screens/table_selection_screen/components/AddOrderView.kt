@@ -12,12 +12,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.gulfappdeveloper.project3.navigation.root.RootViewModel
 
 @Composable
 fun AddOrderView(
-    rootViewModel: RootViewModel,
-    addNewOrder:()->Unit
+    addNewOrder: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -45,11 +43,11 @@ fun AddOrderView(
                     contentDescription = null,
                     modifier = Modifier.size(100.dp),
                     tint = Color(0xFF8C8787)
-                )  
+                )
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(text = "New order")
             }
-            
+
         }
     }
 }

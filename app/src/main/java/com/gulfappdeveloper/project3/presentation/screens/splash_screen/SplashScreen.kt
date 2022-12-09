@@ -1,6 +1,5 @@
 package com.gulfappdeveloper.project3.presentation.screens.splash_screen
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -12,18 +11,15 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.gulfappdeveloper.project3.R
 import com.gulfappdeveloper.project3.navigation.root.RootNavScreens
 import com.gulfappdeveloper.project3.navigation.root.RootViewModel
 import com.gulfappdeveloper.project3.presentation.presentation_util.UiEvent
 import com.gulfappdeveloper.project3.ui.theme.MyPrimeColor
-import com.gulfappdeveloper.project3.ui.theme.ProgressBarColour
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 
-private const val TAG = "SplashScreen"
 @Composable
 fun SplashScreen(
     navHostController: NavHostController,
@@ -57,13 +53,12 @@ fun SplashScreen(
                     delay(2000L)
                     navHostController.popBackStack()
                     navHostController.navigate(route = event.uiEvent.route)
-                   // Log.d(TAG, "SplashScreen: ${event.uiEvent.route}")
+                    // Log.d(TAG, "SplashScreen: ${event.uiEvent.route}")
                 }
                 is UiEvent.ShowButton1 -> {
                     showUrlSetButton = true
                 }
-                is UiEvent.ShowSnackBar->{
-                    Log.d(TAG, "SplashScreen: ")
+                is UiEvent.ShowSnackBar -> {
                     scaffoldState.snackbarHostState.showSnackbar(
                         message = event.uiEvent.message
                     )

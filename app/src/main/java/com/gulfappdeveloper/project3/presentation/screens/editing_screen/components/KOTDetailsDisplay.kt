@@ -1,6 +1,5 @@
 package com.gulfappdeveloper.project3.presentation.screens.editing_screen.components
 
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -23,7 +22,7 @@ import com.gulfappdeveloper.project3.ui.theme.MyPrimeColor
 import java.text.SimpleDateFormat
 import java.util.*
 
-private const val TAG = "KOTDetailsDisplay"
+//private const val TAG = "KOTDetailsDisplay"
 @Composable
 fun KOTDetailsDisplay(
     rootViewModel: RootViewModel,
@@ -32,16 +31,16 @@ fun KOTDetailsDisplay(
 ) {
 
 
-    var updatedDate:Date? = null
+    var updatedDate: Date? = null
     try {
-        val myTime = userOrder.dateAndTime+".000Z"
+        val myTime = userOrder.dateAndTime + ".000Z"
         val sdf = SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSS'Z'")
         val date = sdf.parse(myTime)
-        updatedDate = convertTimeToLocal(date = date!!)   
-    }catch (e:Exception){
-        Log.e(TAG, "KOTDetailsDisplay: ${e.message}", )
+        updatedDate = convertTimeToLocal(date = date!!)
+    } catch (e: Exception) {
+        //Log.e(TAG, "KOTDetailsDisplay: ${e.message}", )
     }
-    
+
 
 
     Card(
@@ -91,13 +90,13 @@ fun KOTDetailsDisplay(
                     .padding(horizontal = 8.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-               /* Text(
-                    text = "KOT Type:- ",
-                    fontSize = 14.sp,
-                    modifier = Modifier
-                        .weight(1f),
-                    textAlign = TextAlign.Center
-                )*/
+                /* Text(
+                     text = "KOT Type:- ",
+                     fontSize = 14.sp,
+                     modifier = Modifier
+                         .weight(1f),
+                     textAlign = TextAlign.Center
+                 )*/
                 Text(
                     text = if (userOrder.orderType == "Dinein") "DINE IN" else "TAKE AWAY",
                     fontSize = 14.sp,
@@ -112,9 +111,14 @@ fun KOTDetailsDisplay(
                     textAlign = TextAlign.Center
                 )
             }
-            Spacer(modifier =Modifier.height(10.dp) )
+            Spacer(modifier = Modifier.height(10.dp))
             Text(
-                text = if(updatedDate!=null) "${SimpleDateFormat("h:mm:ss a", Locale.getDefault()).format(updatedDate)}" else "",
+                text = if (updatedDate != null) "${
+                    SimpleDateFormat(
+                        "h:mm:ss a",
+                        Locale.getDefault()
+                    ).format(updatedDate)
+                }" else "",
                 color = MaterialTheme.colors.MyPrimeColor
             )
 
@@ -129,12 +133,10 @@ fun KOTDetailsDisplay(
 private fun convertTimeToLocal(date: Date): Date {
     val timeZone = date.timezoneOffset
     val time = -(timeZone / 60)
-    Log.i(TAG, "convertTimeToLocal: $time")
     val remainTime = -timeZone % 60
-    Log.e(TAG, "convertTimeToLocal: $remainTime", )
     val calendar = Calendar.getInstance()
     calendar.time = date
     calendar.add(Calendar.HOUR_OF_DAY, time)
-    return Date(calendar.timeInMillis + (remainTime * 60*1000))
+    return Date(calendar.timeInMillis + (remainTime * 60 * 1000))
 
 }

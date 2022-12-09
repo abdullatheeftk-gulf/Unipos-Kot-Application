@@ -5,5 +5,5 @@ import com.gulfappdeveloper.project3.repositories.RemoteRepository
 class GetMultiSizeProduct(
     private val remoteRepository: RemoteRepository
 ) {
-    suspend operator fun invoke(url:String) = remoteRepository.getMultiSizeProducts(url = url)
+    suspend operator fun invoke(url: String) = remoteRepository.getMultiSizeProducts(url = url)
 }

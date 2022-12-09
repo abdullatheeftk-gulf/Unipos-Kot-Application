@@ -115,7 +115,7 @@ fun ListViewItem(
                         if (selectedIndex == index && showProgressBarInItem) {
                             CircularProgressIndicator(
                                 modifier = Modifier.size(20.dp),
-                                color = MaterialTheme.colors.ProgressBarColour,
+                                color = MaterialTheme.colors.MyPrimeColor,
                                 strokeWidth = 1.dp
                             )
                         }

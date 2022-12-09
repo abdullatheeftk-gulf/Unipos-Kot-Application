@@ -20,7 +20,6 @@ import androidx.compose.ui.unit.sp
 import com.gulfappdeveloper.project3.R
 import com.gulfappdeveloper.project3.navigation.root.RootViewModel
 import com.gulfappdeveloper.project3.ui.theme.MyPrimeColor
-import com.gulfappdeveloper.project3.ui.theme.ProgressBarColour
 
 @Composable
 fun TableListDisplay(

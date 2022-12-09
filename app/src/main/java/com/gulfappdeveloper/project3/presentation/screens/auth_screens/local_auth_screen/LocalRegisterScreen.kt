@@ -23,7 +23,7 @@ import com.gulfappdeveloper.project3.ui.theme.ProgressBarColour
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
-fun LocalRegister(
+fun LocalRegisterScreen(
     rootViewModel: RootViewModel,
     navHostController: NavHostController,
     hideKeyboard: () -> Unit
@@ -31,7 +31,6 @@ fun LocalRegister(
 
     val scaffoldState = rememberScaffoldState()
 
-   // val baseUrl by rootViewModel.baseUrl
 
     var text by remember {
         mutableStateOf("")

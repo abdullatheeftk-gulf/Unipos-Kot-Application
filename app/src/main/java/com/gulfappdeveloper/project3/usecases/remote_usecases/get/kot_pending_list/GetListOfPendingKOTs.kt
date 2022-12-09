@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 class GetListOfPendingKOTs(
     private val remoteRepository: RemoteRepository
 ) {
-    suspend operator fun invoke(url:String):Flow<GetDataFromRemote<List<UserOrder>>>{
+    suspend operator fun invoke(url: String): Flow<GetDataFromRemote<List<UserOrder>>> {
         return remoteRepository.getListOfPendingKOTs(url = url)
     }
 }

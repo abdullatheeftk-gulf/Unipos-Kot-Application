@@ -4,14 +4,14 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Kot(
-    val chairCount: Int=0,
+    val chairCount: Int = 0,
     val fK_UserId: Int,
     val kotDetails: List<KotItem>,
     val kotMasterId: Int,
-    var notes: String? ="",
-    val orderName: String?="",
+    var notes: String? = "",
+    val orderName: String? = "",
     var remarks: String? = "",
     val serialNo: Int,
-    val tableId: Int=0,
+    val tableId: Int = 0,
     val terminal: String
 )

@@ -1,6 +1,5 @@
 package com.gulfappdeveloper.project3.presentation.screens.review_screen.components
 
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -11,7 +10,6 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,13 +31,12 @@ import com.gulfappdeveloper.project3.navigation.root.RootViewModel
 import com.gulfappdeveloper.project3.ui.theme.MyPrimeColor
 import com.gulfappdeveloper.project3.ui.theme.ProgressBarColour
 
-private const val TAG = "KotItemsDisplay"
 @Composable
 fun KotItemsDisplay(
     kotItem: KotItem,
-    index:Int,
+    index: Int,
     rootViewModel: RootViewModel,
-    onItemClicked: (KotItem,Int) -> Unit
+    onItemClicked: (KotItem, Int) -> Unit
 ) {
 
 
@@ -48,7 +45,6 @@ fun KotItemsDisplay(
     }
 
     itemCount = kotItem.quantity.toInt()
-    Log.e(TAG, "KotItemsDisplay: $itemCount", )
 
     val baseUrl by rootViewModel.baseUrl
 
@@ -71,7 +67,7 @@ fun KotItemsDisplay(
                     .weight(.25f)
                     .padding(all = 5.dp),
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data(baseUrl+HttpRoutes.PRODUCT_IMAGE + kotItem.barcode)
+                    .data(baseUrl + HttpRoutes.PRODUCT_IMAGE + kotItem.barcode)
                     .crossfade(true)
                     .build(),
                 placeholder = painterResource(id = R.drawable.image_loading),
@@ -87,7 +83,7 @@ fun KotItemsDisplay(
                     modifier = Modifier
                         .weight(0.7f)
                         .clickable {
-                            onItemClicked(kotItem,index)
+                            onItemClicked(kotItem, index)
                         },
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
@@ -101,7 +97,7 @@ fun KotItemsDisplay(
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis
                     )
-                    if (kotItem.itemNote?.isNotEmpty()!!){
+                    if (kotItem.itemNote?.isNotEmpty()!!) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_baseline_notes_24),
                             contentDescription = null,
@@ -172,7 +168,10 @@ fun KotItemsDisplay(
                     .background(Color.Magenta)
                     .weight(0.15f)
                     .clickable {
-                        rootViewModel.onDeleteItemFromKotItemClicked(kotItem = kotItem, index = index)
+                        rootViewModel.onDeleteItemFromKotItemClicked(
+                            kotItem = kotItem,
+                            index = index
+                        )
                     },
                 contentAlignment = Alignment.Center
 

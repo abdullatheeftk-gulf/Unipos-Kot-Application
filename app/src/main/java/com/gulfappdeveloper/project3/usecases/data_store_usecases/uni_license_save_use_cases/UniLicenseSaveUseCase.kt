@@ -5,7 +5,7 @@ import com.gulfappdeveloper.project3.repositories.DataStoreRepository
 class UniLicenseSaveUseCase(
     private val dataStoreRepository: DataStoreRepository
 ) {
-    suspend operator fun invoke(uniLicenseString:String){
+    suspend operator fun invoke(uniLicenseString: String) {
         dataStoreRepository.saveUniLicenseKey(uniLicenseString = uniLicenseString)
     }
 }

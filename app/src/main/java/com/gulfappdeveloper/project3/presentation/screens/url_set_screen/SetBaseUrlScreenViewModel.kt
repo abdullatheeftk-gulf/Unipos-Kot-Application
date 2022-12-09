@@ -1,6 +1,5 @@
 package com.gulfappdeveloper.project3.presentation.screens.url_set_screen
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gulfappdeveloper.project3.data.remote.HttpRoutes
@@ -9,7 +8,6 @@ import com.gulfappdeveloper.project3.domain.firebase.FirebaseError
 import com.gulfappdeveloper.project3.domain.remote.get.GetDataFromRemote
 import com.gulfappdeveloper.project3.navigation.root.RootNavScreens
 import com.gulfappdeveloper.project3.presentation.presentation_util.UiEvent
-import com.gulfappdeveloper.project3.presentation.screens.splash_screen.util.SplashScreenEvent
 import com.gulfappdeveloper.project3.usecases.UseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -22,17 +20,17 @@ import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
-private const val TAG = "SetBaseUrlScreenViewMod"
+//private const val TAG = "SetBaseUrlScreenViewMod"
 @HiltViewModel
 class SetBaseUrlScreenViewModel @Inject constructor(
-    private val useCase: UseCase
+    private val useCase: UseCase,
 ) : ViewModel() {
 
     private val _uiEvent = Channel<UiEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
 
     fun setBaseUrl(value: String) {
-       // Log.d(TAG, "setBaseUrl: ")
+        // Log.d(TAG, "setBaseUrl: ")
         viewModelScope.launch {
             useCase.saveBaseUrlUseCase(baseUrl = value)
             getWelcomeMessage(url = value + HttpRoutes.WELCOME_MESSAGE)
@@ -46,12 +44,12 @@ class SetBaseUrlScreenViewModel @Inject constructor(
                 sendUiEvent(UiEvent.CloseProgressBar)
                 if (result is GetDataFromRemote.Success) {
                     readUniLicenseKeyDetails()
-                   // sendUiEvent(UiEvent.Navigate(RootNavScreens.LocalRegisterScreen.route))
+                    // sendUiEvent(UiEvent.Navigate(RootNavScreens.LocalRegisterScreen.route))
                 }
                 if (result is GetDataFromRemote.Failed) {
                     sendUiEvent(UiEvent.ShowSnackBar(message = "Server with $url is down"))
                     useCase.insertErrorDataToFireStoreUseCase(
-                        collectionName = "ErrorDataDev",
+                        collectionName = "ErrorData",
                         documentName = "UrlSettingScreenViewModel-getWelcomeMessage,${Date()}",
                         errorData = FirebaseError(
                             errorCode = result.error.code,
@@ -70,11 +68,9 @@ class SetBaseUrlScreenViewModel @Inject constructor(
         viewModelScope.launch {
             useCase.uniLicenseReadUseCase().collectLatest { value ->
                 // checking for saved license details
-                Log.w(TAG, "readUniLicenseKeyDetails: $value")
                 if (value.isNotEmpty() && value.isNotBlank()) {
 
                     val licenseDetails = Json.decodeFromString<UniLicenseDetails>(value)
-
 
 
                     // check saved license is demo
@@ -92,13 +88,13 @@ class SetBaseUrlScreenViewModel @Inject constructor(
                             sendUiEvent(UiEvent.Navigate(route = RootNavScreens.LocalRegisterScreen.route))
                         }
                     }
-                    if(licenseDetails.licenseType == "permanent"){
+                    if (licenseDetails.licenseType == "permanent") {
                         // license is permanent
                         sendUiEvent(UiEvent.Navigate(route = RootNavScreens.LocalRegisterScreen.route))
                     }
                 } else {
                     //first time license activation
-                   sendUiEvent(UiEvent.Navigate(route = RootNavScreens.UniLicenseActScreen.route))
+                    sendUiEvent(UiEvent.Navigate(route = RootNavScreens.UniLicenseActScreen.route))
                 }
             }
         }
@@ -113,7 +109,6 @@ class SetBaseUrlScreenViewModel @Inject constructor(
 
         return expDate >= Date()
     }
-
 
 
     fun onErrorUrl(url: String) {

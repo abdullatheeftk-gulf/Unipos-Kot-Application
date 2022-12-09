@@ -6,7 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.gulfappdeveloper.project3.R
-import com.gulfappdeveloper.project3.presentation.screens.auth_screens.local_auth_screen.LocalRegister
+import com.gulfappdeveloper.project3.presentation.screens.auth_screens.local_auth_screen.LocalRegisterScreen
 import com.gulfappdeveloper.project3.presentation.screens.dine_in_screen.DineInScreen
 import com.gulfappdeveloper.project3.presentation.screens.editing_screen.EditingScreen
 import com.gulfappdeveloper.project3.presentation.screens.home_screen.HomeScreen
@@ -62,7 +62,7 @@ fun RootNavGraph(
         }
         composable(route = RootNavScreens.LocalRegisterScreen.route) {
             changeStatusBarColor(R.color.my_prime_color)
-            LocalRegister(
+            LocalRegisterScreen(
                 rootViewModel = rootViewModel,
                 navHostController = navHostController,
                 hideKeyboard = hideKeyboard
@@ -81,8 +81,7 @@ fun RootNavGraph(
             changeStatusBarColor(R.color.my_prime_color)
             DineInScreen(
                 navHostController = navHostController,
-                rootViewModel = rootViewModel,
-                hideKeyboard = hideKeyboard
+                rootViewModel = rootViewModel
             )
 
         }

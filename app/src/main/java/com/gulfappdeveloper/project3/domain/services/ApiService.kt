@@ -1,9 +1,9 @@
 package com.gulfappdeveloper.project3.domain.services
 
 import com.gulfappdeveloper.project3.domain.remote.get.GetDataFromRemote
-import com.gulfappdeveloper.project3.domain.remote.get.dine_in.TableOrder
 import com.gulfappdeveloper.project3.domain.remote.get.dine_in.Section
 import com.gulfappdeveloper.project3.domain.remote.get.dine_in.Table
+import com.gulfappdeveloper.project3.domain.remote.get.dine_in.TableOrder
 import com.gulfappdeveloper.project3.domain.remote.get.kot_cancel_privilege_checker.KotCancelPrivilege
 import com.gulfappdeveloper.project3.domain.remote.get.kot_list.UserOrder
 import com.gulfappdeveloper.project3.domain.remote.get.login.User
@@ -26,7 +26,7 @@ interface ApiService {
     suspend fun registerUser(url: String): Flow<GetDataFromRemote<User>>
 
     // To get kot cancel privilege
-    suspend fun getKotCancelPrivilege(url: String):Flow<GetDataFromRemote<KotCancelPrivilege>>
+    suspend fun getKotCancelPrivilege(url: String): Flow<GetDataFromRemote<KotCancelPrivilege>>
 
     // Product
     suspend fun getCategory(url: String): Flow<GetDataFromRemote<List<Category>>>

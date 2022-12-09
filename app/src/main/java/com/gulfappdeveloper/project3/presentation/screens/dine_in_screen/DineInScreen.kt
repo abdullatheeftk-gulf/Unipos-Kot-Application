@@ -23,7 +23,6 @@ import kotlinx.coroutines.flow.collectLatest
 fun DineInScreen(
     navHostController: NavHostController,
     rootViewModel: RootViewModel,
-    hideKeyboard: () -> Unit,
 ) {
 
     val scaffoldState = rememberScaffoldState()

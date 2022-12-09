@@ -8,9 +8,9 @@ class EditKotUseCase(
 ) {
     suspend operator fun invoke(
         url: String, kot: Kot, callBack: suspend (Int, String) -> Unit
-    ){
+    ) {
         remoteRepository.editKot(
-            url = url, kot = kot,callBack = callBack
+            url = url, kot = kot, callBack = callBack
         )
     }
 }

@@ -25,7 +25,7 @@ import com.gulfappdeveloper.project3.domain.remote.get.dine_in.Table
 import com.gulfappdeveloper.project3.navigation.root.RootViewModel
 import com.gulfappdeveloper.project3.ui.theme.MyPrimeColor
 
-private const val TAG = "TableDisplay"
+//private const val TAG = "TableDisplay"
 
 @Composable
 fun TableDisplay(
@@ -34,7 +34,6 @@ fun TableDisplay(
 ) {
 
     val baseUrl by rootViewModel.baseUrl
-    // Log.i(TAG, "TableDisplay: ${table.tableName} ${table.tableName.length}")
 
     Card(
         modifier = Modifier

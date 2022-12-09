@@ -16,7 +16,6 @@ import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
 
-private const val TAG = "SettingScreenViewModel"
 
 @HiltViewModel
 class SettingScreenViewModel @Inject constructor(
@@ -26,10 +25,9 @@ class SettingScreenViewModel @Inject constructor(
     val uiEvent = _uiEvent.receiveAsFlow()
 
     //firebase
-    private val collectionName = "ErrorDataDev"
+    private val collectionName = "ErrorData"
 
     fun setBaseUrl(value: String) {
-        // Log.d(TAG, "setBaseUrl: ")
         sendUiEvent(UiEvent.ShowProgressBar)
         viewModelScope.launch {
             useCase.saveBaseUrlUseCase(baseUrl = value)
@@ -37,7 +35,7 @@ class SettingScreenViewModel @Inject constructor(
         }
     }
 
-    fun saveIpAddress(ipAddress: String) {
+    /*fun saveIpAddress(ipAddress: String) {
         viewModelScope.launch {
             useCase.saveIpAddressUseCase(ipAddress = ipAddress)
         }
@@ -49,7 +47,7 @@ class SettingScreenViewModel @Inject constructor(
                 portAddress = portAddress
             )
         }
-    }
+    }*/
 
     private fun getWelcomeMessage(url: String) {
 

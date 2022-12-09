@@ -5,7 +5,7 @@ import com.gulfappdeveloper.project3.repositories.DataStoreRepository
 class SaveIpAddressUseCase(
     private val dataStoreRepository: DataStoreRepository
 ) {
-    suspend operator fun invoke(ipAddress:String){
+    suspend operator fun invoke(ipAddress: String) {
         dataStoreRepository.saveIpAddress(ipAddress = ipAddress)
     }
 }

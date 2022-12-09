@@ -19,7 +19,7 @@ import com.gulfappdeveloper.project3.ui.theme.CategoryBackGroundClicked
 fun CategoryItemDisplay(
     rootViewModel: RootViewModel,
     category: Category,
-    onCategoryItemClicked:()->Unit
+    onCategoryItemClicked: () -> Unit
 ) {
     val categorySelected by rootViewModel.selectedCategory
 

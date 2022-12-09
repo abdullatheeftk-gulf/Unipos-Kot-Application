@@ -5,11 +5,11 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Product(
-    val id:Int,
-    val name:String,
-    val categoryId:Int,
-    val rate:Float,
-    val barcode:String,
+    val id: Int,
+    val name: String,
+    val categoryId: Int,
+    val rate: Float,
+    val barcode: String,
     @SerialName("multisizecount")
-    val multiSizeCount:Int
+    val multiSizeCount: Int
 )

@@ -5,7 +5,7 @@ import com.gulfappdeveloper.project3.repositories.DataStoreRepository
 class SavePortAddressUseCase(
     private val dataStoreRepository: DataStoreRepository
 ) {
-    suspend operator fun invoke(portAddress:String){
+    suspend operator fun invoke(portAddress: String) {
         dataStoreRepository.savePortAddress(portAddress = portAddress)
     }
 }

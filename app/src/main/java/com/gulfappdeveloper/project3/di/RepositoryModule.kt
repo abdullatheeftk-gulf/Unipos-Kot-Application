@@ -93,7 +93,9 @@ object RepositoryModule {
 
 
             insertErrorDataToFireStoreUseCase = InsertErrorDataToFireStoreUseCase(firebaseRepository = firebaseRepository),
-            insertGeneralDataToFirebaseUseCase = InsertGeneralDataToFirebaseUseCase(firebaseRepository = firebaseRepository),
+            insertGeneralDataToFirebaseUseCase = InsertGeneralDataToFirebaseUseCase(
+                firebaseRepository = firebaseRepository
+            ),
 
             uniLicenseActivationUseCase = UniLicenseActivationUseCase(remoteRepository = remoteRepository)
         )

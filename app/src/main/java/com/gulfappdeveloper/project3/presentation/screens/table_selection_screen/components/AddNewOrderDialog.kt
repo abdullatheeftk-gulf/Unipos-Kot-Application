@@ -81,16 +81,16 @@ fun AddNewOrderDialog(
                     ),
                     isError = showError
                 )
-                if (showError){
+                if (showError) {
                     Row(modifier = Modifier.fillMaxWidth()) {
-                       Spacer(modifier = Modifier.width(12.dp))
+                        Spacer(modifier = Modifier.width(12.dp))
                         Text(
                             text = "Order name is empty",
                             color = MaterialTheme.colors.error
                         )
                     }
                     Spacer(modifier = Modifier.height(4.dp))
-                }else {
+                } else {
                     Spacer(modifier = Modifier.height(10.dp))
                 }
                 Row(
@@ -146,7 +146,7 @@ fun AddNewOrderDialog(
                                     },
                                     modifier = Modifier.height(25.dp)
 
-                                    ) {
+                                ) {
                                     Text(
                                         text = seatNumber.toString(),
                                     )
@@ -176,10 +176,10 @@ fun AddNewOrderDialog(
                                     noOfChairRequired = onOfSeatsRequired
                                 )
                                 onDismissRequest()
-                            }else{
+                            } else {
                                 showError = true
                             }
-                    }) {
+                        }) {
                         Text(text = "Ok")
                     }
                 }

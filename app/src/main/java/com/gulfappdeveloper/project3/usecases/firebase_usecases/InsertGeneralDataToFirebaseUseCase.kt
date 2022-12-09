@@ -6,7 +6,7 @@ import com.gulfappdeveloper.project3.repositories.FirebaseRepository
 class InsertGeneralDataToFirebaseUseCase(
     private val firebaseRepository: FirebaseRepository
 ) {
-    suspend operator fun invoke(collectionName:String,firebaseGeneralData: FirebaseGeneralData){
+    suspend operator fun invoke(collectionName: String, firebaseGeneralData: FirebaseGeneralData) {
         firebaseRepository.insertGeneralData(
             collectionName = collectionName,
             firebaseGeneralData = firebaseGeneralData

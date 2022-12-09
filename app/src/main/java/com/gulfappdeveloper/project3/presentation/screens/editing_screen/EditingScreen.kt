@@ -1,6 +1,5 @@
 package com.gulfappdeveloper.project3.presentation.screens.editing_screen
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -25,10 +24,9 @@ import com.gulfappdeveloper.project3.presentation.screens.editing_screen.compone
 import com.gulfappdeveloper.project3.presentation.screens.editing_screen.components.app_bars.EditNormalTopBar
 import com.gulfappdeveloper.project3.presentation.screens.editing_screen.components.app_bars.EditSearchTopBar
 import com.gulfappdeveloper.project3.ui.theme.MyPrimeColor
-import com.gulfappdeveloper.project3.ui.theme.ProgressBarColour
 import kotlinx.coroutines.flow.collectIndexed
 
-private const val TAG = "EditingScreen"
+//private const val TAG = "EditingScreen"
 
 @Composable
 fun EditingScreen(
@@ -37,7 +35,6 @@ fun EditingScreen(
     hideKeyboard: () -> Unit
 ) {
     val scaffoldState = rememberScaffoldState()
-
 
 
     val kotPendingList = rootViewModel.kotPendingList
@@ -60,7 +57,7 @@ fun EditingScreen(
     LaunchedEffect(key1 = true) {
         //rootViewModel.getListOfPendingKOTs()
         rootViewModel.editingScreenEvent.collectIndexed { index, value ->
-           // Log.e(TAG, "EditingScreen: $index")
+            // Log.e(TAG, "EditingScreen: $index")
             when (value.uiEvent) {
                 is UiEvent.ShowProgressBar -> {
                     showProgressBar = true

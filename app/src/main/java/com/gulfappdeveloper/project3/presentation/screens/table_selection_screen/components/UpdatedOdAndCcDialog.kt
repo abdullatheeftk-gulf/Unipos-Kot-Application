@@ -15,10 +15,10 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun UpdatedOdAndCcDialog(
-    onDismissRequest: ()->Unit
+    onDismissRequest: () -> Unit
 ) {
     AlertDialog(
-        onDismissRequest =onDismissRequest,
+        onDismissRequest = onDismissRequest,
         buttons = {
             Column(
                 modifier = Modifier.padding(all = 12.dp),

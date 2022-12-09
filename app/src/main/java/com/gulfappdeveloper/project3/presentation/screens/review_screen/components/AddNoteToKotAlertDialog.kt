@@ -16,7 +16,7 @@ import com.gulfappdeveloper.project3.navigation.root.RootViewModel
 @Composable
 fun AddNoteToKotAlertDialog(
     rootViewModel: RootViewModel,
-    onDismissRequest:()->Unit,
+    onDismissRequest: () -> Unit,
 ) {
     val kotNotes by rootViewModel.kotNotes
     var typedText by remember {

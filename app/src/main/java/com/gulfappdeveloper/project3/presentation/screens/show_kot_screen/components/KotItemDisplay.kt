@@ -14,27 +14,27 @@ import com.gulfappdeveloper.project3.domain.remote.post.KotItem
 @Composable
 fun KotItemDisplay(
     kotItem: KotItem,
-    index:Int
+    index: Int
 ) {
-   Row(
-       horizontalArrangement = Arrangement.Center,
-       verticalAlignment = Alignment.CenterVertically,
-       modifier = Modifier.fillMaxWidth()
-   ) {
-       Text(
-           text = "${(index+1)},",
-           modifier = Modifier.weight(1f),
-           textAlign = TextAlign.Start
-       )
-       Text(
-           text = kotItem.productName,
-           modifier = Modifier.weight(7f),
-           textAlign = TextAlign.Start
-       )
-       Text(
-           text = kotItem.quantity.toString(),
-           modifier = Modifier.weight(2f),
-           textAlign = TextAlign.Center
-       )
-   }
+    Row(
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Text(
+            text = "${(index + 1)},",
+            modifier = Modifier.weight(1f),
+            textAlign = TextAlign.Start
+        )
+        Text(
+            text = kotItem.productName,
+            modifier = Modifier.weight(7f),
+            textAlign = TextAlign.Start
+        )
+        Text(
+            text = kotItem.quantity.toString(),
+            modifier = Modifier.weight(4f),
+            textAlign = TextAlign.Center
+        )
+    }
 }

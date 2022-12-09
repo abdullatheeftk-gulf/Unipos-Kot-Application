@@ -1,6 +1,5 @@
 package com.gulfappdeveloper.project3.navigation.root
 
-import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -36,7 +35,6 @@ import com.gulfappdeveloper.project3.usecases.UseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
@@ -47,12 +45,11 @@ import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
-private const val TAG = "RootViewModel"
+//private const val TAG = "RootViewModel"
 
 @HiltViewModel
 class RootViewModel @Inject constructor(
     private val useCase: UseCase,
-    // @ApplicationContext private val context: Context
 ) : ViewModel() {
 
 
@@ -184,7 +181,7 @@ class RootViewModel @Inject constructor(
 
 
     //firebase
-    private val collectionName = "ErrorDataDev"
+    private val collectionName = "ErrorData"
 
     // public ip address
     private var publicIpAddress = ""
@@ -437,7 +434,7 @@ class RootViewModel @Inject constructor(
             }
             selectedCategory.value = value
         } catch (e: Exception) {
-            Log.e(TAG, "getProductList: ${e.message}")
+            // Log.e(TAG, "getProductList: ${e.message}")
         }
 
 
@@ -455,7 +452,7 @@ class RootViewModel @Inject constructor(
                     }
                     selectedCategory.value = value
                 } catch (e: Exception) {
-                    Log.e(TAG, "getProductList: ${e.message}")
+                    // Log.e(TAG, "getProductList: ${e.message}")
                 }
 
 
@@ -492,7 +489,7 @@ class RootViewModel @Inject constructor(
         try {
             multiSizeProductList.removeAll { true }
         } catch (e: Exception) {
-            Log.e(TAG, "getMultiSizeProduct: ${e.message}")
+            // Log.e(TAG, "getMultiSizeProduct: ${e.message}")
         }
 
 
@@ -630,7 +627,7 @@ class RootViewModel @Inject constructor(
             }
 
         } catch (e: Exception) {
-            Log.e(TAG, "getTableList: ${e.message}")
+            // Log.e(TAG, "getTableList: ${e.message}")
         }
 
         sendDineInScreenEvent(DineInScreenEvent(UiEvent.ShowProgressBar))
@@ -648,7 +645,7 @@ class RootViewModel @Inject constructor(
                     }
 
                 } catch (e: Exception) {
-                    Log.e(TAG, "getTableList: ${e.message}")
+                    // Log.e(TAG, "getTableList: ${e.message}")
                 }
 
 
@@ -830,15 +827,11 @@ class RootViewModel @Inject constructor(
             useCase.kotCancelPrivilegeUseCase(url = url).collectLatest { result ->
                 when (result) {
                     is GetDataFromRemote.Success -> {
-                        Log.e(TAG, "getKotCancelPrivilege: ${result.data.isPrivileged}")
+                        //  Log.e(TAG, "getKotCancelPrivilege: ${result.data.isPrivileged}")
                         kotCancelPrivilege.value = result.data.isPrivileged
                     }
                     is GetDataFromRemote.Failed -> {
-                        Log.d(
-                            TAG,
-                            "getKotCancelPrivilege: ${result.error.message}, ${result.error.code}"
-                        )
-                        Log.w(TAG, "url: $url")
+
                         useCase.insertErrorDataToFireStoreUseCase(
                             collectionName = collectionName,
                             documentName = "getKotCancelPrivilege,${Date()}",
@@ -883,14 +876,7 @@ class RootViewModel @Inject constructor(
     }
 
     fun onIncrementAndDecrementKotItemClicked(count: Int, productId: Int, index: Int) {
-        /* kotItemList.map { kotItem ->
-             if (kotItem.productId == productId) {
-                 kotNetAmount.value -= kotItem.netAmount
-                 kotItem.quantity = count.toFloat()
-                 kotItem.netAmount = count * kotItem.rate
-                 kotNetAmount.value += kotItem.netAmount
-             }
-         }*/
+
         kotItemList.mapIndexed { i, kotItem ->
             if (i == index && kotItem.productId == productId) {
                 kotNetAmount.value -= kotItem.netAmount
@@ -902,7 +888,7 @@ class RootViewModel @Inject constructor(
     }
 
     fun onDeleteItemFromKotItemClicked(kotItem: KotItem, index: Int) {
-        Log.e(TAG, "onDeleteItemFromKotItemClicked: $index")
+        // Log.e(TAG, "onDeleteItemFromKotItemClicked: $index")
         /*kotItemList.removeAll {
             if (it.productId == kotItem.productId && it.quantity == kotItem.quantity) {
                 kotNetAmount.value -= it.netAmount
@@ -1163,7 +1149,7 @@ class RootViewModel @Inject constructor(
                 true
             }
         } catch (e: Exception) {
-            Log.e(TAG, "getKOTDetails: ")
+            //Log.e(TAG, "getKOTDetails: ")
         }
         /*if (isOrderFromEditScreen) {
             sendEditScreenEvent(UiEvent.ShowProgressBar)
@@ -1189,7 +1175,7 @@ class RootViewModel @Inject constructor(
                                 true
                             }
                         } catch (e: Exception) {
-                            Log.e(TAG, "getKOTDetails: ")
+                            //  Log.e(TAG, "getKOTDetails: ")
                         }
 
                         //Adding data for editing
@@ -1200,7 +1186,7 @@ class RootViewModel @Inject constructor(
                                 kotNetAmount.value += kotItem.netAmount
                             }
                         } catch (e: Exception) {
-                            Log.e(TAG, "getKOTDetails: ${e.message}")
+                            //  Log.e(TAG, "getKOTDetails: ${e.message}")
                         }
                         // Log.e(TAG, "getKOTDetails: ${chairCount.value}")
                         // Log.d(TAG, "getKOTDetails: ${orderName.value}")
@@ -1313,7 +1299,6 @@ class RootViewModel @Inject constructor(
     }
 
 
-
     private fun sendTableSelectionUiEvent(tableSelectionUiEvent: TableSelectionUiEvent) {
         viewModelScope.launch {
             _tableSelectionUiEvent.send(tableSelectionUiEvent)
@@ -1357,7 +1342,7 @@ class RootViewModel @Inject constructor(
                 true
             }
         } catch (e: Exception) {
-            Log.e(TAG, "resetKot: ${e.message}")
+            // Log.e(TAG, "resetKot: ${e.message}")
         }
 
         itemsCountInKot.value = 0
@@ -1377,7 +1362,7 @@ class RootViewModel @Inject constructor(
                 true
             }
         } catch (e: Exception) {
-            Log.e(TAG, "resetKot: ${e.message}")
+            // Log.e(TAG, "resetKot: ${e.message}")
         }
 
 
@@ -1423,7 +1408,7 @@ class RootViewModel @Inject constructor(
                 true
             }
         } catch (e: Exception) {
-            Log.e(TAG, "getListOfPendingKOTs: ${e.message}")
+            // Log.e(TAG, "getListOfPendingKOTs: ${e.message}")
         }
         sendEditScreenEvent(UiEvent.ShowProgressBar)
         val url = baseUrl.value + HttpRoutes.LIST_KOT_OF_USER + fKUserId.value
@@ -1431,14 +1416,19 @@ class RootViewModel @Inject constructor(
             useCase.getListOfPendingKOTs(url = url).collectLatest { result ->
                 sendEditScreenEvent(UiEvent.CloseProgressBar)
                 if (result is GetDataFromRemote.Success) {
-                    kotPendingList.addAll(result.data)
-                    sendEditScreenEvent(UiEvent.ShowList)
+                    val list = result.data
+                    if (list.isEmpty()) {
+                        sendEditScreenEvent(UiEvent.ShowEmptyList)
+                    } else {
+                        kotPendingList.addAll(result.data)
+                        sendEditScreenEvent(UiEvent.ShowList)
+                    }
                 }
                 if (result is GetDataFromRemote.Failed) {
-                    Log.e(
-                        TAG,
-                        "getListOfPendingKOTs: url:- $url, error:- ${result.error.message} code:- ${result.error.code}",
-                    )
+                    /* Log.e(
+                         TAG,
+                         "getListOfPendingKOTs: url:- $url, error:- ${result.error.message} code:- ${result.error.code}",
+                     )*/
                     sendEditScreenEvent(UiEvent.ShowSnackBar("There have some Error:-url:- $url, error:- ${result.error.message} code:- ${result.error.code} "))
                     sendEditScreenEvent(UiEvent.ShowEmptyList)
                     useCase.insertErrorDataToFireStoreUseCase(
@@ -1509,10 +1499,10 @@ class RootViewModel @Inject constructor(
                     }
                 }
                 if (result is GetDataFromRemote.Failed) {
-                    Log.e(
-                        TAG,
-                        "uniLicenseActivation: ${result.error.message}, ${result.error.code}",
-                    )
+                    /* Log.e(
+                         TAG,
+                         "uniLicenseActivation: ${result.error.message}, ${result.error.code}",
+                     )*/
                     licenseKeyActivationError.value = result.error.message ?: "Error on Activation"
                     sendUniLicenseActScreenEvent(UiEvent.ShowSnackBar(message = "code:- ${result.error.code}, error:- ${result.error.message}"))
 
@@ -1539,7 +1529,7 @@ class RootViewModel @Inject constructor(
                 // checking for saved license details
                 //Log.w(TAG, "readUniLicenseKeyDetails: $value")
                 if (value.isNotEmpty() && value.isNotBlank()) {
-                   // Log.d(TAG, "readUniLicenseKeyDetails: $value")
+                    // Log.d(TAG, "readUniLicenseKeyDetails: $value")
 
                     val licenseDetails = Json.decodeFromString<UniLicenseDetails>(value)
 
@@ -1551,11 +1541,19 @@ class RootViewModel @Inject constructor(
                         // check for license expired
                         if (!checkForLicenseExpiryDate(licenseDetails.expiryDate)) {
                             // demo license expired
-                            sendSplashScreenEvent(
-                                SplashScreenEvent(
-                                    UiEvent.Navigate(route = RootNavScreens.UniLicenseActScreen.route)
+                            if (publicIpAddress.isNotEmpty() && publicIpAddress.isNotBlank()) {
+                                sendSplashScreenEvent(
+                                    SplashScreenEvent(
+                                        UiEvent.Navigate(route = RootNavScreens.UniLicenseActScreen.route)
+                                    )
                                 )
-                            )
+                            } else {
+                                sendSplashScreenEvent(
+                                    SplashScreenEvent(
+                                        UiEvent.ShowSnackBar(message = "Error on reading Public Ip Address. Restart Your Application")
+                                    )
+                                )
+                            }
 
                         } else {
                             // demo license not expired
@@ -1569,10 +1567,16 @@ class RootViewModel @Inject constructor(
                 } else {
                     //Log.i(TAG, "readUniLicenseKeyDetails: $publicIpAddress")
                     if (publicIpAddress.isNotEmpty() && publicIpAddress.isNotBlank()) {
-                       // Log.e(TAG, "readUniLicenseKeyDetails: test", )
+                        // Log.e(TAG, "readUniLicenseKeyDetails: test", )
                         sendSplashScreenEvent(
                             SplashScreenEvent(
                                 UiEvent.Navigate(route = RootNavScreens.UniLicenseActScreen.route)
+                            )
+                        )
+                    } else {
+                        sendSplashScreenEvent(
+                            SplashScreenEvent(
+                                UiEvent.ShowSnackBar(message = "Error on reading Public Ip Address. Restart Your Application")
                             )
                         )
                     }

@@ -11,7 +11,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
@@ -25,7 +24,7 @@ fun LicenseInformationDisplayAlertDialog(
     onDismissRequest: () -> Unit,
     rootViewModel: RootViewModel
 ) {
- val uniLicense by rootViewModel.uniLicenseDetails
+    val uniLicense by rootViewModel.uniLicenseDetails
 
     AlertDialog(
         onDismissRequest = onDismissRequest,
@@ -35,7 +34,7 @@ fun LicenseInformationDisplayAlertDialog(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.padding(10.dp)
             )
-                {
+            {
                 Text(
                     text = "Unipos License Information",
                     fontStyle = MaterialTheme.typography.h6.fontStyle,
@@ -59,10 +58,10 @@ fun LicenseInformationDisplayAlertDialog(
                         textAlign = TextAlign.Center
                     )
                     Text(
-                        text = if(uniLicense?.licenseType == "demo") "Demo" else "Permanent",
+                        text = if (uniLicense?.licenseType == "demo") "Demo" else "Permanent",
                         modifier = Modifier.weight(1f),
                         textAlign = TextAlign.Center,
-                        color = if(uniLicense?.licenseType == "demo") Color(0xFFD66E04) else MaterialTheme.colors.MyPrimeColor,
+                        color = if (uniLicense?.licenseType == "demo") Color(0xFFD66E04) else MaterialTheme.colors.MyPrimeColor,
                         fontWeight = FontWeight.Bold,
                         fontSize = 18.sp
                     )
@@ -86,7 +85,7 @@ fun LicenseInformationDisplayAlertDialog(
                         text = uniLicense?.expiryDate ?: "Nil",
                         modifier = Modifier.weight(1f),
                         textAlign = TextAlign.Center,
-                        color = if(uniLicense?.licenseType == "demo") MaterialTheme.colors.error else MaterialTheme.colors.MyPrimeColor
+                        color = if (uniLicense?.licenseType == "demo") MaterialTheme.colors.error else MaterialTheme.colors.MyPrimeColor
                     )
                 }
                 Spacer(modifier = Modifier.height(15.dp))

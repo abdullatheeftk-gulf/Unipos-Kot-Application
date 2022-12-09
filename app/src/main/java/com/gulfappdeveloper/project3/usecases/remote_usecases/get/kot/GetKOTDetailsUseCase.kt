@@ -12,7 +12,7 @@ class GetKOTDetailsUseCase(
     suspend operator fun invoke(
         url: String,
 
-    ): Flow<GetDataFromRemote<Kot?>> {
+        ): Flow<GetDataFromRemote<Kot?>> {
         return remoteRepository.getKOTDetails(url = url)
     }
 }

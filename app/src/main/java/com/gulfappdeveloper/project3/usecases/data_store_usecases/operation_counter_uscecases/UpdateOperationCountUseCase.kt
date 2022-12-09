@@ -6,7 +6,7 @@ import com.gulfappdeveloper.project3.repositories.DataStoreRepository
 class UpdateOperationCountUseCase(
     private val dataStoreRepository: DataStoreRepository
 ) {
-    suspend operator fun invoke(){
+    suspend operator fun invoke() {
         dataStoreRepository.updateOperationCount()
     }
 }

@@ -12,17 +12,13 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.gulfappdeveloper.project3.navigation.root.RootViewModel
 import com.gulfappdeveloper.project3.presentation.presentation_util.UiEvent
-import com.gulfappdeveloper.project3.ui.theme.ProgressBarColour
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -38,28 +34,16 @@ fun SettingsScreen(
     var text by remember {
         mutableStateOf("")
     }
-    
-   /* var ipAddress by remember {
-        mutableStateOf("")
-    }
-    
-    var portAddress by remember {
-        mutableStateOf("")
-    }*/
+
 
     var showProgressBar by remember {
         mutableStateOf(false)
     }
-    
-   /* val ip by rootViewModel.ipAddress
-    val port by rootViewModel.port
-*/
 
 
     val currentBaseUrl by rootViewModel.baseUrl
 
     LaunchedEffect(key1 = true) {
-      //  focusRequester.requestFocus()
         settingScreenViewModel.uiEvent.collectLatest { value: UiEvent ->
             when (value) {
                 is UiEvent.Navigate -> {
@@ -148,7 +132,7 @@ fun SettingsScreen(
                 ),
                 modifier = Modifier
                     .fillMaxWidth(),
-                    //.focusRequester(focusRequester = focusRequester),
+                //.focusRequester(focusRequester = focusRequester),
                 enabled = !showProgressBar
             )
             Spacer(modifier = Modifier.height(10.dp))
@@ -170,79 +154,79 @@ fun SettingsScreen(
                 Text(text = "Set Base Url")
             }
             Spacer(modifier = Modifier.height(30.dp))
-        /*    Text(
-                text = "Set Printer Properties",
-                textDecoration = TextDecoration.Underline,
-                fontSize = MaterialTheme.typography.h6.fontSize,
-                fontStyle = MaterialTheme.typography.h6.fontStyle,
-                fontWeight = MaterialTheme.typography.h6.fontWeight
-            )
-            Spacer(modifier = Modifier.height(10.dp))
-            Row(modifier = Modifier.fillMaxWidth()) {
-                OutlinedTextField(
-                    value = ipAddress, 
-                    onValueChange = {typedValue->
-                        ipAddress = typedValue
-                    },
-                    modifier = Modifier.weight(2f),
-                    label = {
-                        Text(text = "Ip Address")
-                    },
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Number,
-                        imeAction = ImeAction.Done
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onDone = {
-                            hideKeyboard()
-                        }
-                    ),
-                    placeholder = {
-                        Text(text = ip)
-                    }
+            /*    Text(
+                    text = "Set Printer Properties",
+                    textDecoration = TextDecoration.Underline,
+                    fontSize = MaterialTheme.typography.h6.fontSize,
+                    fontStyle = MaterialTheme.typography.h6.fontStyle,
+                    fontWeight = MaterialTheme.typography.h6.fontWeight
                 )
-                Spacer(modifier = Modifier.width(4.dp))
-                OutlinedTextField(
-                    value = portAddress,
-                    onValueChange = {typedValue->
-                        portAddress = typedValue
-                    },
-                    modifier = Modifier.weight(1f),
-                    label = {
-                        Text(text = "Port")
-                    },
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Number,
-                        imeAction = ImeAction.Done
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onDone = {
-                            hideKeyboard()
+                Spacer(modifier = Modifier.height(10.dp))
+                Row(modifier = Modifier.fillMaxWidth()) {
+                    OutlinedTextField(
+                        value = ipAddress,
+                        onValueChange = {typedValue->
+                            ipAddress = typedValue
+                        },
+                        modifier = Modifier.weight(2f),
+                        label = {
+                            Text(text = "Ip Address")
+                        },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Number,
+                            imeAction = ImeAction.Done
+                        ),
+                        keyboardActions = KeyboardActions(
+                            onDone = {
+                                hideKeyboard()
+                            }
+                        ),
+                        placeholder = {
+                            Text(text = ip)
                         }
-                    ),
-                    placeholder = {
-                        Text(text = port)
-                    }
-                )
-            }
-            Spacer(modifier = Modifier.height(20.dp))
-            Button(
-                onClick = {
-                hideKeyboard()
-                settingScreenViewModel.saveIpAddress(ipAddress = ipAddress)
-                settingScreenViewModel.savePortAddress(portAddress = portAddress)
-                rootViewModel.readPortAddress()
-                rootViewModel.readIpAddress()
-            }) {
-               Text(text = "Save Printer Address")
-            }*/
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    OutlinedTextField(
+                        value = portAddress,
+                        onValueChange = {typedValue->
+                            portAddress = typedValue
+                        },
+                        modifier = Modifier.weight(1f),
+                        label = {
+                            Text(text = "Port")
+                        },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Number,
+                            imeAction = ImeAction.Done
+                        ),
+                        keyboardActions = KeyboardActions(
+                            onDone = {
+                                hideKeyboard()
+                            }
+                        ),
+                        placeholder = {
+                            Text(text = port)
+                        }
+                    )
+                }
+                Spacer(modifier = Modifier.height(20.dp))
+                Button(
+                    onClick = {
+                    hideKeyboard()
+                    settingScreenViewModel.saveIpAddress(ipAddress = ipAddress)
+                    settingScreenViewModel.savePortAddress(portAddress = portAddress)
+                    rootViewModel.readPortAddress()
+                    rootViewModel.readIpAddress()
+                }) {
+                   Text(text = "Save Printer Address")
+                }*/
         }
 
-        if (showProgressBar){
+        if (showProgressBar) {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
-            ){
+            ) {
                 CircularProgressIndicator()
             }
         }

@@ -1,10 +1,7 @@
 package com.gulfappdeveloper.project3.di
 
-import com.google.firebase.firestore.FirebaseFirestore
-import com.gulfappdeveloper.project3.data.firebase.FirebaseServiceImpl
 import com.gulfappdeveloper.project3.data.remote.ApiServiceImpl
 import com.gulfappdeveloper.project3.domain.services.ApiService
-import com.gulfappdeveloper.project3.domain.services.FirebaseService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -27,8 +24,8 @@ object NetWorkModule {
     @Provides
     @Singleton
     fun provideKtorClient(): HttpClient {
-        return HttpClient(Android){
-            install(ContentNegotiation){
+        return HttpClient(Android) {
+            install(ContentNegotiation) {
                 json(
                     contentType = ContentType.Application.Json,
                     json = Json {
@@ -36,7 +33,7 @@ object NetWorkModule {
                     }
                 )
             }
-            install(Logging){
+            install(Logging) {
                 level = LogLevel.ALL
             }
             install(HttpCache)

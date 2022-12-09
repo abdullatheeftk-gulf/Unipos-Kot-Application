@@ -1,11 +1,10 @@
 package com.gulfappdeveloper.project3.data.remote
 
-import android.util.Log
 import com.gulfappdeveloper.project3.domain.remote.error.Error
 import com.gulfappdeveloper.project3.domain.remote.get.GetDataFromRemote
-import com.gulfappdeveloper.project3.domain.remote.get.dine_in.TableOrder
 import com.gulfappdeveloper.project3.domain.remote.get.dine_in.Section
 import com.gulfappdeveloper.project3.domain.remote.get.dine_in.Table
+import com.gulfappdeveloper.project3.domain.remote.get.dine_in.TableOrder
 import com.gulfappdeveloper.project3.domain.remote.get.kot_cancel_privilege_checker.KotCancelPrivilege
 import com.gulfappdeveloper.project3.domain.remote.get.kot_list.UserOrder
 import com.gulfappdeveloper.project3.domain.remote.get.login.User
@@ -22,14 +21,13 @@ import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.network.sockets.*
 import io.ktor.client.request.*
-import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.serialization.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import java.net.ConnectException
 
-private const val TAG = "ApiServiceImpl"
+//private const val TAG = "ApiServiceImpl"
 
 class ApiServiceImpl(
     private val client: HttpClient
@@ -1179,7 +1177,7 @@ class ApiServiceImpl(
         kot: Kot,
         callBack: suspend (Int, String) -> Unit
     ) {
-        Log.d(TAG, "generateKOT: $kot")
+        // Log.d(TAG, "generateKOT: $kot")
         try {
             val httpResponse = client.post(url) {
                 contentType(ContentType.Application.Json)
@@ -1189,10 +1187,10 @@ class ApiServiceImpl(
             val statusMessage = httpResponse.status.description
             callBack(statusCode, statusMessage)
             //  Log.i(TAG, "$kot")
-             Log.d(TAG, "generateKOT: $statusCode $statusMessage")
+            // Log.d(TAG, "generateKOT: $statusCode $statusMessage")
 
         } catch (e: Exception) {
-            Log.e(TAG, "generateKOT: ${e.message}")
+            // Log.e(TAG, "generateKOT: ${e.message}")
             callBack(404, e.toString())
         }
 
@@ -1231,7 +1229,7 @@ class ApiServiceImpl(
             val statusCode = httpResponse.status.value
             val statusMessage = httpResponse.status.description
             val editedOrder = httpResponse.body<TableOrder>()
-            Log.w(TAG, "editKOTBasics: $editKOTBasic $url $editedOrder", )
+            //Log.w(TAG, "editKOTBasics: $editKOTBasic $url $editedOrder", )
             callBack(statusCode, statusMessage)
         } catch (e: Exception) {
             callBack(404, e.toString())
@@ -1434,7 +1432,7 @@ class ApiServiceImpl(
                 )
 
             } catch (e: NoTransformationFoundException) {
-                Log.e(TAG, " NoTransformationFoundException ${e.message}")
+                // Log.e(TAG, " NoTransformationFoundException ${e.message}")
                 emit(
                     GetDataFromRemote.Failed(
                         error = Error(
@@ -1491,7 +1489,7 @@ class ApiServiceImpl(
             //Log.d(TAG, "deleteKOT: $statusCode")
             callBack(statusCode, statusMessage)
         } catch (e: Exception) {
-            Log.e(TAG, "deleteKOT: ")
+            // Log.e(TAG, "deleteKOT: ")
             callBack(404, e.toString())
         }
     }
@@ -1502,14 +1500,14 @@ class ApiServiceImpl(
         url: String,
         licenseRequestBody: LicenseRequestBody
     ): Flow<GetDataFromRemote<LicenseResponse>> {
-        Log.d(TAG, "request: $licenseRequestBody")
-        Log.w(TAG, "url: $url", )
-        Log.e(TAG, "header: $rioLabKey", )
+        // Log.d(TAG, "request: $licenseRequestBody")
+        //Log.w(TAG, "url: $url", )
+        // Log.e(TAG, "header: $rioLabKey", )
         return flow {
             try {
                 val httpResponse = client.post(urlString = url) {
                     contentType(ContentType.Application.Json)
-                    header("Authorization",rioLabKey)
+                    header("Authorization", rioLabKey)
                     setBody(licenseRequestBody)
                 }
                 val statusCode = httpResponse.status.value
@@ -1586,7 +1584,7 @@ class ApiServiceImpl(
                     )
                 )
             } catch (e: ConnectException) {
-                  Log.e(TAG, "${e.message}")
+                // Log.e(TAG, "${e.message}")
                 emit(
                     GetDataFromRemote.Failed(
                         error = Error(

@@ -3,7 +3,6 @@ package com.gulfappdeveloper.project3.data.remote
 object HttpRoutes {
     const val BASE_URL = "https://uniposerpapi.azurewebsites.net"
 
-    //const val BASE_URL = "http://192.168.1.5:80"
     const val WELCOME_MESSAGE = "/api/oem"
     const val LOGIN = "/api/login/"
 

@@ -19,7 +19,6 @@ import com.gulfappdeveloper.project3.navigation.root.RootViewModel
 import com.gulfappdeveloper.project3.presentation.presentation_util.UiEvent
 import com.gulfappdeveloper.project3.presentation.screens.uni_license_act_screen.components.LicenseInformationDisplayAlertDialog
 import com.gulfappdeveloper.project3.presentation.screens.uni_license_act_screen.util.UniLicenseActScreenEvent
-import com.gulfappdeveloper.project3.ui.theme.ProgressBarColour
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 

@@ -15,8 +15,6 @@ import com.gulfappdeveloper.project3.usecases.data_store_usecases.uni_license_sa
 import com.gulfappdeveloper.project3.usecases.firebase_usecases.InsertErrorDataToFireStoreUseCase
 import com.gulfappdeveloper.project3.usecases.firebase_usecases.InsertGeneralDataToFirebaseUseCase
 import com.gulfappdeveloper.project3.usecases.remote_usecases.delete.DeleteKotUseCase
-import com.gulfappdeveloper.project3.usecases.remote_usecases.get.product.GetCategoryListUseCase
-import com.gulfappdeveloper.project3.usecases.remote_usecases.get.product.GetProductListUseCase
 import com.gulfappdeveloper.project3.usecases.remote_usecases.get.GetWelcomeMessageUseCase
 import com.gulfappdeveloper.project3.usecases.remote_usecases.get.dine_in.GetSectionListUseCase
 import com.gulfappdeveloper.project3.usecases.remote_usecases.get.dine_in.GetTableListUseCase
@@ -25,7 +23,9 @@ import com.gulfappdeveloper.project3.usecases.remote_usecases.get.kot.GetKOTDeta
 import com.gulfappdeveloper.project3.usecases.remote_usecases.get.kot_cancel_privilege.KotCancelPrivilegeUseCase
 import com.gulfappdeveloper.project3.usecases.remote_usecases.get.kot_pending_list.GetListOfPendingKOTs
 import com.gulfappdeveloper.project3.usecases.remote_usecases.get.login.RegisterUserUseCase
+import com.gulfappdeveloper.project3.usecases.remote_usecases.get.product.GetCategoryListUseCase
 import com.gulfappdeveloper.project3.usecases.remote_usecases.get.product.GetMultiSizeProduct
+import com.gulfappdeveloper.project3.usecases.remote_usecases.get.product.GetProductListUseCase
 import com.gulfappdeveloper.project3.usecases.remote_usecases.get.product.ProductSearchUseCase
 import com.gulfappdeveloper.project3.usecases.remote_usecases.license.uni_license_activation_use_case.UniLicenseActivationUseCase
 import com.gulfappdeveloper.project3.usecases.remote_usecases.post.GenerateKotUseCase
@@ -57,15 +57,15 @@ data class UseCase(
 
     val getCategoryListUseCase: GetCategoryListUseCase,
     val getProductListUseCase: GetProductListUseCase,
-    val productSearchUseCase : ProductSearchUseCase,
+    val productSearchUseCase: ProductSearchUseCase,
     val getMultiSizeProduct: GetMultiSizeProduct,
 
-    val getSectionListUseCase:GetSectionListUseCase,
+    val getSectionListUseCase: GetSectionListUseCase,
     val getTableListUseCase: GetTableListUseCase,
     val getTableOrderListUseCase: GetTableOrderListUseCase,
 
     // Generate kot
-    val generateKotUseCase:GenerateKotUseCase,
+    val generateKotUseCase: GenerateKotUseCase,
     // Edit Kot
     val editKotUseCase: EditKotUseCase,
     val editKotBasicUseCase: EditKotBasicUseCase,
@@ -84,4 +84,4 @@ data class UseCase(
     // Unipos license
     val uniLicenseActivationUseCase: UniLicenseActivationUseCase,
 
-)
+    )

@@ -20,8 +20,6 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -36,9 +34,9 @@ import com.gulfappdeveloper.project3.ui.theme.MyPrimeColor
 @Composable
 fun MultiGridViewItem(
     rootViewModel: RootViewModel,
-    parentCategoryId:Int,
+    parentCategoryId: Int,
     multiSizeProduct: MultiSizeProduct,
-    onDismissRequest:()->Unit,
+    onDismissRequest: () -> Unit,
 ) {
     var orderCount by remember {
         mutableStateOf(1)
@@ -62,7 +60,7 @@ fun MultiGridViewItem(
 
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data(baseUrl + HttpRoutes.PRODUCT_IMAGE+ multiSizeProduct.barcode)
+                    .data(baseUrl + HttpRoutes.PRODUCT_IMAGE + multiSizeProduct.barcode)
                     .crossfade(true)
                     .build(),
                 contentDescription = "",

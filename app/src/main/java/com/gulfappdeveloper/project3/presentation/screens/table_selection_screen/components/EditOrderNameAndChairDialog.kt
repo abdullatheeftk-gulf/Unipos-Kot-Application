@@ -1,6 +1,5 @@
 package com.gulfappdeveloper.project3.presentation.screens.table_selection_screen.components
 
-import android.util.Log
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CornerSize
@@ -19,11 +18,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.gulfappdeveloper.project3.domain.remote.get.dine_in.TableOrder
 import com.gulfappdeveloper.project3.domain.remote.get.dine_in.Table
+import com.gulfappdeveloper.project3.domain.remote.get.dine_in.TableOrder
 import com.gulfappdeveloper.project3.navigation.root.RootViewModel
 
-private const val TAG = "EditOrderNameAndChairDi"
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -52,8 +50,6 @@ fun EditOrderNameAndChairDialog(
     }
 
 
-
-    Log.i(TAG, "chair remaining: $noOfChairRemaining \nchair selected $chairSelected")
     val interactionSource = remember {
         MutableInteractionSource()
     }
@@ -65,8 +61,8 @@ fun EditOrderNameAndChairDialog(
 
         selectedTable?.let {
             noOfChairRemaining = it.noOfSeats - it.occupied
-            if (tableOrder.fK_KOTInvoiceId ==0){
-                noOfChairRemaining-=chairSelected
+            if (tableOrder.fK_KOTInvoiceId == 0) {
+                noOfChairRemaining -= chairSelected
             }
         }
     }

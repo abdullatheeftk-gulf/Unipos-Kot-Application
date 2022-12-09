@@ -9,7 +9,7 @@ class GetSectionListUseCase(
     private val remoteRepository: RemoteRepository
 ) {
 
-    suspend operator fun invoke(url:String):Flow<GetDataFromRemote<List<Section>>>{
+    suspend operator fun invoke(url: String): Flow<GetDataFromRemote<List<Section>>> {
         return remoteRepository.getSectionList(url = url)
     }
 }

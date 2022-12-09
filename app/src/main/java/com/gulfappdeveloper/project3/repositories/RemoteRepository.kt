@@ -1,9 +1,9 @@
 package com.gulfappdeveloper.project3.repositories
 
 import com.gulfappdeveloper.project3.domain.remote.get.GetDataFromRemote
-import com.gulfappdeveloper.project3.domain.remote.get.dine_in.TableOrder
 import com.gulfappdeveloper.project3.domain.remote.get.dine_in.Section
 import com.gulfappdeveloper.project3.domain.remote.get.dine_in.Table
+import com.gulfappdeveloper.project3.domain.remote.get.dine_in.TableOrder
 import com.gulfappdeveloper.project3.domain.remote.get.kot_cancel_privilege_checker.KotCancelPrivilege
 import com.gulfappdeveloper.project3.domain.remote.get.kot_list.UserOrder
 import com.gulfappdeveloper.project3.domain.remote.get.login.User
@@ -51,7 +51,7 @@ class RemoteRepository @Inject constructor(
         return apiService.productSearch(url = url)
     }
 
-    suspend fun getMultiSizeProducts(url: String):Flow<GetDataFromRemote<List<MultiSizeProduct>>>{
+    suspend fun getMultiSizeProducts(url: String): Flow<GetDataFromRemote<List<MultiSizeProduct>>> {
         return apiService.getMultiSizeProduct(url = url)
     }
 
@@ -78,7 +78,11 @@ class RemoteRepository @Inject constructor(
         apiService.editKOTDetails(url = url, kot = kot, callBack = callBack)
     }
 
-    suspend fun editKOTBasics(url: String, editKOTBasic: EditKOTBasic, callBack: suspend (Int, String) -> Unit) {
+    suspend fun editKOTBasics(
+        url: String,
+        editKOTBasic: EditKOTBasic,
+        callBack: suspend (Int, String) -> Unit
+    ) {
         apiService.editKOTBasics(url = url, editKOTBasic = editKOTBasic, callBack = callBack)
     }
 

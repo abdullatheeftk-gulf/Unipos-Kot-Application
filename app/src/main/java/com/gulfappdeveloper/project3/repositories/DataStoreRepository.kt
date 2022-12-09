@@ -22,15 +22,15 @@ class DataStoreRepository @Inject constructor(
         dataStoreService.updateSerialNo()
     }
 
-    suspend fun saveIpAddress(ipAddress:String){
+    suspend fun saveIpAddress(ipAddress: String) {
         dataStoreService.saveIpAddress(ipAddress = ipAddress)
     }
 
-    suspend fun savePortAddress(portAddress:String){
+    suspend fun savePortAddress(portAddress: String) {
         dataStoreService.savePortAddress(portAddress = portAddress)
     }
 
-    suspend fun saveUniLicenseKey(uniLicenseString:String){
+    suspend fun saveUniLicenseKey(uniLicenseString: String) {
         dataStoreService.saveUniLicenseData(uniLicenseString = uniLicenseString)
     }
 
@@ -43,19 +43,19 @@ class DataStoreRepository @Inject constructor(
         return dataStoreService.readBaseUrl()
     }
 
-    fun readSerialNo():Flow<Int>{
+    fun readSerialNo(): Flow<Int> {
         return dataStoreService.readSerialNo()
     }
 
-    fun readIpAddress():Flow<String>{
+    fun readIpAddress(): Flow<String> {
         return dataStoreService.readIpaddress()
     }
 
-    fun readPortAddress():Flow<String>{
+    fun readPortAddress(): Flow<String> {
         return dataStoreService.readPortAddress()
     }
 
-    fun readUniLicenseKey():Flow<String>{
+    fun readUniLicenseKey(): Flow<String> {
         return dataStoreService.readUniLicenseData()
     }
 

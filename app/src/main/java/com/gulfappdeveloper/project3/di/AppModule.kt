@@ -29,11 +29,10 @@ object AppModule {
     fun provideFirebaseFireStoreDb() = FirebaseFirestore.getInstance()
 
 
-
     @Provides
     @Singleton
     fun provideFirebaseService(fdb: FirebaseFirestore): FirebaseService {
-        return  FirebaseServiceImpl(fdb)
+        return FirebaseServiceImpl(fdb)
     }
 
 

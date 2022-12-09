@@ -1,7 +1,6 @@
 package com.gulfappdeveloper.project3.presentation.screens.show_kot_screen
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -11,19 +10,15 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.gulfappdeveloper.project3.navigation.root.RootNavScreens
 import com.gulfappdeveloper.project3.navigation.root.RootViewModel
 import com.gulfappdeveloper.project3.presentation.presentation_util.UiEvent
 import com.gulfappdeveloper.project3.presentation.screens.show_kot_screen.components.DeleteKotAlertDialog
 import com.gulfappdeveloper.project3.presentation.screens.show_kot_screen.components.KotItemDisplay
-import com.gulfappdeveloper.project3.ui.theme.ProgressBarColour
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -45,7 +40,7 @@ fun ShowKOTScreen(
         mutableStateOf(false)
     }
 
-    var kotCancelPrivilege by rootViewModel.kotCancelPrivilege
+    val kotCancelPrivilege by rootViewModel.kotCancelPrivilege
 
     LaunchedEffect(key1 = true) {
 
@@ -137,7 +132,9 @@ fun ShowKOTScreen(
                     ) {
                         Text(
                             text = "Si",
-                            modifier = Modifier.weight(1f).padding(bottom = 5.dp),
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(bottom = 5.dp),
                             textAlign = TextAlign.Start,
                             textDecoration = TextDecoration.Underline,
                             fontSize = MaterialTheme.typography.h6.fontSize,
@@ -145,7 +142,9 @@ fun ShowKOTScreen(
                         )
                         Text(
                             text = "Product Name",
-                            modifier = Modifier.weight(7f).padding(bottom = 5.dp),
+                            modifier = Modifier
+                                .weight(7f)
+                                .padding(bottom = 5.dp),
                             textAlign = TextAlign.Start,
                             textDecoration = TextDecoration.Underline,
                             fontSize = MaterialTheme.typography.h6.fontSize,
@@ -153,7 +152,9 @@ fun ShowKOTScreen(
                         )
                         Text(
                             text = "Quantity",
-                            modifier = Modifier.weight(2f).padding(bottom = 5.dp),
+                            modifier = Modifier
+                                .weight(4f)
+                                .padding(bottom = 5.dp),
                             textAlign = TextAlign.Center,
                             textDecoration = TextDecoration.Underline,
                             fontSize = MaterialTheme.typography.h6.fontSize,
@@ -182,7 +183,7 @@ fun ShowKOTScreen(
             }
 
         }
-        
+
 
 
 

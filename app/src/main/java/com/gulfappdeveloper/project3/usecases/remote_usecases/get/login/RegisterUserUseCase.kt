@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 class RegisterUserUseCase(
     private val remoteRepository: RemoteRepository
 ) {
-    suspend operator fun invoke(url:String):Flow<GetDataFromRemote<User>>{
-       return remoteRepository.registerUser(url = url)
+    suspend operator fun invoke(url: String): Flow<GetDataFromRemote<User>> {
+        return remoteRepository.registerUser(url = url)
     }
 }

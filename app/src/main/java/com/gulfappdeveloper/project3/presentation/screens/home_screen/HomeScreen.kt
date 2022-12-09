@@ -23,7 +23,6 @@ import com.gulfappdeveloper.project3.navigation.root.RootViewModel
 import com.gulfappdeveloper.project3.presentation.presentation_util.OrderMode
 import com.gulfappdeveloper.project3.presentation.screens.home_screen.components.MenuCard
 
-private const val TAG = "HomeScreen"
 
 @Composable
 fun HomeScreen(
@@ -38,7 +37,7 @@ fun HomeScreen(
     val categoryList = rootViewModel.categoryList
 
     val context = LocalContext.current
-    
+
     val uniLicenseDetails by rootViewModel.uniLicenseDetails
 
 
@@ -49,7 +48,6 @@ fun HomeScreen(
         Pair(first = R.drawable.settings, "SETTINGS")
     )
 
-    // Log.d(TAG, "HomeScreen: ")
 
 
     Scaffold(scaffoldState = scaffoldState) {
@@ -68,13 +66,13 @@ fun HomeScreen(
                     textDecoration = TextDecoration.Underline
                 )
                 Spacer(modifier = Modifier.height(10.dp))
-                Text(text = "Ends on :- ${uniLicenseDetails?.expiryDate}")
+                Text(text = "Valid until :- ${uniLicenseDetails?.expiryDate}")
 
 
             }
         }
-        
-        
+
+
 
         LazyVerticalGrid(
             columns = GridCells.Fixed(count = 2),

@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class WelcomeMessage(
     @SerialName("oemName")
-    val message:String
+    val message: String
 )

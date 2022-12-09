@@ -1,10 +1,8 @@
 package com.gulfappdeveloper.project3.presentation.screens.review_screen
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -25,10 +23,8 @@ import com.gulfappdeveloper.project3.navigation.root.RootViewModel
 import com.gulfappdeveloper.project3.presentation.presentation_util.UiEvent
 import com.gulfappdeveloper.project3.presentation.screens.review_screen.components.*
 import com.gulfappdeveloper.project3.ui.theme.MyPrimeColor
-import com.gulfappdeveloper.project3.ui.theme.ProgressBarColour
 import kotlinx.coroutines.flow.collectLatest
 
-private const val TAG = "ReviewScreen"
 @Composable
 fun ReviewScreen(
     navHostController: NavHostController,
@@ -40,9 +36,6 @@ fun ReviewScreen(
 
     val kotItemList = rootViewModel.kotItemList
 
-   /* kotItemList.forEach {
-        Log.e(TAG, "ReviewScreen: $it", )
-    }*/
 
     val editMode by rootViewModel.editMode
 
@@ -56,7 +49,7 @@ fun ReviewScreen(
         mutableStateOf(null)
     }
 
-    var kotItemIndexSelectedForAddingNote by remember{
+    var kotItemIndexSelectedForAddingNote by remember {
         mutableStateOf(-1)
     }
 
@@ -126,16 +119,15 @@ fun ReviewScreen(
 
     if (cancelKotAlertDialog) {
         CancelKotAlertDialog(
-            rootViewModel = rootViewModel,
             onYesButtonClicked = {
                 cancelKotAlertDialog = false
-               // Log.e(TAG, "ReviewScreen: $editMode", )
+                // Log.e(TAG, "ReviewScreen: $editMode", )
                 if (editMode) {
 
                     navHostController.navigate(
                         route = RootNavScreens.HomeScreen.route
-                    ){
-                        popUpTo(route = RootNavScreens.HomeScreen.route){
+                    ) {
+                        popUpTo(route = RootNavScreens.HomeScreen.route) {
                             inclusive = true
                         }
                     }
@@ -164,8 +156,8 @@ fun ReviewScreen(
             kotSuccessAlertDialog = false
             rootViewModel.resetKot()
 
-            navHostController.navigate(route = RootNavScreens.HomeScreen.route){
-                popUpTo(route = RootNavScreens.HomeScreen.route){
+            navHostController.navigate(route = RootNavScreens.HomeScreen.route) {
+                popUpTo(route = RootNavScreens.HomeScreen.route) {
                     inclusive = true
                 }
             }
@@ -184,11 +176,10 @@ fun ReviewScreen(
 
     BackHandler(true) {
         if (editMode) {
-            Log.w(TAG, "ReviewScreen: $editMode", )
             navHostController.navigate(
                 route = RootNavScreens.HomeScreen.route
-            ){
-                popUpTo(route = RootNavScreens.HomeScreen.route){
+            ) {
+                popUpTo(route = RootNavScreens.HomeScreen.route) {
                     inclusive = true
                 }
             }
@@ -212,8 +203,8 @@ fun ReviewScreen(
                             if (editMode) {
                                 navHostController.navigate(
                                     route = RootNavScreens.HomeScreen.route
-                                ){
-                                    popUpTo(route = RootNavScreens.HomeScreen.route){
+                                ) {
+                                    popUpTo(route = RootNavScreens.HomeScreen.route) {
                                         inclusive = true
                                     }
                                 }
@@ -264,23 +255,23 @@ fun ReviewScreen(
             item {
                 Spacer(modifier = Modifier.height(10.dp))
             }
-           /* items(kotItemList) { item: KotItem ->
-                KotItemsDisplay(
-                    kotItem = item,
-                    rootViewModel = rootViewModel,
-                    onItemClicked = { kotItem ->
-                        kotItemSelectedForAddingNote = kotItem
-                        showAddNoteToKotItemAlertDialog = true
-                    }
-                )
-            }*/
+            /* items(kotItemList) { item: KotItem ->
+                 KotItemsDisplay(
+                     kotItem = item,
+                     rootViewModel = rootViewModel,
+                     onItemClicked = { kotItem ->
+                         kotItemSelectedForAddingNote = kotItem
+                         showAddNoteToKotItemAlertDialog = true
+                     }
+                 )
+             }*/
 
-            itemsIndexed(kotItemList){index,item:KotItem->
+            itemsIndexed(kotItemList) { index, item: KotItem ->
                 KotItemsDisplay(
                     kotItem = item,
                     index = index,
                     rootViewModel = rootViewModel,
-                    onItemClicked = { kotItem,i ->
+                    onItemClicked = { kotItem, i ->
                         kotItemSelectedForAddingNote = kotItem
                         kotItemIndexSelectedForAddingNote = i
                         showAddNoteToKotItemAlertDialog = true

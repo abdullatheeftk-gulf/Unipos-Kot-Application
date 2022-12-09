@@ -173,7 +173,6 @@ fun TableSelectionScreen(
             if (showNewOrderAddButton) {
                 item {
                     AddOrderView(
-                        rootViewModel = rootViewModel,
                         addNewOrder = {
                             showAddNewOrderDialog = true
                         }

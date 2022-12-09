@@ -99,7 +99,7 @@ fun GridViewItem(
                     if (product.multiSizeCount > 0) {
                         BadgedBox(
                             badge = {
-                                Badge(){
+                                Badge() {
                                     Text(text = product.multiSizeCount.toString())
                                 }
                             },
@@ -116,7 +116,7 @@ fun GridViewItem(
                             if (selectedIndex == index && showProgressBarInItem) {
                                 CircularProgressIndicator(
                                     modifier = Modifier.size(20.dp),
-                                    color = MaterialTheme.colors.ProgressBarColour,
+                                    color = MaterialTheme.colors.MyPrimeColor,
                                     strokeWidth = 1.dp
                                 )
                             }

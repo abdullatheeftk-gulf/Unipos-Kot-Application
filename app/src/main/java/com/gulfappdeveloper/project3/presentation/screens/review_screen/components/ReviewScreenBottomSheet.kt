@@ -17,7 +17,6 @@ import androidx.navigation.NavHostController
 import com.gulfappdeveloper.project3.navigation.root.RootNavScreens
 import com.gulfappdeveloper.project3.navigation.root.RootViewModel
 import com.gulfappdeveloper.project3.ui.theme.MyPrimeColor
-import com.gulfappdeveloper.project3.ui.theme.ProgressBarColour
 
 @Composable
 fun ReviewScreenBottomSheet(

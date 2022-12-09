@@ -7,7 +7,7 @@ class UniLicenseReadUseCase(
     private val dataStoreRepository: DataStoreRepository
 ) {
 
-    operator fun invoke():Flow<String>{
+    operator fun invoke(): Flow<String> {
         return dataStoreRepository.readUniLicenseKey()
     }
 }

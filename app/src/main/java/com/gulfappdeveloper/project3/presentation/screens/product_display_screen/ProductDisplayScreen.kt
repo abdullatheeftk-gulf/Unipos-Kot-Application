@@ -263,7 +263,7 @@ fun ProductDisplayScreen(
                     showEmptyList = showEmptyList,
                     selectedIndex = selectedIndex,
                     showProgressBarInItem = showProgressBarInItem,
-                    openMultiSizeProduct = { productId, categoryId ,index->
+                    openMultiSizeProduct = { productId, categoryId, index ->
                         multiSizeProductId = productId
                         selectedIndex = index
                         rootViewModel.getMultiSizeProduct(id = productId)
@@ -276,7 +276,7 @@ fun ProductDisplayScreen(
                     rootViewModel = rootViewModel,
                     showProgressBar = showProgressBar,
                     showEmptyList = showEmptyList,
-                    openMultiSizeProduct = { productId, categoryId,index ->
+                    openMultiSizeProduct = { productId, categoryId, index ->
                         multiSizeProductId = productId
                         selectedIndex = index
                         rootViewModel.getMultiSizeProduct(id = productId)

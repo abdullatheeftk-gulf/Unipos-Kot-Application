@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 class GetProductListUseCase(
     private val remoteRepository: RemoteRepository
 ) {
-    suspend operator fun invoke(url:String):Flow<GetDataFromRemote<List<Product>>>{
+    suspend operator fun invoke(url: String): Flow<GetDataFromRemote<List<Product>>> {
         return remoteRepository.getProducts(url = url)
     }
 }

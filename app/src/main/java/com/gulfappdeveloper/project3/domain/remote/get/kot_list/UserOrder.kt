@@ -1,7 +1,6 @@
 package com.gulfappdeveloper.project3.domain.remote.get.kot_list
 
 import kotlinx.serialization.SerialName
-import java.util.Date
 
 @kotlinx.serialization.Serializable
 data class UserOrder(

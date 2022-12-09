@@ -32,7 +32,7 @@ fun SearchTopBar(
     hideKeyboard: () -> Unit,
 ) {
     val searchText by rootViewModel.productSearchText
-    TopAppBar() {
+    TopAppBar {
 
         Row(
             modifier = Modifier.fillMaxWidth(),
