@@ -20,6 +20,7 @@ import com.gulfappdeveloper.project3.navigation.root.RootViewModel
 import com.gulfappdeveloper.project3.presentation.presentation_util.UiEvent
 import com.gulfappdeveloper.project3.ui.theme.MyPrimeColor
 import com.gulfappdeveloper.project3.ui.theme.ProgressBarColour
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 
 private const val TAG = "SplashScreen"
@@ -53,6 +54,7 @@ fun SplashScreen(
                     showProgressBar = false
                 }
                 is UiEvent.Navigate -> {
+                    delay(2000L)
                     navHostController.popBackStack()
                     navHostController.navigate(route = event.uiEvent.route)
                 }

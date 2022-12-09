@@ -39,21 +39,21 @@ fun SettingsScreen(
         mutableStateOf("")
     }
     
-    var ipAddress by remember {
+   /* var ipAddress by remember {
         mutableStateOf("")
     }
     
     var portAddress by remember {
         mutableStateOf("")
-    }
+    }*/
 
     var showProgressBar by remember {
         mutableStateOf(false)
     }
     
-    val ip by rootViewModel.ipAddress
+   /* val ip by rootViewModel.ipAddress
     val port by rootViewModel.port
-
+*/
 
 
     val currentBaseUrl by rootViewModel.baseUrl
@@ -170,7 +170,7 @@ fun SettingsScreen(
                 Text(text = "Set Base Url")
             }
             Spacer(modifier = Modifier.height(30.dp))
-            Text(
+        /*    Text(
                 text = "Set Printer Properties",
                 textDecoration = TextDecoration.Underline,
                 fontSize = MaterialTheme.typography.h6.fontSize,
@@ -247,7 +247,7 @@ fun SettingsScreen(
                     strokeWidth = 1.dp,
                     color = MaterialTheme.colors.ProgressBarColour,
                 )
-            }
+            }*/
         }
 
     }

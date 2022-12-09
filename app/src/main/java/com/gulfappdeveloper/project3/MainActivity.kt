@@ -59,7 +59,7 @@ class MainActivity : ComponentActivity() {
                     
                     val navHostController = rememberNavController()
 
-                    if (publicIpAddress.isNotEmpty() && publicIpAddress.isNotBlank()) {
+                   // if (publicIpAddress.isNotEmpty() && publicIpAddress.isNotBlank()) {
                         RootNavGraph(
                             hideKeyboard = {
                                 hideSoftKeyboard()
@@ -74,7 +74,8 @@ class MainActivity : ComponentActivity() {
                         )
                         //CrashTest()
                         
-                    }else{
+                   // }
+                    /*else{
                         window.statusBarColor = ContextCompat.getColor(this, R.color.white)
                         Scaffold() {
                             it.calculateTopPadding()
@@ -91,7 +92,7 @@ class MainActivity : ComponentActivity() {
                                 )
                             }
                         }
-                    }
+                    }*/
                 }
             }
         }

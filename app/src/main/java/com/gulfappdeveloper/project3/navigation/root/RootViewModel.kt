@@ -734,7 +734,7 @@ class RootViewModel @Inject constructor(
                 if (result is GetDataFromRemote.Success) {
 
                     result.data.forEach {
-                        chairs += it.chairCount!!
+                        chairs += it.chairCount?:0
                     }
                     showNewTableOrderAddButton.value = selectedTable.value?.noOfSeats!! > chairs
 
@@ -847,18 +847,21 @@ class RootViewModel @Inject constructor(
 
     }
 
-    fun getKotCancelPrivilege(){
+    fun getKotCancelPrivilege() {
         viewModelScope.launch(Dispatchers.IO) {
-            val url ="${baseUrl.value}${HttpRoutes.KOT_CANCEL_PRIVILEGE}${fKUserId.value}"
-            useCase.kotCancelPrivilegeUseCase(url = url).collectLatest { result->
-                when(result){
-                    is GetDataFromRemote.Success->{
-                        Log.e(TAG, "getKotCancelPrivilege: ${result.data.isPrivileged}", )
+            val url = "${baseUrl.value}${HttpRoutes.KOT_CANCEL_PRIVILEGE}${fKUserId.value}"
+            useCase.kotCancelPrivilegeUseCase(url = url).collectLatest { result ->
+                when (result) {
+                    is GetDataFromRemote.Success -> {
+                        Log.e(TAG, "getKotCancelPrivilege: ${result.data.isPrivileged}")
                         kotCancelPrivilege.value = result.data.isPrivileged
                     }
-                    is GetDataFromRemote.Failed->{
-                        Log.d(TAG, "getKotCancelPrivilege: ${result.error.message}, ${result.error.code}")
-                        Log.w(TAG, "url: $url", )
+                    is GetDataFromRemote.Failed -> {
+                        Log.d(
+                            TAG,
+                            "getKotCancelPrivilege: ${result.error.message}, ${result.error.code}"
+                        )
+                        Log.w(TAG, "url: $url")
                         useCase.insertErrorDataToFireStoreUseCase(
                             collectionName = collectionName,
                             documentName = "getKotCancelPrivilege,${Date()}",
@@ -1521,13 +1524,13 @@ class RootViewModel @Inject constructor(
                     val licenseString = Json.encodeToString(licenceInformation)
                     useCase.uniLicenseSaveUseCase(uniLicenseString = licenseString)
                     viewModelScope.launch(Dispatchers.IO) {
-                       useCase.insertGeneralDataToFirebaseUseCase(
-                           collectionName = "UserInformation",
-                           firebaseGeneralData = FirebaseGeneralData(
-                               deviceId = deviceId,
-                               ipAddress = publicIpAddress
-                           )
-                       )
+                        useCase.insertGeneralDataToFirebaseUseCase(
+                            collectionName = "UserInformation",
+                            firebaseGeneralData = FirebaseGeneralData(
+                                deviceId = deviceId,
+                                ipAddress = publicIpAddress
+                            )
+                        )
                     }
                 }
                 if (result is GetDataFromRemote.Failed) {
@@ -1588,11 +1591,13 @@ class RootViewModel @Inject constructor(
                         sendSplashScreenEvent(SplashScreenEvent(UiEvent.Navigate(route = RootNavScreens.LocalRegisterScreen.route)))
                     }
                 } else {
-                    sendSplashScreenEvent(
-                        SplashScreenEvent(
-                            UiEvent.Navigate(route = RootNavScreens.UniLicenseActScreen.route)
+                    if (publicIpAddress.isNotEmpty() && publicIpAddress.isNotBlank()) {
+                        sendSplashScreenEvent(
+                            SplashScreenEvent(
+                                UiEvent.Navigate(route = RootNavScreens.UniLicenseActScreen.route)
+                            )
                         )
-                    )
+                    }
                 }
             }
         }
