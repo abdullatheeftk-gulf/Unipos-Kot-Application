@@ -6,12 +6,12 @@
         <type value="RUNNING_DEVICE_TARGET" />
         <deviceKey>
           <Key>
-            <type value="SERIAL_NUMBER" />
-            <value value="adb-RZ8MA0YMBVM-MgN3xU._adb-tls-connect._tcp" />
+            <type value="VIRTUAL_DEVICE_PATH" />
+            <value value="C:\Users\abdul\.android\avd\Pixel_4_API_33_2.avd" />
           </Key>
         </deviceKey>
       </Target>
     </runningDeviceTargetSelectedWithDropDown>
-    <timeTargetWasSelectedWithDropDown value="2022-12-09T12:52:50.643890100Z" />
+    <timeTargetWasSelectedWithDropDown value="2022-12-09T14:00:16.828285200Z" />
   </component>
 </project>

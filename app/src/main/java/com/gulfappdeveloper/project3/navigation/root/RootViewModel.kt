@@ -1,5 +1,6 @@
 package com.gulfappdeveloper.project3.navigation.root
 
+import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -35,6 +36,7 @@ import com.gulfappdeveloper.project3.usecases.UseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
@@ -45,7 +47,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
-//private const val TAG = "RootViewModel"
+private const val TAG = "RootViewModel"
 
 @HiltViewModel
 class RootViewModel @Inject constructor(
@@ -1425,10 +1427,7 @@ class RootViewModel @Inject constructor(
                     }
                 }
                 if (result is GetDataFromRemote.Failed) {
-                    /* Log.e(
-                         TAG,
-                         "getListOfPendingKOTs: url:- $url, error:- ${result.error.message} code:- ${result.error.code}",
-                     )*/
+
                     sendEditScreenEvent(UiEvent.ShowSnackBar("There have some Error:-url:- $url, error:- ${result.error.message} code:- ${result.error.code} "))
                     sendEditScreenEvent(UiEvent.ShowEmptyList)
                     useCase.insertErrorDataToFireStoreUseCase(
@@ -1499,10 +1498,7 @@ class RootViewModel @Inject constructor(
                     }
                 }
                 if (result is GetDataFromRemote.Failed) {
-                    /* Log.e(
-                         TAG,
-                         "uniLicenseActivation: ${result.error.message}, ${result.error.code}",
-                     )*/
+
                     licenseKeyActivationError.value = result.error.message ?: "Error on Activation"
                     sendUniLicenseActScreenEvent(UiEvent.ShowSnackBar(message = "code:- ${result.error.code}, error:- ${result.error.message}"))
 
@@ -1527,9 +1523,7 @@ class RootViewModel @Inject constructor(
         viewModelScope.launch {
             useCase.uniLicenseReadUseCase().collectLatest { value ->
                 // checking for saved license details
-                //Log.w(TAG, "readUniLicenseKeyDetails: $value")
                 if (value.isNotEmpty() && value.isNotBlank()) {
-                    // Log.d(TAG, "readUniLicenseKeyDetails: $value")
 
                     val licenseDetails = Json.decodeFromString<UniLicenseDetails>(value)
 
@@ -1541,19 +1535,7 @@ class RootViewModel @Inject constructor(
                         // check for license expired
                         if (!checkForLicenseExpiryDate(licenseDetails.expiryDate)) {
                             // demo license expired
-                            if (publicIpAddress.isNotEmpty() && publicIpAddress.isNotBlank()) {
-                                sendSplashScreenEvent(
-                                    SplashScreenEvent(
-                                        UiEvent.Navigate(route = RootNavScreens.UniLicenseActScreen.route)
-                                    )
-                                )
-                            } else {
-                                sendSplashScreenEvent(
-                                    SplashScreenEvent(
-                                        UiEvent.ShowSnackBar(message = "Error on reading Public Ip Address. Restart Your Application")
-                                    )
-                                )
-                            }
+                           checkForPublicIpAddressStatus()
 
                         } else {
                             // demo license not expired
@@ -1565,21 +1547,7 @@ class RootViewModel @Inject constructor(
                         sendSplashScreenEvent(SplashScreenEvent(UiEvent.Navigate(route = RootNavScreens.LocalRegisterScreen.route)))
                     }
                 } else {
-                    //Log.i(TAG, "readUniLicenseKeyDetails: $publicIpAddress")
-                    if (publicIpAddress.isNotEmpty() && publicIpAddress.isNotBlank()) {
-                        // Log.e(TAG, "readUniLicenseKeyDetails: test", )
-                        sendSplashScreenEvent(
-                            SplashScreenEvent(
-                                UiEvent.Navigate(route = RootNavScreens.UniLicenseActScreen.route)
-                            )
-                        )
-                    } else {
-                        sendSplashScreenEvent(
-                            SplashScreenEvent(
-                                UiEvent.ShowSnackBar(message = "Error on reading Public Ip Address. Restart Your Application")
-                            )
-                        )
-                    }
+                   checkForPublicIpAddressStatus()
                 }
             }
         }
@@ -1605,6 +1573,35 @@ class RootViewModel @Inject constructor(
         viewModelScope.launch {
             _uniLicenseActScreenEvent.send(UniLicenseActScreenEvent(uiEvent))
         }
+    }
+
+
+    private fun checkForPublicIpAddressStatus() {
+        viewModelScope.launch {
+            (1..60).forEach {
+                if (publicIpAddress.isNotEmpty() && publicIpAddress.isNotBlank()) {
+                    sendSplashScreenEvent(
+                        SplashScreenEvent(
+                            UiEvent.Navigate(route = RootNavScreens.UniLicenseActScreen.route)
+                        )
+                    )
+                    return@launch
+                }
+                delay(1000L)
+                if (it == 60) {
+                    Log.e(TAG, "checkForPublicIpAddressStatus: $publicIpAddress", )
+                    sendSplashScreenEvent(
+                        SplashScreenEvent(
+                            UiEvent.ShowSnackBar("There have some error on reading Public Ip address. Please restart application")
+                        )
+                    )
+                    return@launch
+                }
+            }
+
+        }
+
+
     }
 
 
