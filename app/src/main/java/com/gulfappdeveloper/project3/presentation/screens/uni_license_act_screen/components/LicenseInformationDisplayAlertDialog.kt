@@ -73,7 +73,7 @@ fun LicenseInformationDisplayAlertDialog(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Expires on",
+                        text = "Expiry Date",
                         modifier = Modifier.weight(1f),
                         textAlign = TextAlign.Start
                     )

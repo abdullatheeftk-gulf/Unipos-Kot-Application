@@ -57,6 +57,7 @@ fun SplashScreen(
                     delay(2000L)
                     navHostController.popBackStack()
                     navHostController.navigate(route = event.uiEvent.route)
+                   // Log.d(TAG, "SplashScreen: ${event.uiEvent.route}")
                 }
                 is UiEvent.ShowButton1 -> {
                     showUrlSetButton = true
@@ -100,11 +101,7 @@ fun SplashScreen(
             )
             Spacer(modifier = Modifier.height(50.dp))
             if (showProgressBar) {
-                CircularProgressIndicator(
-                    color = MaterialTheme.colors.ProgressBarColour,
-                    strokeWidth = 1.dp,
-                    modifier = Modifier.size(30.dp)
-                )
+                CircularProgressIndicator()
             }
         }
 

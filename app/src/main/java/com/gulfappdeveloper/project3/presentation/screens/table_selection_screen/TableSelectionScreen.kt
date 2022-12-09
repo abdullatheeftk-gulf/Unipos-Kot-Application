@@ -4,7 +4,6 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -20,7 +19,6 @@ import com.gulfappdeveloper.project3.domain.remote.get.dine_in.TableOrder
 import com.gulfappdeveloper.project3.navigation.root.RootViewModel
 import com.gulfappdeveloper.project3.presentation.presentation_util.UiEvent
 import com.gulfappdeveloper.project3.presentation.screens.table_selection_screen.components.*
-import com.gulfappdeveloper.project3.ui.theme.ProgressBarColour
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -77,7 +75,7 @@ fun TableSelectionScreen(
                     //navHostController.popBackStack()
                     navHostController.navigate(route = value.uiEvent.route)
                 }
-                is UiEvent.ShowAlertDialog-> {
+                is UiEvent.ShowAlertDialog -> {
                     showCompletedEditOnAndCc = true
                 }
 
@@ -113,7 +111,7 @@ fun TableSelectionScreen(
         )
     }
 
-    if (showCompletedEditOnAndCc){
+    if (showCompletedEditOnAndCc) {
         UpdatedOdAndCcDialog {
             showCompletedEditOnAndCc = false
         }
@@ -151,11 +149,7 @@ fun TableSelectionScreen(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                CircularProgressIndicator(
-                    modifier = Modifier.size(30.dp),
-                    strokeWidth = 1.dp,
-                    color = MaterialTheme.colors.ProgressBarColour
-                )
+                CircularProgressIndicator()
             }
             return@Scaffold
         }
@@ -169,7 +163,7 @@ fun TableSelectionScreen(
                 OrderView(
                     tableOrder = item,
                     rootViewModel = rootViewModel,
-                    onEditButtonClicked = {tableOrder->
+                    onEditButtonClicked = { tableOrder ->
                         selectedOrder = tableOrder
                         showEditOrderNameAndChairCountDialog = true
                     }

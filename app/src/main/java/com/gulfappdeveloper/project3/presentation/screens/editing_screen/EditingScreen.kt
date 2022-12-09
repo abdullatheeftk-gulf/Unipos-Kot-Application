@@ -124,11 +124,7 @@ fun EditingScreen(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                CircularProgressIndicator(
-                    strokeWidth = 1.dp,
-                    modifier = Modifier.size(30.dp),
-                    color = MaterialTheme.colors.ProgressBarColour
-                )
+                CircularProgressIndicator()
             }
         } else {
             if (showEmptyList) {

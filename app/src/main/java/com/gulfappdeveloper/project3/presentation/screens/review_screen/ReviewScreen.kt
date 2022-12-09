@@ -178,11 +178,7 @@ fun ReviewScreen(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
-            CircularProgressIndicator(
-                modifier = Modifier.size(30.dp),
-                strokeWidth = 1.dp,
-                color = MaterialTheme.colors.ProgressBarColour
-            )
+            CircularProgressIndicator()
         }
     }
 

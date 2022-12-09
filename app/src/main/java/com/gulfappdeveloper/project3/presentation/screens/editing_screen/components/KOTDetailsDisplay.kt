@@ -51,7 +51,7 @@ fun KOTDetailsDisplay(
             .padding(8.dp)
             .clickable {
                 navHostController.navigate(RootNavScreens.ShowKotScreen.route)
-                rootViewModel.getKOTDetails(userOrder.kotMasterId, isOrderFromEditScreen = true)
+                rootViewModel.getKOTDetails(userOrder.kotMasterId)
 
             },
         elevation = 6.dp,

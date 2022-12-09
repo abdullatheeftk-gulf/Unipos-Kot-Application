@@ -40,11 +40,7 @@ fun GridViewScreen(
             contentAlignment = Alignment.Center
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                CircularProgressIndicator(
-                    modifier = Modifier.size(30.dp),
-                    strokeWidth = 1.dp,
-                    color = MaterialTheme.colors.ProgressBarColour
-                )
+                CircularProgressIndicator()
                 Spacer(modifier = Modifier.height(20.dp))
                 Text(text = "Loading....")
             }

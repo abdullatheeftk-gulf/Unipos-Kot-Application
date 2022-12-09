@@ -1,17 +1,20 @@
 package com.gulfappdeveloper.project3.presentation.screens.home_screen
 
 import android.widget.Toast
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.gulfappdeveloper.project3.R
@@ -35,6 +38,8 @@ fun HomeScreen(
     val categoryList = rootViewModel.categoryList
 
     val context = LocalContext.current
+    
+    val uniLicenseDetails by rootViewModel.uniLicenseDetails
 
 
     val menuList = listOf(
@@ -49,6 +54,27 @@ fun HomeScreen(
 
     Scaffold(scaffoldState = scaffoldState) {
         it.calculateTopPadding()
+        if (uniLicenseDetails?.licenseType != "permanent") {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Spacer(modifier = Modifier.height(50.dp))
+                Text(
+                    text = "Demo Version",
+                    color = MaterialTheme.colors.error,
+                    fontStyle = MaterialTheme.typography.h6.fontStyle,
+                    fontSize = MaterialTheme.typography.h6.fontSize,
+                    textDecoration = TextDecoration.Underline
+                )
+                Spacer(modifier = Modifier.height(10.dp))
+                Text(text = "Ends on :- ${uniLicenseDetails?.expiryDate}")
+
+
+            }
+        }
+        
+        
 
         LazyVerticalGrid(
             columns = GridCells.Fixed(count = 2),

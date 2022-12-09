@@ -87,8 +87,8 @@ class RootViewModel @Inject constructor(
 
 
     // Operation count application
-    var operationCount = mutableStateOf(0)
-        private set
+    private var operationCount = mutableStateOf(0)
+
 
     // Base Url
     var baseUrl = mutableStateOf(HttpRoutes.BASE_URL)
@@ -127,8 +127,8 @@ class RootViewModel @Inject constructor(
     var selectedTable: MutableState<Table?> = mutableStateOf(null)
         private set
 
-    var newTableOrder: MutableState<TableOrder?> = mutableStateOf(null)
-        private set
+    private var newTableOrder: MutableState<TableOrder?> = mutableStateOf(null)
+
 
     val tableOrderList = mutableStateListOf<TableOrder>()
 
@@ -148,20 +148,17 @@ class RootViewModel @Inject constructor(
     var kotNotes = mutableStateOf("")
         private set
 
-    var fKUserId = mutableStateOf(0)
-        private set
+    private var fKUserId = mutableStateOf(0)
 
-    var serialNo = mutableStateOf(0)
-        private set
 
-    var orderName = mutableStateOf("")
-        private set
+    private var serialNo = mutableStateOf(0)
+
+    private var orderName = mutableStateOf("")
 
     var tableId = mutableStateOf(0)
         private set
 
-    var chairCount = mutableStateOf(0)
-        private set
+    private var chairCount = mutableStateOf(0)
 
 
     // For editing only
@@ -238,17 +235,7 @@ class RootViewModel @Inject constructor(
 
         } catch (e: Exception) {
             //Log.e(TAG, "setInitialLoadingIsFinished:${e.message} ")
-            viewModelScope.launch(Dispatchers.IO) {
-                useCase.insertErrorDataToFireStoreUseCase(
-                    collectionName = collectionName,
-                    documentName = "setIsInitialLoadingIsNotFinished,${Date()}",
-                    errorData = FirebaseError(
-                        errorMessage = e.message ?: "",
-                        ipAddress = publicIpAddress
-                    ),
-                )
-            }
-
+            e.printStackTrace()
         }
 
         //Log.w(TAG, "setIsInitialLoadingIsNotFinished: $isInitialLoadingFinished", )
@@ -265,7 +252,7 @@ class RootViewModel @Inject constructor(
         // Log.i(TAG, "readOperationCount: ")
         viewModelScope.launch {
             useCase.readOperationCountUseCase().collect {
-                Log.d(TAG, "readOperationCount: $it")
+                // Log.d(TAG, "readOperationCount: $it")
                 operationCount.value = it
             }
         }
@@ -282,7 +269,7 @@ class RootViewModel @Inject constructor(
         }
     }
 
-    fun readIpAddress() {
+    private fun readIpAddress() {
         viewModelScope.launch {
             useCase.readIpAddressUseCase().collectLatest { ip ->
                 ipAddress.value = ip
@@ -290,7 +277,7 @@ class RootViewModel @Inject constructor(
         }
     }
 
-    fun readPortAddress() {
+    private fun readPortAddress() {
         viewModelScope.launch {
             useCase.readPortAddressUseCase().collectLatest { value ->
                 port.value = value
@@ -306,7 +293,7 @@ class RootViewModel @Inject constructor(
                 baseUrl.value = it
                 // Log.w(TAG, "readBaseUrl: $it $isInitialLoadingFinished")
                 if (!isInitialLoadingFinished) {
-                    Log.i(TAG, "readBaseUrl: $it")
+                    //Log.i(TAG, "readBaseUrl: $it")
                     getWelcomeMessage()
                     getCategoryList()
                     getProductList(value = 0)
@@ -331,7 +318,7 @@ class RootViewModel @Inject constructor(
                         //  Log.w(TAG, "getWelcomeMessage: ${result.data}")
                         message.value = result.data.message
                         readUniLicenseKeyDetails()
-                        navigateToNextScreenWithDelayForSplashScreen(route = RootNavScreens.LocalRegisterScreen.route)
+                        //navigateToNextScreenWithDelayForSplashScreen(route = RootNavScreens.LocalRegisterScreen.route)
                         // isInitialLoadingFinished = true
                     }
                     if (result is GetDataFromRemote.Failed) {
@@ -450,17 +437,7 @@ class RootViewModel @Inject constructor(
             }
             selectedCategory.value = value
         } catch (e: Exception) {
-            viewModelScope.launch(Dispatchers.IO) {
-                useCase.insertErrorDataToFireStoreUseCase(
-                    collectionName = collectionName,
-                    documentName = "getProductList,${Date()}",
-                    errorData = FirebaseError(
-                        errorMessage = e.message ?: "",
-                        ipAddress = publicIpAddress
-                    )
-                )
-            }
-            // Log.e(TAG, "getProductList: ${e.message}")
+            Log.e(TAG, "getProductList: ${e.message}")
         }
 
 
@@ -478,7 +455,7 @@ class RootViewModel @Inject constructor(
                     }
                     selectedCategory.value = value
                 } catch (e: Exception) {
-                    // Log.e(TAG, "getProductList: ${e.message}")
+                    Log.e(TAG, "getProductList: ${e.message}")
                 }
 
 
@@ -501,7 +478,7 @@ class RootViewModel @Inject constructor(
                         errorData = FirebaseError(
                             errorMessage = result.error.message ?: "",
                             errorCode = result.error.code,
-                            url = baseUrl.value + baseUrl.value + HttpRoutes.PRODUCT_LIST,
+                            url = url,
                             ipAddress = publicIpAddress
                         )
                     )
@@ -734,7 +711,7 @@ class RootViewModel @Inject constructor(
                 if (result is GetDataFromRemote.Success) {
 
                     result.data.forEach {
-                        chairs += it.chairCount?:0
+                        chairs += it.chairCount ?: 0
                     }
                     showNewTableOrderAddButton.value = selectedTable.value?.noOfSeats!! > chairs
 
@@ -970,7 +947,7 @@ class RootViewModel @Inject constructor(
     }
 
     fun onEditTableOrderSet(kotMasterId: Int) {
-        getKOTDetails(kotNumber = kotMasterId, isOrderFromEditScreen = false)
+        getKOTDetails(kotNumber = kotMasterId)
         sendTableSelectionUiEvent(
             TableSelectionUiEvent(
                 UiEvent.Navigate(
@@ -1047,7 +1024,7 @@ class RootViewModel @Inject constructor(
                         documentName = "generateKot,${Date()}",
                         errorData = FirebaseError(
                             errorCode = statusCode,
-                            errorMessage = message,
+                            errorMessage = "$message, kot:- $kot",
                             url = url,
                             ipAddress = publicIpAddress
                         )
@@ -1105,7 +1082,7 @@ class RootViewModel @Inject constructor(
                         documentName = "editKot,${Date()}",
                         errorData = FirebaseError(
                             errorCode = statusCode,
-                            errorMessage = statusMessage,
+                            errorMessage = "$statusMessage, kot:- $kot",
                             url = url,
                             ipAddress = publicIpAddress
                         )
@@ -1164,7 +1141,7 @@ class RootViewModel @Inject constructor(
                         documentName = "editOrderNameAndChairCount,${Date()}",
                         errorData = FirebaseError(
                             errorCode = statusCode,
-                            errorMessage = statusMessage,
+                            errorMessage = statusMessage + "kot basic:- $editKOTBasic",
                             url = url,
                             ipAddress = publicIpAddress
                         )
@@ -1180,7 +1157,7 @@ class RootViewModel @Inject constructor(
 
 
     // Get KOT
-    fun getKOTDetails(kotNumber: Int, isOrderFromEditScreen: Boolean) {
+    fun getKOTDetails(kotNumber: Int) {
         try {
             kotItemList.removeAll {
                 true
@@ -1284,10 +1261,10 @@ class RootViewModel @Inject constructor(
                         sendShowKotUiEvent(UiEvent.ShowSnackBar("There have some Error with message : $statusMessage"))
                         useCase.insertErrorDataToFireStoreUseCase(
                             collectionName = collectionName,
-                            documentName = "getKOTDetails,${Date()}",
+                            documentName = "deleteKot,${Date()}",
                             errorData = FirebaseError(
                                 errorCode = statusCode,
-                                errorMessage = statusMessage ?: "",
+                                errorMessage = statusMessage,
                                 url = baseUrl.value + HttpRoutes.EDIT_KOT + kotMasterId.value,
                                 ipAddress = publicIpAddress
                             )
@@ -1304,12 +1281,12 @@ class RootViewModel @Inject constructor(
         sendProductDisplayEvent(ProductDisplayScreenEvent(UiEvent.ShowSnackBar(message)))
     }
 
-    private fun navigateToNextScreenWithDelayForSplashScreen(route: String) {
+    /*private fun navigateToNextScreenWithDelayForSplashScreen(route: String) {
         viewModelScope.launch {
             delay(2000)
             sendSplashScreenEvent(SplashScreenEvent(UiEvent.Navigate(route = route)))
         }
-    }
+    }*/
 
     private fun sendSplashScreenEvent(splashScreenEvent: SplashScreenEvent) {
         viewModelScope.launch {
@@ -1335,9 +1312,7 @@ class RootViewModel @Inject constructor(
         }
     }
 
-    /*fun filledTableClicked() {
-        sendDineInScreenEvent(DineInScreenEvent(UiEvent.ShowSnackBar("This Table is full")))
-    }*/
+
 
     private fun sendTableSelectionUiEvent(tableSelectionUiEvent: TableSelectionUiEvent) {
         viewModelScope.launch {
@@ -1468,7 +1443,7 @@ class RootViewModel @Inject constructor(
                     sendEditScreenEvent(UiEvent.ShowEmptyList)
                     useCase.insertErrorDataToFireStoreUseCase(
                         collectionName = collectionName,
-                        documentName = "getKOTDetails,${Date()}",
+                        documentName = "getListOfPendingKOTs,${Date()}",
                         errorData = FirebaseError(
                             errorCode = result.error.code,
                             errorMessage = result.error.message ?: "",
@@ -1562,8 +1537,9 @@ class RootViewModel @Inject constructor(
         viewModelScope.launch {
             useCase.uniLicenseReadUseCase().collectLatest { value ->
                 // checking for saved license details
-                Log.w(TAG, "readUniLicenseKeyDetails: $value")
+                //Log.w(TAG, "readUniLicenseKeyDetails: $value")
                 if (value.isNotEmpty() && value.isNotBlank()) {
+                   // Log.d(TAG, "readUniLicenseKeyDetails: $value")
 
                     val licenseDetails = Json.decodeFromString<UniLicenseDetails>(value)
 
@@ -1591,7 +1567,9 @@ class RootViewModel @Inject constructor(
                         sendSplashScreenEvent(SplashScreenEvent(UiEvent.Navigate(route = RootNavScreens.LocalRegisterScreen.route)))
                     }
                 } else {
+                    //Log.i(TAG, "readUniLicenseKeyDetails: $publicIpAddress")
                     if (publicIpAddress.isNotEmpty() && publicIpAddress.isNotBlank()) {
+                       // Log.e(TAG, "readUniLicenseKeyDetails: test", )
                         sendSplashScreenEvent(
                             SplashScreenEvent(
                                 UiEvent.Navigate(route = RootNavScreens.UniLicenseActScreen.route)

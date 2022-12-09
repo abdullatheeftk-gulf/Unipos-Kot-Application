@@ -121,11 +121,7 @@ fun ShowKOTScreen(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                CircularProgressIndicator(
-                    strokeWidth = 1.dp,
-                    color = MaterialTheme.colors.ProgressBarColour,
-                    modifier = Modifier.size(30.dp)
-                )
+                CircularProgressIndicator()
             }
         }
         Row(modifier = Modifier.fillMaxWidth()) {

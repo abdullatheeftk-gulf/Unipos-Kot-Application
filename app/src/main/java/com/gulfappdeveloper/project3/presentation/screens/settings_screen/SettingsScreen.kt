@@ -235,7 +235,7 @@ fun SettingsScreen(
                 rootViewModel.readIpAddress()
             }) {
                Text(text = "Save Printer Address")
-            }
+            }*/
         }
 
         if (showProgressBar){
@@ -243,11 +243,8 @@ fun SettingsScreen(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ){
-                CircularProgressIndicator(
-                    strokeWidth = 1.dp,
-                    color = MaterialTheme.colors.ProgressBarColour,
-                )
-            }*/
+                CircularProgressIndicator()
+            }
         }
 
     }

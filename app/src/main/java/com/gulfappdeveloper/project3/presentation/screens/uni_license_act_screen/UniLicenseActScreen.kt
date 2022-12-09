@@ -194,10 +194,7 @@ fun UniLicenseActScreen(
                 verticalArrangement = Arrangement.Bottom,
                 modifier = Modifier.fillMaxSize()
             ) {
-                CircularProgressIndicator(
-                    modifier = Modifier.size(30.dp),
-                    color = MaterialTheme.colors.ProgressBarColour
-                )
+                CircularProgressIndicator()
                 Spacer(modifier = Modifier.height(20.dp))
             }
         }
