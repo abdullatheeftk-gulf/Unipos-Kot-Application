@@ -16,7 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.gulfappdeveloper.project3.domain.remote.get.TableOrder
+import com.gulfappdeveloper.project3.domain.remote.get.dine_in.TableOrder
 import com.gulfappdeveloper.project3.navigation.root.RootViewModel
 import com.gulfappdeveloper.project3.presentation.presentation_util.UiEvent
 import com.gulfappdeveloper.project3.presentation.screens.table_selection_screen.components.*
@@ -34,7 +34,7 @@ fun TableSelectionScreen(
 
     val selectedTable by rootViewModel.selectedTable
 
-    var selectedOrder:TableOrder? by remember {
+    var selectedOrder: TableOrder? by remember {
         mutableStateOf(null)
     }
     val tableOrderList = rootViewModel.tableOrderList

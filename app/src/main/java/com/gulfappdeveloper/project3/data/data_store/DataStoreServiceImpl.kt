@@ -21,6 +21,7 @@ class DataStoreServiceImpl(context: Context) : DataStoreService {
         val serialNoKey = intPreferencesKey(name = DataStoreConstants.SERIAL_NO_KEY)
         val ipAddressKey = stringPreferencesKey(name = DataStoreConstants.IP_ADDRESS_KEY)
         val portAddressKey = stringPreferencesKey(name = DataStoreConstants.PORT_KEY)
+        val uniLicenseKey = stringPreferencesKey(name = DataStoreConstants.UNI_LICENSE_SAVE_KEY)
     }
 
     private val dataStore = context.dataStore
@@ -45,17 +46,18 @@ class DataStoreServiceImpl(context: Context) : DataStoreService {
         }
     }
 
-    override suspend fun saveIpAddress(ipAddress:String) {
-        dataStore.edit { preference->
+    override suspend fun saveIpAddress(ipAddress: String) {
+        dataStore.edit { preference ->
             preference[PreferenceKeys.ipAddressKey] = ipAddress
         }
     }
 
-    override suspend fun savePortAddress(portAddress:String) {
-        dataStore.edit { preference->
+    override suspend fun savePortAddress(portAddress: String) {
+        dataStore.edit { preference ->
             preference[PreferenceKeys.portAddressKey] = portAddress
         }
     }
+
 
     override fun readOperationCount(): Flow<Int> {
         return dataStore.data
@@ -109,7 +111,7 @@ class DataStoreServiceImpl(context: Context) : DataStoreService {
             }
             .map { preferences ->
                 val ipAddress = preferences[PreferenceKeys.ipAddressKey] ?: ""
-               ipAddress
+                ipAddress
             }
     }
 
@@ -123,6 +125,27 @@ class DataStoreServiceImpl(context: Context) : DataStoreService {
             }
             .map { preferences ->
                 val portAddress = preferences[PreferenceKeys.portAddressKey] ?: ""
+                portAddress
+            }
+    }
+
+
+    override suspend fun saveUniLicenseData(uniLicenseString: String) {
+        dataStore.edit { preference ->
+            preference[PreferenceKeys.uniLicenseKey] = uniLicenseString
+        }
+    }
+
+    override fun readUniLicenseData(): Flow<String> {
+        return dataStore.data
+            .catch { exception ->
+                if (exception is IOException)
+                    emit(emptyPreferences())
+                else
+                    throw exception
+            }
+            .map { preferences ->
+                val portAddress = preferences[PreferenceKeys.uniLicenseKey] ?: ""
                 portAddress
             }
     }

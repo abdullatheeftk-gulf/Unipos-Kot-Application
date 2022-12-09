@@ -8,6 +8,7 @@ interface DataStoreService {
     suspend fun updateSerialNo()
     suspend fun saveIpAddress(ipAddress:String)
     suspend fun savePortAddress(portAddress:String)
+    suspend fun saveUniLicenseData(uniLicenseString: String)
 
 
     fun readOperationCount(): Flow<Int>
@@ -15,6 +16,7 @@ interface DataStoreService {
     fun readSerialNo():Flow<Int>
     fun readIpaddress():Flow<String>
     fun readPortAddress():Flow<String>
+    fun readUniLicenseData():Flow<String>
 
 
 }

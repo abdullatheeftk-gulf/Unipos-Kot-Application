@@ -41,7 +41,7 @@ fun SplashScreen(
         mutableStateOf(false)
     }
 
-    Log.d(TAG, "SplashScreen: ")
+    //Log.d(TAG, "SplashScreen: ")
 
     LaunchedEffect(key1 = true) {
         rootViewModel.splashScreenEvent.collectLatest { event ->
@@ -77,9 +77,10 @@ fun SplashScreen(
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
+            verticalArrangement = Arrangement.Top,
             modifier = Modifier.fillMaxSize()
         ) {
+            Spacer(modifier = Modifier.height(150.dp))
             Image(
                 painter = painterResource(id = R.drawable.manthy),
                 contentDescription = null,

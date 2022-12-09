@@ -1,4 +1,4 @@
-package com.gulfappdeveloper.project3.domain.remote.get
+package com.gulfappdeveloper.project3.domain.remote.get.dine_in
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

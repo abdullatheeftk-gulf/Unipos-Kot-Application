@@ -1,15 +1,18 @@
 package com.gulfappdeveloper.project3.repositories
 
 import com.gulfappdeveloper.project3.domain.remote.get.GetDataFromRemote
-import com.gulfappdeveloper.project3.domain.remote.get.TableOrder
+import com.gulfappdeveloper.project3.domain.remote.get.dine_in.TableOrder
 import com.gulfappdeveloper.project3.domain.remote.get.dine_in.Section
 import com.gulfappdeveloper.project3.domain.remote.get.dine_in.Table
+import com.gulfappdeveloper.project3.domain.remote.get.kot_cancel_privilege_checker.KotCancelPrivilege
 import com.gulfappdeveloper.project3.domain.remote.get.kot_list.UserOrder
 import com.gulfappdeveloper.project3.domain.remote.get.login.User
 import com.gulfappdeveloper.project3.domain.remote.get.product.Category
 import com.gulfappdeveloper.project3.domain.remote.get.product.MultiSizeProduct
 import com.gulfappdeveloper.project3.domain.remote.get.product.Product
 import com.gulfappdeveloper.project3.domain.remote.get.welcome.WelcomeMessage
+import com.gulfappdeveloper.project3.domain.remote.license.LicenseRequestBody
+import com.gulfappdeveloper.project3.domain.remote.license.LicenseResponse
 import com.gulfappdeveloper.project3.domain.remote.post.Kot
 import com.gulfappdeveloper.project3.domain.remote.put.EditKOTBasic
 import com.gulfappdeveloper.project3.domain.services.ApiService
@@ -30,6 +33,10 @@ class RemoteRepository @Inject constructor(
 
     suspend fun registerUser(url: String): Flow<GetDataFromRemote<User>> {
         return apiService.registerUser(url = url)
+    }
+
+    suspend fun getKotCancelPrivilege(url: String): Flow<GetDataFromRemote<KotCancelPrivilege>> {
+        return apiService.getKotCancelPrivilege(url = url)
     }
 
     suspend fun getCategory(url: String): Flow<GetDataFromRemote<List<Category>>> {
@@ -92,6 +99,18 @@ class RemoteRepository @Inject constructor(
         callBack: suspend (Int, String) -> Unit
     ) {
         apiService.deleteKOT(url = url, callBack = callBack)
+    }
+
+    suspend fun uniLicenseActivation(
+        rioLabKey: String,
+        url: String,
+        licenseRequestBody: LicenseRequestBody
+    ): Flow<GetDataFromRemote<LicenseResponse>> {
+        return apiService.uniLicenseActivation(
+            rioLabKey = rioLabKey,
+            url = url,
+            licenseRequestBody = licenseRequestBody
+        )
     }
 
 

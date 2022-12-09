@@ -9,4 +9,6 @@ object DataStoreConstants {
 
     const val IP_ADDRESS_KEY = "ip_address_key"
     const val PORT_KEY = "port_key"
+
+    const val UNI_LICENSE_SAVE_KEY = "uni_license_key"
 }

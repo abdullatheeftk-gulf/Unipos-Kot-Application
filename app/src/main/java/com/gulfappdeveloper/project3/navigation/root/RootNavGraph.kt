@@ -16,6 +16,7 @@ import com.gulfappdeveloper.project3.presentation.screens.settings_screen.Settin
 import com.gulfappdeveloper.project3.presentation.screens.show_kot_screen.ShowKOTScreen
 import com.gulfappdeveloper.project3.presentation.screens.splash_screen.SplashScreen
 import com.gulfappdeveloper.project3.presentation.screens.table_selection_screen.TableSelectionScreen
+import com.gulfappdeveloper.project3.presentation.screens.uni_license_act_screen.UniLicenseActScreen
 import com.gulfappdeveloper.project3.presentation.screens.url_set_screen.SetBaseUrlScreen
 
 @Composable
@@ -25,8 +26,10 @@ fun RootNavGraph(
     hideKeyboard: () -> Unit,
     onScanButtonClicked: () -> Unit,
     changeStatusBarColor: (Int) -> Unit,
-    navHostController: NavHostController
+    navHostController: NavHostController,
+    publicIpAddress: String
 ) {
+    rootViewModel.setPublicIpAddress(publicIpAddress = publicIpAddress)
 
     NavHost(
         navController = navHostController,
@@ -46,6 +49,15 @@ fun RootNavGraph(
                 rootViewModel = rootViewModel,
                 navHostController = navHostController,
                 hideKeyboard = hideKeyboard
+            )
+        }
+        composable(route = RootNavScreens.UniLicenseActScreen.route) {
+            changeStatusBarColor(R.color.my_prime_color)
+            UniLicenseActScreen(
+                rootViewModel = rootViewModel,
+                deviceId = deviceId,
+                hideKeyboard = hideKeyboard,
+                navHostController = navHostController
             )
         }
         composable(route = RootNavScreens.LocalRegisterScreen.route) {
@@ -121,7 +133,7 @@ fun RootNavGraph(
             )
         }
 
-        composable(route=RootNavScreens.ShowKotScreen.route){
+        composable(route = RootNavScreens.ShowKotScreen.route) {
             changeStatusBarColor(R.color.my_prime_color)
             ShowKOTScreen(
                 rootViewModel = rootViewModel,

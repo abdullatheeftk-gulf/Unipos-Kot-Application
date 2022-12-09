@@ -1,5 +1,7 @@
 package com.gulfappdeveloper.project3.presentation.presentation_util
 
+import com.gulfappdeveloper.project3.domain.datastore.UniLicenseDetails
+
 sealed class UiEvent {
     object ShowProgressBar : UiEvent()
     object CloseProgressBar : UiEvent()
@@ -12,5 +14,6 @@ sealed class UiEvent {
     object ShowEmptyList : UiEvent()
     object ShowList : UiEvent()
     object HideKeyboard : UiEvent()
+    data class ShowUniLicenseAlertDialog(val licenseDetails: UniLicenseDetails) :UiEvent()
 
 }

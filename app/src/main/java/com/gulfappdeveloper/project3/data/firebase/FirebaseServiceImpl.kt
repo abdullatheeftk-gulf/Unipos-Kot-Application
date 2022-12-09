@@ -3,7 +3,9 @@ package com.gulfappdeveloper.project3.data.firebase
 import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.gulfappdeveloper.project3.domain.firebase.FirebaseError
+import com.gulfappdeveloper.project3.domain.firebase.FirebaseGeneralData
 import com.gulfappdeveloper.project3.domain.services.FirebaseService
+import java.util.Date
 
 private const val TAG = "FirebaseServiceImpl"
 class FirebaseServiceImpl(
@@ -31,7 +33,11 @@ class FirebaseServiceImpl(
 
     }
 
-    override suspend fun insertGeneralData(collectionName: String) {
-
+    override suspend fun insertGeneralData(collectionName: String,firebaseGeneralData: FirebaseGeneralData) {
+        try {
+            fdb.collection(collectionName).document(Date().toString()).set(firebaseGeneralData)
+        }catch (e:Exception){
+            e.printStackTrace()
+        }
     }
 }

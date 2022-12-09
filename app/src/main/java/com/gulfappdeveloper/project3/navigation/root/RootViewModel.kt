@@ -7,15 +7,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gulfappdeveloper.project3.data.remote.HttpRoutes
+import com.gulfappdeveloper.project3.domain.datastore.UniLicenseDetails
 import com.gulfappdeveloper.project3.domain.firebase.FirebaseError
+import com.gulfappdeveloper.project3.domain.firebase.FirebaseGeneralData
 import com.gulfappdeveloper.project3.domain.remote.get.GetDataFromRemote
-import com.gulfappdeveloper.project3.domain.remote.get.TableOrder
 import com.gulfappdeveloper.project3.domain.remote.get.dine_in.Section
 import com.gulfappdeveloper.project3.domain.remote.get.dine_in.Table
+import com.gulfappdeveloper.project3.domain.remote.get.dine_in.TableOrder
 import com.gulfappdeveloper.project3.domain.remote.get.kot_list.UserOrder
 import com.gulfappdeveloper.project3.domain.remote.get.product.Category
 import com.gulfappdeveloper.project3.domain.remote.get.product.MultiSizeProduct
 import com.gulfappdeveloper.project3.domain.remote.get.product.Product
+import com.gulfappdeveloper.project3.domain.remote.license.LicenseRequestBody
 import com.gulfappdeveloper.project3.domain.remote.post.Kot
 import com.gulfappdeveloper.project3.domain.remote.post.KotItem
 import com.gulfappdeveloper.project3.domain.remote.put.EditKOTBasic
@@ -28,6 +31,7 @@ import com.gulfappdeveloper.project3.presentation.screens.review_screen.util.Rev
 import com.gulfappdeveloper.project3.presentation.screens.show_kot_screen.util.ShowKotScreenUiEvent
 import com.gulfappdeveloper.project3.presentation.screens.splash_screen.util.SplashScreenEvent
 import com.gulfappdeveloper.project3.presentation.screens.table_selection_screen.TableSelectionUiEvent
+import com.gulfappdeveloper.project3.presentation.screens.uni_license_act_screen.util.UniLicenseActScreenEvent
 import com.gulfappdeveloper.project3.usecases.UseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -36,6 +40,10 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
@@ -52,6 +60,9 @@ class RootViewModel @Inject constructor(
 
     private val _splashScreenEvent = Channel<SplashScreenEvent>()
     val splashScreenEvent = _splashScreenEvent.receiveAsFlow()
+
+    private val _uniLicenseActScreenEvent = Channel<UniLicenseActScreenEvent>()
+    val uniLicenseActScreenEvent = _uniLicenseActScreenEvent.receiveAsFlow()
 
     private val _productDisplayEvent = Channel<ProductDisplayScreenEvent>()
     val productDisplayScreenEvent = _productDisplayEvent.receiveAsFlow()
@@ -174,6 +185,20 @@ class RootViewModel @Inject constructor(
     //firebase
     private val collectionName = "ErrorDataDev"
 
+    // public ip address
+    private var publicIpAddress = ""
+
+    // Unipos License activation
+
+    var licenseKeyActivationError = mutableStateOf("")
+        private set
+
+    /*var licenseDetailsString = mutableStateOf("")
+        private set*/
+
+    var uniLicenseDetails: MutableState<UniLicenseDetails?> = mutableStateOf(null)
+        private set
+
 
     init {
 
@@ -185,6 +210,10 @@ class RootViewModel @Inject constructor(
         readIpAddress()
         readPortAddress()
 
+    }
+
+    fun setPublicIpAddress(publicIpAddress: String) {
+        this.publicIpAddress = publicIpAddress
     }
 
     fun setIsInitialLoadingIsNotFinished() {
@@ -215,7 +244,7 @@ class RootViewModel @Inject constructor(
                     documentName = "setIsInitialLoadingIsNotFinished,${Date()}",
                     errorData = FirebaseError(
                         errorMessage = e.message ?: "",
-                        ipAddress = ""
+                        ipAddress = publicIpAddress
                     ),
                 )
             }
@@ -290,6 +319,7 @@ class RootViewModel @Inject constructor(
         }
     }
 
+
     // Product display
     private fun getWelcomeMessage() {
         //  Log.d(TAG, "getWelcomeMessage: ")
@@ -300,6 +330,7 @@ class RootViewModel @Inject constructor(
                     if (result is GetDataFromRemote.Success) {
                         //  Log.w(TAG, "getWelcomeMessage: ${result.data}")
                         message.value = result.data.message
+                        readUniLicenseKeyDetails()
                         navigateToNextScreenWithDelayForSplashScreen(route = RootNavScreens.LocalRegisterScreen.route)
                         // isInitialLoadingFinished = true
                     }
@@ -359,7 +390,7 @@ class RootViewModel @Inject constructor(
                                 errorMessage = result.error.message ?: "",
                                 errorCode = result.error.code,
                                 url = baseUrl.value + HttpRoutes.WELCOME_MESSAGE,
-                                ipAddress = ""
+                                ipAddress = publicIpAddress
                             )
                         )
                     }
@@ -367,6 +398,8 @@ class RootViewModel @Inject constructor(
         }
     }
 
+
+    // get category list
     private fun getCategoryList() {
         viewModelScope.launch {
             useCase.getCategoryListUseCase(url = baseUrl.value + HttpRoutes.CATEGORY_LIST)
@@ -391,7 +424,7 @@ class RootViewModel @Inject constructor(
                                 errorMessage = result.error.message ?: "",
                                 errorCode = result.error.code,
                                 url = baseUrl.value + baseUrl.value + HttpRoutes.CATEGORY_LIST,
-                                ipAddress = ""
+                                ipAddress = publicIpAddress
                             )
                         )
 
@@ -423,7 +456,7 @@ class RootViewModel @Inject constructor(
                     documentName = "getProductList,${Date()}",
                     errorData = FirebaseError(
                         errorMessage = e.message ?: "",
-                        ipAddress = ""
+                        ipAddress = publicIpAddress
                     )
                 )
             }
@@ -469,7 +502,7 @@ class RootViewModel @Inject constructor(
                             errorMessage = result.error.message ?: "",
                             errorCode = result.error.code,
                             url = baseUrl.value + baseUrl.value + HttpRoutes.PRODUCT_LIST,
-                            ipAddress = ""
+                            ipAddress = publicIpAddress
                         )
                     )
                 }
@@ -488,13 +521,13 @@ class RootViewModel @Inject constructor(
 
         val url = baseUrl.value + HttpRoutes.MULTI_SIZE_PRODUCT + id
         viewModelScope.launch(Dispatchers.IO) {
-            useCase.getMultiSizeProduct(url = url).collectLatest {result->
+            useCase.getMultiSizeProduct(url = url).collectLatest { result ->
                 if (result is GetDataFromRemote.Success) {
-                   // Log.w(TAG, "getMultiSizeProduct: $url ${it.data}")
+                    // Log.w(TAG, "getMultiSizeProduct: $url ${it.data}")
                     multiSizeProductList.addAll(result.data)
                 }
                 if (result is GetDataFromRemote.Failed) {
-                   // Log.e(TAG, "getMultiSizeProduct: ${it.error}")
+                    // Log.e(TAG, "getMultiSizeProduct: ${it.error}")
                     useCase.insertErrorDataToFireStoreUseCase(
                         collectionName = collectionName,
                         documentName = "getMultiSizeProduct,${Date()}",
@@ -502,7 +535,7 @@ class RootViewModel @Inject constructor(
                             errorMessage = result.error.message ?: "",
                             errorCode = result.error.code,
                             url = baseUrl.value + HttpRoutes.MULTI_SIZE_PRODUCT + id,
-                            ipAddress = ""
+                            ipAddress = publicIpAddress
                         )
                     )
                 }
@@ -558,7 +591,7 @@ class RootViewModel @Inject constructor(
                             errorMessage = result.error.message ?: "",
                             errorCode = result.error.code,
                             url = baseUrl.value + HttpRoutes.PRODUCT_SEARCH + productSearchText.value,
-                            ipAddress = ""
+                            ipAddress = publicIpAddress
                         )
                     )
                 }
@@ -602,7 +635,7 @@ class RootViewModel @Inject constructor(
                             errorMessage = result.error.message ?: "",
                             errorCode = result.error.code,
                             url = baseUrl.value + HttpRoutes.SECTION_LIST,
-                            ipAddress = ""
+                            ipAddress = publicIpAddress
                         )
                     )
                 }
@@ -657,7 +690,7 @@ class RootViewModel @Inject constructor(
                 }
                 if (result is GetDataFromRemote.Failed) {
                     sendDineInScreenEvent(DineInScreenEvent(UiEvent.ShowEmptyList))
-                   // Log.e(TAG, "getTableList: ${result.error.message} $url")
+                    // Log.e(TAG, "getTableList: ${result.error.message} $url")
                     useCase.insertErrorDataToFireStoreUseCase(
                         collectionName = collectionName,
                         documentName = "getTableList,${Date()}",
@@ -665,7 +698,7 @@ class RootViewModel @Inject constructor(
                             errorMessage = result.error.message ?: "",
                             errorCode = result.error.code,
                             url = url,
-                            ipAddress = ""
+                            ipAddress = publicIpAddress
                         )
                     )
                 }
@@ -705,9 +738,9 @@ class RootViewModel @Inject constructor(
                     }
                     showNewTableOrderAddButton.value = selectedTable.value?.noOfSeats!! > chairs
 
-                   // Log.d(TAG, "getTableOrderList: ${showNewTableOrderAddButton.value}")
-                  //  Log.e(TAG, "getTableOrderList: ${selectedTable.value}")
-                  //  Log.i(TAG, "getTableOrderList: $chairs")
+                    // Log.d(TAG, "getTableOrderList: ${showNewTableOrderAddButton.value}")
+                    //  Log.e(TAG, "getTableOrderList: ${selectedTable.value}")
+                    //  Log.i(TAG, "getTableOrderList: $chairs")
                     tableOrderList.addAll(result.data)
                 }
                 if (result is GetDataFromRemote.Failed) {
@@ -719,7 +752,7 @@ class RootViewModel @Inject constructor(
                             errorMessage = result.error.message ?: "",
                             errorCode = result.error.code,
                             url = baseUrl.value + HttpRoutes.TABLE_ORDER + id,
-                            ipAddress = ""
+                            ipAddress = publicIpAddress
                         )
                     )
                     //  Log.e(TAG, "getTableOrderList: ${result.error}")
@@ -805,7 +838,7 @@ class RootViewModel @Inject constructor(
                                 errorCode = result.error.code,
                                 errorMessage = result.error.message!!,
                                 url = "${baseUrl.value}${HttpRoutes.LOGIN}${password}",
-                                ipAddress = ""
+                                ipAddress = publicIpAddress
                             )
                         )
                     }
@@ -985,7 +1018,7 @@ class RootViewModel @Inject constructor(
                             errorCode = statusCode,
                             errorMessage = message,
                             url = url,
-                            ipAddress = ""
+                            ipAddress = publicIpAddress
                         )
                     )
                 }
@@ -1043,7 +1076,7 @@ class RootViewModel @Inject constructor(
                             errorCode = statusCode,
                             errorMessage = statusMessage,
                             url = url,
-                            ipAddress = ""
+                            ipAddress = publicIpAddress
                         )
                     )
                     sendReviewScreenEvent(ReviewScreenEvent(UiEvent.ShowSnackBar(message = "There have some error :- $statusMessage")))
@@ -1102,12 +1135,12 @@ class RootViewModel @Inject constructor(
                             errorCode = statusCode,
                             errorMessage = statusMessage,
                             url = url,
-                            ipAddress = ""
+                            ipAddress = publicIpAddress
                         )
                     )
-                  //  Log.e(TAG, "editOrderNameAndChairCount: $statusCode $statusMessage")
-                  //  Log.w(TAG, "editOrderNameAndChairCount: $url")
-                   // Log.d(TAG, "editOrderNameAndChairCount: $editKOTBasic")
+                    //  Log.e(TAG, "editOrderNameAndChairCount: $statusCode $statusMessage")
+                    //  Log.w(TAG, "editOrderNameAndChairCount: $url")
+                    // Log.d(TAG, "editOrderNameAndChairCount: $editKOTBasic")
                 }
             }
         }
@@ -1161,8 +1194,8 @@ class RootViewModel @Inject constructor(
                         } catch (e: Exception) {
                             Log.e(TAG, "getKOTDetails: ${e.message}")
                         }
-                       // Log.e(TAG, "getKOTDetails: ${chairCount.value}")
-                       // Log.d(TAG, "getKOTDetails: ${orderName.value}")
+                        // Log.e(TAG, "getKOTDetails: ${chairCount.value}")
+                        // Log.d(TAG, "getKOTDetails: ${orderName.value}")
 
                         kotMasterId.value = value.kotMasterId
                         tableId.value = value.tableId
@@ -1175,9 +1208,9 @@ class RootViewModel @Inject constructor(
                         orderName.value = orderName.value.ifEmpty {
                             value.orderName ?: ""
                         }
-                       /* Log.w(TAG, "getKOTDetails: ---------------")
-                        Log.e(TAG, "getKOTDetails: ${chairCount.value}")
-                        Log.d(TAG, "getKOTDetails: ${orderName.value}")*/
+                        /* Log.w(TAG, "getKOTDetails: ---------------")
+                         Log.e(TAG, "getKOTDetails: ${chairCount.value}")
+                         Log.d(TAG, "getKOTDetails: ${orderName.value}")*/
 
 
                         /*if (isOrderFromEditScreen) {
@@ -1197,7 +1230,7 @@ class RootViewModel @Inject constructor(
                             errorCode = result.error.code,
                             errorMessage = result.error.message ?: "",
                             url = baseUrl.value + HttpRoutes.EDIT_KOT + kotNumber,
-                            ipAddress = ""
+                            ipAddress = publicIpAddress
                         )
                     )
                 }
@@ -1225,7 +1258,7 @@ class RootViewModel @Inject constructor(
                                 errorCode = statusCode,
                                 errorMessage = statusMessage ?: "",
                                 url = baseUrl.value + HttpRoutes.EDIT_KOT + kotMasterId.value,
-                                ipAddress = ""
+                                ipAddress = publicIpAddress
                             )
                         )
                     }
@@ -1409,7 +1442,7 @@ class RootViewModel @Inject constructor(
                             errorCode = result.error.code,
                             errorMessage = result.error.message ?: "",
                             url = url,
-                            ipAddress = ""
+                            ipAddress = publicIpAddress
                         )
                     )
 
@@ -1422,6 +1455,140 @@ class RootViewModel @Inject constructor(
         val id = value.toInt()
         kotPendingList.removeAll {
             it.kotMasterId != id
+        }
+    }
+
+    fun uniLicenseActivation(deviceId: String, licenseKey: String) {
+
+        sendUniLicenseActScreenEvent(UiEvent.ShowProgressBar)
+
+        val url = HttpRoutes.UNI_LICENSE_ACTIVATION_URL
+        val header = HttpRoutes.UNI_LICENSE_HEADER
+        val licenseRequestBody = LicenseRequestBody(
+            licenseKey = licenseKey,
+            macId = deviceId,
+            ipAddress = publicIpAddress
+        )
+        viewModelScope.launch(Dispatchers.IO) {
+            useCase.uniLicenseActivationUseCase(
+                url = url,
+                rioLabKey = header,
+                licenseRequestBody = licenseRequestBody
+            ).collectLatest { result ->
+
+                sendUniLicenseActScreenEvent(UiEvent.CloseProgressBar)
+
+                if (result is GetDataFromRemote.Success) {
+                    // sendUniLicenseActScreenEvent(UiEvent.Navigate(route = RootNavScreens.LocalRegisterScreen.route))
+                    val licenceInformation = UniLicenseDetails(
+                        licenseType = result.data.message.licenseType,
+                        licenseKey = licenseKey,
+                        expiryDate = result.data.message.expiryDate ?: ""
+                    )
+
+                    uniLicenseDetails.value = licenceInformation
+
+                    sendUniLicenseActScreenEvent(UiEvent.ShowAlertDialog)
+
+                    val licenseString = Json.encodeToString(licenceInformation)
+                    useCase.uniLicenseSaveUseCase(uniLicenseString = licenseString)
+                    viewModelScope.launch(Dispatchers.IO) {
+                       useCase.insertGeneralDataToFirebaseUseCase(
+                           collectionName = "UserInformation",
+                           firebaseGeneralData = FirebaseGeneralData(
+                               deviceId = deviceId,
+                               ipAddress = publicIpAddress
+                           )
+                       )
+                    }
+                }
+                if (result is GetDataFromRemote.Failed) {
+                    Log.e(
+                        TAG,
+                        "uniLicenseActivation: ${result.error.message}, ${result.error.code}",
+                    )
+                    licenseKeyActivationError.value = result.error.message ?: "Error on Activation"
+                    sendUniLicenseActScreenEvent(UiEvent.ShowSnackBar(message = "code:- ${result.error.code}, error:- ${result.error.message}"))
+
+                    useCase.insertErrorDataToFireStoreUseCase(
+                        collectionName = collectionName,
+                        documentName = "uniLicenseActivation,${Date()}",
+                        errorData = FirebaseError(
+                            errorCode = result.error.code,
+                            errorMessage = result.error.message ?: "Error on Activation",
+                            url = url,
+                            ipAddress = publicIpAddress
+                        )
+                    )
+                }
+
+            }
+        }
+    }
+
+    // Read unipos license details
+    private fun readUniLicenseKeyDetails() {
+        viewModelScope.launch {
+            useCase.uniLicenseReadUseCase().collectLatest { value ->
+                // checking for saved license details
+                Log.w(TAG, "readUniLicenseKeyDetails: $value")
+                if (value.isNotEmpty() && value.isNotBlank()) {
+
+                    val licenseDetails = Json.decodeFromString<UniLicenseDetails>(value)
+
+                    uniLicenseDetails.value = licenseDetails
+
+                    // check saved license is demo
+                    if (licenseDetails.licenseType == "demo" && licenseDetails.expiryDate.isNotEmpty()) {
+
+                        // check for license expired
+                        if (!checkForLicenseExpiryDate(licenseDetails.expiryDate)) {
+                            // demo license expired
+                            sendSplashScreenEvent(
+                                SplashScreenEvent(
+                                    UiEvent.Navigate(route = RootNavScreens.UniLicenseActScreen.route)
+                                )
+                            )
+
+                        } else {
+                            // demo license not expired
+                            sendSplashScreenEvent(SplashScreenEvent(UiEvent.Navigate(route = RootNavScreens.LocalRegisterScreen.route)))
+                        }
+                    }
+                    if (licenseDetails.licenseType == "permanent") {
+                        // license is permanent
+                        sendSplashScreenEvent(SplashScreenEvent(UiEvent.Navigate(route = RootNavScreens.LocalRegisterScreen.route)))
+                    }
+                } else {
+                    sendSplashScreenEvent(
+                        SplashScreenEvent(
+                            UiEvent.Navigate(route = RootNavScreens.UniLicenseActScreen.route)
+                        )
+                    )
+                }
+            }
+        }
+    }
+
+    private fun checkForLicenseExpiryDate(eDate: String): Boolean {
+
+        val expDate: Date = SimpleDateFormat(
+            "dd-MM-yyyy",
+            Locale.getDefault()
+        ).parse(eDate)!!
+
+        return expDate >= Date()
+    }
+
+
+    fun setUnitActivationErrorValue(value: String) {
+        licenseKeyActivationError.value = value
+    }
+
+
+    private fun sendUniLicenseActScreenEvent(uiEvent: UiEvent) {
+        viewModelScope.launch {
+            _uniLicenseActScreenEvent.send(UniLicenseActScreenEvent(uiEvent))
         }
     }
 

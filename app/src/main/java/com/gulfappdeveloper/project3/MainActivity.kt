@@ -6,12 +6,14 @@ import android.provider.Settings
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.navigation.compose.rememberNavController
 import com.creative.ipfyandroid.Ipfy
@@ -19,6 +21,8 @@ import com.creative.ipfyandroid.IpfyClass
 import com.gulfappdeveloper.project3.navigation.root.RootNavGraph
 import com.gulfappdeveloper.project3.ui.theme.Project3Theme
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.util.Date
 
 
@@ -39,6 +43,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
+
                     // Get Ip address
                     var publicIpAddress:String by remember {
                         mutableStateOf("")
@@ -64,10 +69,28 @@ class MainActivity : ComponentActivity() {
                                 window.statusBarColor = ContextCompat.getColor(this, color)
                             },
                             navHostController = navHostController,
-                            deviceId = deviceId
+                            deviceId = deviceId,
+                            publicIpAddress = publicIpAddress
                         )
                         //CrashTest()
                         
+                    }else{
+                        window.statusBarColor = ContextCompat.getColor(this, R.color.white)
+                        Scaffold() {
+                            it.calculateTopPadding()
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Top,
+                                modifier = Modifier.fillMaxSize()
+                            ) {
+                                Spacer(modifier = Modifier.height(150.dp))
+                                Image(
+                                    painter = painterResource(id = R.drawable.manthy),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(250.dp)
+                                )
+                            }
+                        }
                     }
                 }
             }

@@ -1,8 +1,9 @@
 package com.gulfappdeveloper.project3.data.remote
 
 object HttpRoutes {
-    const val BASE_URL = "https://ashproerpapi.azurewebsites.net"
-   //const val BASE_URL = "http://192.168.1.5:80"
+    const val BASE_URL = ""
+
+    //const val BASE_URL = "http://192.168.1.5:80"
     const val WELCOME_MESSAGE = "/api/oem"
     const val LOGIN = "/api/login/"
 
@@ -23,4 +24,8 @@ object HttpRoutes {
     const val EDIT_KOT = "/api/kichenorder/"
     const val EDIT_ORDER_NAME_AND_CHAIR_COUNT = "/api/tableorder/"
     const val LIST_KOT_OF_USER = "/api/supplierorder/"
+
+    const val UNI_LICENSE_HEADER = "riolab123456"
+    const val UNI_LICENSE_ACTIVATION_URL =
+        "http://license.riolabz.com/license-repo/public/api/v1/verifyjson"
 }

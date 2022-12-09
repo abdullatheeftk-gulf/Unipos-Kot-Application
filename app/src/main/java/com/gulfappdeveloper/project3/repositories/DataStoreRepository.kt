@@ -30,6 +30,10 @@ class DataStoreRepository @Inject constructor(
         dataStoreService.savePortAddress(portAddress = portAddress)
     }
 
+    suspend fun saveUniLicenseKey(uniLicenseString:String){
+        dataStoreService.saveUniLicenseData(uniLicenseString = uniLicenseString)
+    }
+
 
     fun readOperationCount(): Flow<Int> {
         return dataStoreService.readOperationCount()
@@ -49,6 +53,10 @@ class DataStoreRepository @Inject constructor(
 
     fun readPortAddress():Flow<String>{
         return dataStoreService.readPortAddress()
+    }
+
+    fun readUniLicenseKey():Flow<String>{
+        return dataStoreService.readUniLicenseData()
     }
 
 

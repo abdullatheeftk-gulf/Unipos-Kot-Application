@@ -4,16 +4,21 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gulfappdeveloper.project3.data.remote.HttpRoutes
+import com.gulfappdeveloper.project3.domain.datastore.UniLicenseDetails
 import com.gulfappdeveloper.project3.domain.firebase.FirebaseError
 import com.gulfappdeveloper.project3.domain.remote.get.GetDataFromRemote
 import com.gulfappdeveloper.project3.navigation.root.RootNavScreens
 import com.gulfappdeveloper.project3.presentation.presentation_util.UiEvent
+import com.gulfappdeveloper.project3.presentation.screens.splash_screen.util.SplashScreenEvent
 import com.gulfappdeveloper.project3.usecases.UseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
+import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
@@ -27,7 +32,7 @@ class SetBaseUrlScreenViewModel @Inject constructor(
     val uiEvent = _uiEvent.receiveAsFlow()
 
     fun setBaseUrl(value: String) {
-        Log.d(TAG, "setBaseUrl: ")
+       // Log.d(TAG, "setBaseUrl: ")
         viewModelScope.launch {
             useCase.saveBaseUrlUseCase(baseUrl = value)
             getWelcomeMessage(url = value + HttpRoutes.WELCOME_MESSAGE)
@@ -40,13 +45,14 @@ class SetBaseUrlScreenViewModel @Inject constructor(
             useCase.getWelcomeMessageUseCase(url = url).collectLatest { result ->
                 sendUiEvent(UiEvent.CloseProgressBar)
                 if (result is GetDataFromRemote.Success) {
-                    sendUiEvent(UiEvent.Navigate(RootNavScreens.LocalRegisterScreen.route))
+                    readUniLicenseKeyDetails()
+                   // sendUiEvent(UiEvent.Navigate(RootNavScreens.LocalRegisterScreen.route))
                 }
                 if (result is GetDataFromRemote.Failed) {
-                    sendUiEvent(UiEvent.ShowSnackBar(message = "This Server with $url is down"))
+                    sendUiEvent(UiEvent.ShowSnackBar(message = "Server with $url is down"))
                     useCase.insertErrorDataToFireStoreUseCase(
                         collectionName = "ErrorDataDev",
-                        documentName = "UrlSettingScreen,getWelcomeMessage,${Date()}",
+                        documentName = "UrlSettingScreenViewModel-getWelcomeMessage,${Date()}",
                         errorData = FirebaseError(
                             errorCode = result.error.code,
                             errorMessage = result.error.message ?: "",
@@ -58,6 +64,57 @@ class SetBaseUrlScreenViewModel @Inject constructor(
             }
         }
     }
+
+    // Read unipos license details
+    private fun readUniLicenseKeyDetails() {
+        viewModelScope.launch {
+            useCase.uniLicenseReadUseCase().collectLatest { value ->
+                // checking for saved license details
+                Log.w(TAG, "readUniLicenseKeyDetails: $value")
+                if (value.isNotEmpty() && value.isNotBlank()) {
+
+                    val licenseDetails = Json.decodeFromString<UniLicenseDetails>(value)
+
+
+
+                    // check saved license is demo
+                    if (licenseDetails.licenseType == "demo" && licenseDetails.expiryDate.isNotEmpty()) {
+
+                        // check for license expired
+                        if (!checkForLicenseExpiryDate(licenseDetails.expiryDate)) {
+                            // demo license expired
+
+                            sendUiEvent(UiEvent.Navigate(route = RootNavScreens.UniLicenseActScreen.route))
+
+
+                        } else {
+                            // demo license not expired
+                            sendUiEvent(UiEvent.Navigate(route = RootNavScreens.LocalRegisterScreen.route))
+                        }
+                    }
+                    if(licenseDetails.licenseType == "permanent"){
+                        // license is permanent
+                        sendUiEvent(UiEvent.Navigate(route = RootNavScreens.LocalRegisterScreen.route))
+                    }
+                } else {
+                    //first time license activation
+                   sendUiEvent(UiEvent.Navigate(route = RootNavScreens.UniLicenseActScreen.route))
+                }
+            }
+        }
+    }
+
+    private fun checkForLicenseExpiryDate(eDate: String): Boolean {
+
+        val expDate: Date = SimpleDateFormat(
+            "dd-MM-yyyy",
+            Locale.getDefault()
+        ).parse(eDate)!!
+
+        return expDate >= Date()
+    }
+
+
 
     fun onErrorUrl(url: String) {
         sendUiEvent(UiEvent.ShowSnackBar(message = "Typed url $url is in wrong format"))
