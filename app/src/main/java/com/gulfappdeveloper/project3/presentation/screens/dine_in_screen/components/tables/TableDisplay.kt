@@ -42,6 +42,7 @@ fun TableDisplay(
             .padding(all = 8.dp)
             .clickable {
                 rootViewModel.setSelectedTable(table = table)
+                rootViewModel.getKotCancelPrivilege()
             },
         border = BorderStroke(
             width = 1.dp,

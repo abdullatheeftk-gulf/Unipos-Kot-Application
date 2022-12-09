@@ -36,7 +36,7 @@ fun CancelKotAlertDialog(
         },
         text = {
             Text(
-                text = "Do you want to cancel KOT ?",
+                text = "Do you want to cancel this operation?.",
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
             )

@@ -22,13 +22,14 @@ fun KotItemDisplay(
        modifier = Modifier.fillMaxWidth()
    ) {
        Text(
-           text = (index+1).toString(),
+           text = "${(index+1)},",
            modifier = Modifier.weight(1f),
            textAlign = TextAlign.Start
        )
        Text(
            text = kotItem.productName,
            modifier = Modifier.weight(7f),
+           textAlign = TextAlign.Start
        )
        Text(
            text = kotItem.quantity.toString(),

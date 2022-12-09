@@ -14,7 +14,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.gulfappdeveloper.project3.navigation.root.RootNavScreens
 import com.gulfappdeveloper.project3.navigation.root.RootViewModel
@@ -43,6 +45,8 @@ fun ShowKOTScreen(
         mutableStateOf(false)
     }
 
+    var kotCancelPrivilege by rootViewModel.kotCancelPrivilege
+
     LaunchedEffect(key1 = true) {
 
         rootViewModel.showKotScreenUiEvent.collectLatest { value ->
@@ -57,8 +61,8 @@ fun ShowKOTScreen(
 
                     navHostController.navigate(
                         route = RootNavScreens.HomeScreen.route
-                    ){
-                        popUpTo(route=RootNavScreens.HomeScreen.route){
+                    ) {
+                        popUpTo(route = RootNavScreens.HomeScreen.route) {
                             inclusive = true
                         }
                     }
@@ -124,51 +128,71 @@ fun ShowKOTScreen(
                 )
             }
         }
-
-        LazyColumn(
-            contentPadding = PaddingValues(12.dp)
-        ) {
-            item {
-                Row(
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(
-                        text = "Si",
-                        modifier = Modifier.weight(1f),
-                        textAlign = TextAlign.Start
-                    )
-                    Text(
-                        text = "Product Name",
-                        modifier = Modifier.weight(7f)
-                    )
-                    Text(
-                        text = "Quantity",
-                        modifier = Modifier.weight(2f),
-                        textAlign = TextAlign.Center
-                    )
+        Row(modifier = Modifier.fillMaxWidth()) {
+            LazyColumn(
+                contentPadding = PaddingValues(12.dp),
+                modifier = Modifier.weight(10f)
+            ) {
+                item {
+                    Row(
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(
+                            text = "Si",
+                            modifier = Modifier.weight(1f).padding(bottom = 5.dp),
+                            textAlign = TextAlign.Start,
+                            textDecoration = TextDecoration.Underline,
+                            fontSize = MaterialTheme.typography.h6.fontSize,
+                            fontStyle = MaterialTheme.typography.h6.fontStyle
+                        )
+                        Text(
+                            text = "Product Name",
+                            modifier = Modifier.weight(7f).padding(bottom = 5.dp),
+                            textAlign = TextAlign.Start,
+                            textDecoration = TextDecoration.Underline,
+                            fontSize = MaterialTheme.typography.h6.fontSize,
+                            fontStyle = MaterialTheme.typography.h6.fontStyle
+                        )
+                        Text(
+                            text = "Quantity",
+                            modifier = Modifier.weight(2f).padding(bottom = 5.dp),
+                            textAlign = TextAlign.Center,
+                            textDecoration = TextDecoration.Underline,
+                            fontSize = MaterialTheme.typography.h6.fontSize,
+                            fontStyle = MaterialTheme.typography.h6.fontStyle
+                        )
+                    }
                 }
-            }
 
-            item {
+                /*item {
 
-                Canvas(modifier = Modifier) {
-                    drawLine(
-                        color = Color.Black,
-                        start = Offset(x = 0f, y = 0f),
-                        end = Offset(x = 2000f, y = 0f)
-                    )
+                    Canvas(modifier = Modifier) {
+                        drawLine(
+                            color = Color.Black,
+                            start = Offset(x = 0f, y = 0f),
+                            end = Offset.Infinite
+                        )
+                    }
+                }*/
+                itemsIndexed(kotItemsList) { index, kotItem ->
+                    KotItemDisplay(kotItem = kotItem, index = index)
                 }
-            }
-            itemsIndexed(kotItemsList) { index, kotItem ->
-                KotItemDisplay(kotItem = kotItem, index = index)
-            }
-            item {
-                Spacer(modifier = Modifier.height(4.dp))
+                item {
+                    Spacer(modifier = Modifier.height(4.dp))
+                }
+
             }
 
         }
+        
+
+
+
+
+
+
 
         Column(
             modifier = Modifier
@@ -187,7 +211,8 @@ fun ShowKOTScreen(
                     colors = ButtonDefaults.buttonColors(
                         backgroundColor = MaterialTheme.colors.error
                     ),
-                    enabled = !showProgressBar
+                    enabled = if (kotCancelPrivilege) !showProgressBar else false
+
                 ) {
                     Text(text = "Cancel Kot")
                 }

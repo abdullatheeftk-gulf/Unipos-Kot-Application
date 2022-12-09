@@ -99,6 +99,10 @@ class RootViewModel @Inject constructor(
     var message = mutableStateOf("")
         private set
 
+    // Kot Cancel privilege
+    var kotCancelPrivilege = mutableStateOf(false)
+        private set
+
 
     // For product display
     var selectedCategory = mutableStateOf(0)
@@ -159,6 +163,7 @@ class RootViewModel @Inject constructor(
     var chairCount = mutableStateOf(0)
         private set
 
+
     // For editing only
     var kotMasterId = mutableStateOf(0)
         private set
@@ -174,7 +179,6 @@ class RootViewModel @Inject constructor(
 
 
     // Ip address and Port use case
-
     var ipAddress = mutableStateOf("")
         private set
 
@@ -189,12 +193,8 @@ class RootViewModel @Inject constructor(
     private var publicIpAddress = ""
 
     // Unipos License activation
-
     var licenseKeyActivationError = mutableStateOf("")
         private set
-
-    /*var licenseDetailsString = mutableStateOf("")
-        private set*/
 
     var uniLicenseDetails: MutableState<UniLicenseDetails?> = mutableStateOf(null)
         private set
@@ -845,6 +845,34 @@ class RootViewModel @Inject constructor(
                 }
         }
 
+    }
+
+    fun getKotCancelPrivilege(){
+        viewModelScope.launch(Dispatchers.IO) {
+            val url ="${baseUrl.value}${HttpRoutes.KOT_CANCEL_PRIVILEGE}${fKUserId.value}"
+            useCase.kotCancelPrivilegeUseCase(url = url).collectLatest { result->
+                when(result){
+                    is GetDataFromRemote.Success->{
+                        Log.e(TAG, "getKotCancelPrivilege: ${result.data.isPrivileged}", )
+                        kotCancelPrivilege.value = result.data.isPrivileged
+                    }
+                    is GetDataFromRemote.Failed->{
+                        Log.d(TAG, "getKotCancelPrivilege: ${result.error.message}, ${result.error.code}")
+                        Log.w(TAG, "url: $url", )
+                        useCase.insertErrorDataToFireStoreUseCase(
+                            collectionName = collectionName,
+                            documentName = "getKotCancelPrivilege,${Date()}",
+                            errorData = FirebaseError(
+                                errorCode = result.error.code,
+                                errorMessage = result.error.message!!,
+                                url = url,
+                                ipAddress = publicIpAddress
+                            )
+                        )
+                    }
+                }
+            }
+        }
     }
 
     private fun updateSerialNo() {

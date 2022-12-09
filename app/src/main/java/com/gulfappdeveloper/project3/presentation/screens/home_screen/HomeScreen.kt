@@ -88,6 +88,7 @@ fun HomeScreen(
                             }
                             "EDIT" -> {
                                 rootViewModel.getListOfPendingKOTs()
+                                rootViewModel.getKotCancelPrivilege()
                                 navHostController.navigate(RootNavScreens.EditingScreen.route)
                             }
                             "SETTINGS" -> {

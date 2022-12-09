@@ -7,6 +7,8 @@ object HttpRoutes {
     const val WELCOME_MESSAGE = "/api/oem"
     const val LOGIN = "/api/login/"
 
+    const val KOT_CANCEL_PRIVILEGE = "/api/Kotcancelprevilage/"
+
     const val CATEGORY_LIST = "/api/category"
     const val PRODUCT_LIST = "/api/product/"
     const val PRODUCT_IMAGE = "/api/proimage/"
