@@ -49,6 +49,10 @@ fun EditOrderNameAndChairDialog(
         mutableStateOf(0)
     }
 
+    var showError by remember {
+        mutableStateOf(false)
+    }
+
 
     val interactionSource = remember {
         MutableInteractionSource()
@@ -88,6 +92,7 @@ fun EditOrderNameAndChairDialog(
                 OutlinedTextField(
                     value = orderName,
                     onValueChange = {
+                        showError = false
                         orderName = it
                     },
                     label = {
@@ -101,9 +106,21 @@ fun EditOrderNameAndChairDialog(
                     keyboardOptions = KeyboardOptions(
                         imeAction = ImeAction.Done
                     ),
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    isError = showError
                 )
-                Spacer(modifier = Modifier.height(25.dp))
+                if (showError) {
+                    Row(modifier = Modifier.fillMaxWidth()) {
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Text(
+                            text = "Order name is empty",
+                            color = MaterialTheme.colors.error
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(4.dp))
+                } else {
+                    Spacer(modifier = Modifier.height(10.dp))
+                }
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -202,6 +219,12 @@ fun EditOrderNameAndChairDialog(
                     }
                     Spacer(modifier = Modifier.width(10.dp))
                     Button(onClick = {
+
+                        if (orderName.isEmpty()){
+                            showError = true
+                            return@Button
+                        }
+
                         if (tableOrder.fK_KOTInvoiceId == 0) {
                             rootViewModel.newOrderButtonClicked(
                                 orderName = orderName,

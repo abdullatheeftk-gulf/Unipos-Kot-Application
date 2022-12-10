@@ -143,14 +143,17 @@ class RootViewModel @Inject constructor(
     var kotNetAmount = mutableStateOf(0f)
         private set
 
+    // it will add in ReviewScreen
     var kotNotes = mutableStateOf("")
         private set
 
+    // uder id from the login response
     private var fKUserId = mutableStateOf(0)
 
-
+    // no of times login the app
     private var serialNo = mutableStateOf(0)
 
+    // order name is added from dine in tables
     private var orderName = mutableStateOf("")
 
     var tableId = mutableStateOf(0)
@@ -166,6 +169,7 @@ class RootViewModel @Inject constructor(
     var editMode = mutableStateOf(false)
         private set
 
+    // kot which is not completed for a user
     val kotPendingList = mutableStateListOf<UserOrder>()
 
     // Dine In and Take Away
@@ -173,7 +177,7 @@ class RootViewModel @Inject constructor(
         private set
 
 
-    // Ip address and Port use case
+    // Ip address and Port use case for printing purpose
     var ipAddress = mutableStateOf("")
         private set
 
@@ -191,6 +195,7 @@ class RootViewModel @Inject constructor(
     var licenseKeyActivationError = mutableStateOf("")
         private set
 
+    // unipos license details
     var uniLicenseDetails: MutableState<UniLicenseDetails?> = mutableStateOf(null)
         private set
 
@@ -257,6 +262,7 @@ class RootViewModel @Inject constructor(
         }
     }
 
+    // No of login
     private fun readSerialNo() {
         // Log.i(TAG, "readSerialNo: ")
         viewModelScope.launch {
@@ -966,6 +972,7 @@ class RootViewModel @Inject constructor(
             tableId = tableId.value,
             orderName = orderName.value,
             chairCount = chairCount.value,
+            // For generation it will be 1
             kotMasterId = 1
         )
         val url = baseUrl.value + HttpRoutes.GENERATE_KOT
@@ -1588,7 +1595,7 @@ class RootViewModel @Inject constructor(
                     return@launch
                 }
                 delay(1000L)
-                if (it%30==0){
+                if (it % 30 == 0) {
                     getIp4Address()
                 }
                 if (it == 180) {
