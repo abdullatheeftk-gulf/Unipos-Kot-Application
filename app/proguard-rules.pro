@@ -19,3 +19,15 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+-keepclassmembers @kotlinx.serialization.Serializable class com.gulfappdeveloper.project3.** {
+    # lookup for plugin generated serializable classes
+    *** Companion;
+    # lookup for serializable objects
+    *** INSTANCE;
+    kotlinx.serialization.KSerializer serializer(...);
+}
+# lookup for plugin generated serializable classes
+-if @kotlinx.serialization.Serializable class com.gulfappdeveloper.project3.**
+-keepclassmembers class com.gulfappdeveloper.project3.<1>$Companion {
+    kotlinx.serialization.KSerializer serializer(...);
+}

@@ -1,8 +1,8 @@
 package com.gulfappdeveloper.project3.domain.firebase
 
+import androidx.annotation.Keep
 import java.util.*
-
-
+@Keep
 data class FirebaseError(
     val model: String = android.os.Build.MODEL ?: "nil",
     val manufacturer: String = android.os.Build.MANUFACTURER ?: "nil",
