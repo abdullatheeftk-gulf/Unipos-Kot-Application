@@ -1,6 +1,5 @@
 package com.gulfappdeveloper.project3.navigation.root
 
-import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -47,7 +46,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
-private const val TAG = "RootViewModel"
+//private const val TAG = "RootViewModel"
 
 @HiltViewModel
 class RootViewModel @Inject constructor(
@@ -208,8 +207,9 @@ class RootViewModel @Inject constructor(
 
     }
 
-    fun setPublicIpAddress(publicIpAddress: String) {
-        this.publicIpAddress = publicIpAddress
+    // call to get ip4 address
+    fun setPublicIpAddress() {
+        getIp4Address()
     }
 
     fun setIsInitialLoadingIsNotFinished() {
@@ -1535,7 +1535,7 @@ class RootViewModel @Inject constructor(
                         // check for license expired
                         if (!checkForLicenseExpiryDate(licenseDetails.expiryDate)) {
                             // demo license expired
-                           checkForPublicIpAddressStatus()
+                            checkForPublicIpAddressStatus()
 
                         } else {
                             // demo license not expired
@@ -1547,7 +1547,7 @@ class RootViewModel @Inject constructor(
                         sendSplashScreenEvent(SplashScreenEvent(UiEvent.Navigate(route = RootNavScreens.LocalRegisterScreen.route)))
                     }
                 } else {
-                   checkForPublicIpAddressStatus()
+                    checkForPublicIpAddressStatus()
                 }
             }
         }
@@ -1578,7 +1578,7 @@ class RootViewModel @Inject constructor(
 
     private fun checkForPublicIpAddressStatus() {
         viewModelScope.launch {
-            (1..60).forEach {
+            (1..180).forEach {
                 if (publicIpAddress.isNotEmpty() && publicIpAddress.isNotBlank()) {
                     sendSplashScreenEvent(
                         SplashScreenEvent(
@@ -1588,8 +1588,10 @@ class RootViewModel @Inject constructor(
                     return@launch
                 }
                 delay(1000L)
-                if (it == 60) {
-                    Log.e(TAG, "checkForPublicIpAddressStatus: $publicIpAddress", )
+                if (it%30==0){
+                    getIp4Address()
+                }
+                if (it == 180) {
                     sendSplashScreenEvent(
                         SplashScreenEvent(
                             UiEvent.ShowSnackBar("There have some error on reading Public Ip address. Please restart application")
@@ -1602,6 +1604,34 @@ class RootViewModel @Inject constructor(
         }
 
 
+    }
+
+
+    private fun getIp4Address() {
+        val url = HttpRoutes.SEE_IP4
+        viewModelScope.launch {
+            useCase.getIp4AddressUseCase(url = url).collectLatest { result ->
+
+                when (result) {
+                    is GetDataFromRemote.Success -> {
+                        publicIpAddress = result.data.ip ?: ""
+                    }
+                    is GetDataFromRemote.Failed -> {
+                        useCase.insertErrorDataToFireStoreUseCase(
+                            collectionName = collectionName,
+                            documentName = "getIp4Address,${Date()}",
+                            errorData = FirebaseError(
+                                errorCode = result.error.code,
+                                errorMessage = result.error.message ?: "Error on Activation",
+                                url = url,
+                                ipAddress = publicIpAddress
+                            )
+                        )
+                    }
+                }
+
+            }
+        }
     }
 
 

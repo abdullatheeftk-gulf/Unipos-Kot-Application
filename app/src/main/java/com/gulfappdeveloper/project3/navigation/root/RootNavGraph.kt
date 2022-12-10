@@ -27,9 +27,8 @@ fun RootNavGraph(
     onScanButtonClicked: () -> Unit,
     changeStatusBarColor: (Int) -> Unit,
     navHostController: NavHostController,
-    publicIpAddress: String
 ) {
-    rootViewModel.setPublicIpAddress(publicIpAddress = publicIpAddress)
+    rootViewModel.setPublicIpAddress()
 
     NavHost(
         navController = navHostController,

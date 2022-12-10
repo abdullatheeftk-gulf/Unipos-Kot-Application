@@ -27,6 +27,7 @@ import com.gulfappdeveloper.project3.usecases.remote_usecases.get.product.GetCat
 import com.gulfappdeveloper.project3.usecases.remote_usecases.get.product.GetMultiSizeProduct
 import com.gulfappdeveloper.project3.usecases.remote_usecases.get.product.GetProductListUseCase
 import com.gulfappdeveloper.project3.usecases.remote_usecases.get.product.ProductSearchUseCase
+import com.gulfappdeveloper.project3.usecases.remote_usecases.ip4.GetIp4AddressUseCase
 import com.gulfappdeveloper.project3.usecases.remote_usecases.license.uni_license_activation_use_case.UniLicenseActivationUseCase
 import com.gulfappdeveloper.project3.usecases.remote_usecases.post.GenerateKotUseCase
 import com.gulfappdeveloper.project3.usecases.remote_usecases.put.EditKotBasicUseCase
@@ -83,5 +84,8 @@ data class UseCase(
 
     // Unipos license
     val uniLicenseActivationUseCase: UniLicenseActivationUseCase,
+
+    // get ip4 address
+    val getIp4AddressUseCase: GetIp4AddressUseCase,
 
     )

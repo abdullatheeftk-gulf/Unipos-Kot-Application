@@ -31,6 +31,7 @@ import com.gulfappdeveloper.project3.usecases.remote_usecases.get.product.GetCat
 import com.gulfappdeveloper.project3.usecases.remote_usecases.get.product.GetMultiSizeProduct
 import com.gulfappdeveloper.project3.usecases.remote_usecases.get.product.GetProductListUseCase
 import com.gulfappdeveloper.project3.usecases.remote_usecases.get.product.ProductSearchUseCase
+import com.gulfappdeveloper.project3.usecases.remote_usecases.ip4.GetIp4AddressUseCase
 import com.gulfappdeveloper.project3.usecases.remote_usecases.license.uni_license_activation_use_case.UniLicenseActivationUseCase
 import com.gulfappdeveloper.project3.usecases.remote_usecases.post.GenerateKotUseCase
 import com.gulfappdeveloper.project3.usecases.remote_usecases.put.EditKotBasicUseCase
@@ -97,7 +98,8 @@ object RepositoryModule {
                 firebaseRepository = firebaseRepository
             ),
 
-            uniLicenseActivationUseCase = UniLicenseActivationUseCase(remoteRepository = remoteRepository)
+            uniLicenseActivationUseCase = UniLicenseActivationUseCase(remoteRepository = remoteRepository),
+            getIp4AddressUseCase = GetIp4AddressUseCase(remoteRepository = remoteRepository)
         )
     }
 }

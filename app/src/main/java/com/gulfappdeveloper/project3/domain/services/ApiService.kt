@@ -15,6 +15,7 @@ import com.gulfappdeveloper.project3.domain.remote.license.LicenseRequestBody
 import com.gulfappdeveloper.project3.domain.remote.license.LicenseResponse
 import com.gulfappdeveloper.project3.domain.remote.post.Kot
 import com.gulfappdeveloper.project3.domain.remote.put.EditKOTBasic
+import com.gulfappdeveloper.project3.domain.remote.seeip.SeeIp
 import kotlinx.coroutines.flow.Flow
 
 interface ApiService {
@@ -65,5 +66,8 @@ interface ApiService {
         url: String,
         licenseRequestBody: LicenseRequestBody
     ): Flow<GetDataFromRemote<LicenseResponse>>
+
+    // get ip address
+    suspend fun getIp4Address(url: String):Flow<GetDataFromRemote<SeeIp>>
 
 }

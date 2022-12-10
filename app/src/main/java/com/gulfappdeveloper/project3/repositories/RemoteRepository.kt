@@ -15,6 +15,7 @@ import com.gulfappdeveloper.project3.domain.remote.license.LicenseRequestBody
 import com.gulfappdeveloper.project3.domain.remote.license.LicenseResponse
 import com.gulfappdeveloper.project3.domain.remote.post.Kot
 import com.gulfappdeveloper.project3.domain.remote.put.EditKOTBasic
+import com.gulfappdeveloper.project3.domain.remote.seeip.SeeIp
 import com.gulfappdeveloper.project3.domain.services.ApiService
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -115,6 +116,11 @@ class RemoteRepository @Inject constructor(
             url = url,
             licenseRequestBody = licenseRequestBody
         )
+    }
+
+
+    suspend fun getIp4Address(url: String): Flow<GetDataFromRemote<SeeIp>> {
+        return apiService.getIp4Address(url = url)
     }
 
 
