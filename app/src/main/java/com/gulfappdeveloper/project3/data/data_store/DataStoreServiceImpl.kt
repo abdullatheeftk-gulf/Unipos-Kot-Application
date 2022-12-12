@@ -22,6 +22,7 @@ class DataStoreServiceImpl(context: Context) : DataStoreService {
         val ipAddressKey = stringPreferencesKey(name = DataStoreConstants.IP_ADDRESS_KEY)
         val portAddressKey = stringPreferencesKey(name = DataStoreConstants.PORT_KEY)
         val uniLicenseKey = stringPreferencesKey(name = DataStoreConstants.UNI_LICENSE_SAVE_KEY)
+        val deviceIdKey = stringPreferencesKey(name = DataStoreConstants.DEVICE_ID_KEY)
     }
 
     private val dataStore = context.dataStore
@@ -136,6 +137,12 @@ class DataStoreServiceImpl(context: Context) : DataStoreService {
         }
     }
 
+    override suspend fun saveDeviceId(deviceId: String) {
+        dataStore.edit { preference ->
+            preference[PreferenceKeys.deviceIdKey] = deviceId
+        }
+    }
+
     override fun readUniLicenseData(): Flow<String> {
         return dataStore.data
             .catch { exception ->
@@ -147,6 +154,20 @@ class DataStoreServiceImpl(context: Context) : DataStoreService {
             .map { preferences ->
                 val portAddress = preferences[PreferenceKeys.uniLicenseKey] ?: ""
                 portAddress
+            }
+    }
+
+    override fun readDeviceId(): Flow<String> {
+        return dataStore.data
+            .catch { exception ->
+                if (exception is IOException)
+                    emit(emptyPreferences())
+                else
+                    throw exception
+            }
+            .map { preferences ->
+                val deviceId = preferences[PreferenceKeys.deviceIdKey] ?: ""
+                deviceId
             }
     }
 }

@@ -2,6 +2,7 @@ package com.gulfappdeveloper.project3.navigation.root
 
 import android.util.Log
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -87,6 +88,9 @@ class RootViewModel @Inject constructor(
 
     // Operation count application
     private var operationCount = mutableStateOf(0)
+
+    private val _deviceIdSate = mutableStateOf("")
+    val deviceIdState: State<String> = _deviceIdSate
 
 
     // Base Url
@@ -204,6 +208,7 @@ class RootViewModel @Inject constructor(
     init {
 
         sendSplashScreenEvent(SplashScreenEvent(UiEvent.ShowProgressBar))
+        readDeviceId()
         saveOperationCount()
         readOperationCount()
         readSerialNo()
@@ -259,6 +264,15 @@ class RootViewModel @Inject constructor(
             useCase.readOperationCountUseCase().collect {
                 // Log.d(TAG, "readOperationCount: $it")
                 operationCount.value = it
+            }
+        }
+    }
+
+    private fun readDeviceId() {
+        viewModelScope.launch {
+            useCase.readDeviceIdUseCase().collectLatest {
+                _deviceIdSate.value = it
+                Log.w(TAG, "readDeviceId: ${_deviceIdSate.value}")
             }
         }
     }
@@ -969,7 +983,7 @@ class RootViewModel @Inject constructor(
             kotDetails = kotItemList.toList(),
             notes = kotNotes.value,
             serialNo = serialNo.value,
-            terminal = deviceId,
+            terminal = _deviceIdSate.value.ifEmpty { deviceId },
             tableId = tableId.value,
             orderName = orderName.value,
             chairCount = chairCount.value,
@@ -993,7 +1007,7 @@ class RootViewModel @Inject constructor(
                 url = url,
                 kot = kot
             ) { statusCode, message ->
-                Log.w(TAG, "generateKot: $kot", )
+               // Log.w(TAG, "generateKot: $kot")
                 sendReviewScreenEvent(ReviewScreenEvent(UiEvent.CloseProgressBar))
                 if (statusCode in 200..299) {
                     sendReviewScreenEvent(ReviewScreenEvent(UiEvent.ShowAlertDialog))
@@ -1060,7 +1074,7 @@ class RootViewModel @Inject constructor(
                 kotDetails = kotItemList.toList(),
                 notes = kotNotes.value,
                 serialNo = serialNo.value,
-                terminal = deviceId,
+                terminal = _deviceIdSate.value.ifEmpty { deviceId },
                 tableId = tableId.value,
                 orderName = orderName.value,
                 chairCount = chairCount.value,
@@ -1085,7 +1099,7 @@ class RootViewModel @Inject constructor(
                             ipAddress = publicIpAddress
                         )
                     )
-                    sendReviewScreenEvent(ReviewScreenEvent(UiEvent.ShowSnackBar(message = "There have some error :-Error message:-  $statusMessage, ErrorCode:- $statusCode", )))
+                    sendReviewScreenEvent(ReviewScreenEvent(UiEvent.ShowSnackBar(message = "There have some error :-Error message:-  $statusMessage, ErrorCode:- $statusCode")))
                 }
             }
         }
@@ -1464,6 +1478,19 @@ class RootViewModel @Inject constructor(
         }
     }
 
+
+    // saving device id in dataStore
+    fun saveDeviceIdInDataStore(deviceId: String) {
+        if (_deviceIdSate.value.isEmpty()) {
+            Log.d(TAG, "saveDeviceIdInDataStore: $deviceId")
+            viewModelScope.launch {
+                useCase.saveDeviceIdUseCase(deviceId = deviceId)
+            }
+        }
+    }
+
+
+    // Unipospro license activation
     fun uniLicenseActivation(deviceId: String, licenseKey: String) {
 
         sendUniLicenseActScreenEvent(UiEvent.ShowProgressBar)
@@ -1472,7 +1499,7 @@ class RootViewModel @Inject constructor(
         val header = HttpRoutes.UNI_LICENSE_HEADER
         val licenseRequestBody = LicenseRequestBody(
             licenseKey = licenseKey,
-            macId = deviceId,
+            macId = _deviceIdSate.value.ifEmpty { deviceId },
             ipAddress = publicIpAddress
         )
         viewModelScope.launch(Dispatchers.IO) {

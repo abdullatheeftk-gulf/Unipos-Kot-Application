@@ -2,6 +2,8 @@ package com.gulfappdeveloper.project3.usecases
 
 import com.gulfappdeveloper.project3.usecases.data_store_usecases.base_url_usecases.ReadBaseUrlUseCase
 import com.gulfappdeveloper.project3.usecases.data_store_usecases.base_url_usecases.SaveBaseUrlUseCase
+import com.gulfappdeveloper.project3.usecases.data_store_usecases.device_id_use_case.ReadDeviceIdUseCase
+import com.gulfappdeveloper.project3.usecases.data_store_usecases.device_id_use_case.SaveDeviceIdUseCase
 import com.gulfappdeveloper.project3.usecases.data_store_usecases.operation_counter_uscecases.ReadOperationCountUseCase
 import com.gulfappdeveloper.project3.usecases.data_store_usecases.operation_counter_uscecases.UpdateOperationCountUseCase
 import com.gulfappdeveloper.project3.usecases.data_store_usecases.printer_usecases.ip_address_usecase.ReadIpAddressUseCase
@@ -40,6 +42,7 @@ data class UseCase(
     val saveIpAddressUseCase: SaveIpAddressUseCase,
     val savePortAddressUseCase: SavePortAddressUseCase,
     val uniLicenseSaveUseCase: UniLicenseSaveUseCase,
+    val saveDeviceIdUseCase: SaveDeviceIdUseCase,
 
     val readOperationCountUseCase: ReadOperationCountUseCase,
     val readBaseUrlUseCase: ReadBaseUrlUseCase,
@@ -47,6 +50,7 @@ data class UseCase(
     val readIpAddressUseCase: ReadIpAddressUseCase,
     val readPortAddressUseCase: ReadPortAddressUseCase,
     val uniLicenseReadUseCase: UniLicenseReadUseCase,
+    val readDeviceIdUseCase: ReadDeviceIdUseCase,
 
 
     val getWelcomeMessageUseCase: GetWelcomeMessageUseCase,

@@ -6,6 +6,8 @@ import com.gulfappdeveloper.project3.repositories.RemoteRepository
 import com.gulfappdeveloper.project3.usecases.UseCase
 import com.gulfappdeveloper.project3.usecases.data_store_usecases.base_url_usecases.ReadBaseUrlUseCase
 import com.gulfappdeveloper.project3.usecases.data_store_usecases.base_url_usecases.SaveBaseUrlUseCase
+import com.gulfappdeveloper.project3.usecases.data_store_usecases.device_id_use_case.ReadDeviceIdUseCase
+import com.gulfappdeveloper.project3.usecases.data_store_usecases.device_id_use_case.SaveDeviceIdUseCase
 import com.gulfappdeveloper.project3.usecases.data_store_usecases.operation_counter_uscecases.ReadOperationCountUseCase
 import com.gulfappdeveloper.project3.usecases.data_store_usecases.operation_counter_uscecases.UpdateOperationCountUseCase
 import com.gulfappdeveloper.project3.usecases.data_store_usecases.printer_usecases.ip_address_usecase.ReadIpAddressUseCase
@@ -62,6 +64,7 @@ object RepositoryModule {
             saveIpAddressUseCase = SaveIpAddressUseCase(dataStoreRepository = dataStoreRepository),
             savePortAddressUseCase = SavePortAddressUseCase(dataStoreRepository = dataStoreRepository),
             uniLicenseSaveUseCase = UniLicenseSaveUseCase(dataStoreRepository = dataStoreRepository),
+            saveDeviceIdUseCase = SaveDeviceIdUseCase(dataStoreRepository = dataStoreRepository),
 
             readOperationCountUseCase = ReadOperationCountUseCase(dataStoreRepository = dataStoreRepository),
             readBaseUrlUseCase = ReadBaseUrlUseCase(dataStoreRepository = dataStoreRepository),
@@ -69,6 +72,7 @@ object RepositoryModule {
             readIpAddressUseCase = ReadIpAddressUseCase(dataStoreRepository = dataStoreRepository),
             readPortAddressUseCase = ReadPortAddressUseCase(dataStoreRepository = dataStoreRepository),
             uniLicenseReadUseCase = UniLicenseReadUseCase(dataStoreRepository = dataStoreRepository),
+            readDeviceIdUseCase = ReadDeviceIdUseCase(dataStoreRepository = dataStoreRepository),
 
             getWelcomeMessageUseCase = GetWelcomeMessageUseCase(remoteRepository = remoteRepository),
 

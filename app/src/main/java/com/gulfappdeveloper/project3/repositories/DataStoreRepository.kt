@@ -34,6 +34,10 @@ class DataStoreRepository @Inject constructor(
         dataStoreService.saveUniLicenseData(uniLicenseString = uniLicenseString)
     }
 
+    suspend fun saveDeviceId(deviceId:String){
+        dataStoreService.saveDeviceId(deviceId = deviceId)
+    }
+
 
     fun readOperationCount(): Flow<Int> {
         return dataStoreService.readOperationCount()
@@ -57,6 +61,10 @@ class DataStoreRepository @Inject constructor(
 
     fun readUniLicenseKey(): Flow<String> {
         return dataStoreService.readUniLicenseData()
+    }
+
+    fun readDeviceId(): Flow<String> {
+        return dataStoreService.readDeviceId()
     }
 
 

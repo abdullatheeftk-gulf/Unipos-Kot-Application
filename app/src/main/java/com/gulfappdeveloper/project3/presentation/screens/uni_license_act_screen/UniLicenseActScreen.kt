@@ -37,6 +37,8 @@ fun UniLicenseActScreen(
 
     val licenseKeyActivationError by rootViewModel.licenseKeyActivationError
 
+    val deviceIdFromDataStore by rootViewModel.deviceIdState
+
     var showProgressBar by remember {
         mutableStateOf(false)
     }
@@ -105,11 +107,11 @@ fun UniLicenseActScreen(
                 Text(
                     text = "Device Id:-   ",
                     fontStyle = MaterialTheme.typography.h1.fontStyle,
-                    fontSize = 16.sp
+                    fontSize = 20.sp
                 )
                 SelectionContainer() {
                     Text(
-                        text = deviceId,
+                        text = deviceIdFromDataStore.ifEmpty { deviceId },
                         fontStyle = MaterialTheme.typography.h1.fontStyle,
                         fontSize = 20.sp,
                     )

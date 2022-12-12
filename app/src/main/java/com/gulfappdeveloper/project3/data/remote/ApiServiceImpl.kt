@@ -22,6 +22,7 @@ import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.network.sockets.*
 import io.ktor.client.request.*
+import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.serialization.*
 import kotlinx.coroutines.flow.Flow
@@ -1213,7 +1214,7 @@ class ApiServiceImpl(
             callBack(statusCode, statusMessage)
 
         } catch (e: Exception) {
-            callBack(404, e.toString()+", printStrack:-  "+e.printStackTrace(), )
+            callBack(404, e.toString() + ", printStrack:-  " + e.printStackTrace())
         }
     }
 
@@ -1229,7 +1230,7 @@ class ApiServiceImpl(
             }
             val statusCode = httpResponse.status.value
             val statusMessage = httpResponse.status.description
-           // val editedOrder = httpResponse.body<TableOrder>()
+            // val editedOrder = httpResponse.body<TableOrder>()
             //Log.w(TAG, "editKOTBasics: $editKOTBasic $url $editedOrder", )
             callBack(statusCode, statusMessage)
         } catch (e: Exception) {
@@ -1530,13 +1531,19 @@ class ApiServiceImpl(
                         )
                     }
                     in 400..499 -> {
-                        //val str = httpResponse.bodyAsText()
+                        var str= ""
+                        try {
+                            str = httpResponse.bodyAsText()
+                        } catch (e: Exception) {
+                            e.message
+                        }
+
                         //Log.d(TAG, "uniLicenseActivation: $str")
                         emit(
                             GetDataFromRemote.Failed(
                                 error = Error(
                                     code = statusCode,
-                                    message = httpResponse.status.description
+                                    message = httpResponse.status.description + "-" + str
                                 )
                             )
                         )

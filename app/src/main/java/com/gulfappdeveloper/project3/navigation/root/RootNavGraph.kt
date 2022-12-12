@@ -39,7 +39,8 @@ fun RootNavGraph(
             changeStatusBarColor(R.color.white)
             SplashScreen(
                 navHostController = navHostController,
-                rootViewModel = rootViewModel
+                rootViewModel = rootViewModel,
+                deviceId = deviceId
             )
         }
         composable(route = RootNavScreens.UrlSetScreen.route) {

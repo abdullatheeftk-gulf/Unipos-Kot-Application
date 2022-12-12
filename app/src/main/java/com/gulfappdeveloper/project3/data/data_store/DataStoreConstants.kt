@@ -11,4 +11,6 @@ object DataStoreConstants {
     const val PORT_KEY = "port_key"
 
     const val UNI_LICENSE_SAVE_KEY = "uni_license_key"
+
+    const val DEVICE_ID_KEY = "device_android_id_key"
 }

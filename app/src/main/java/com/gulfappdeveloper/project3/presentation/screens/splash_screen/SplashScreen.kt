@@ -24,6 +24,7 @@ import kotlinx.coroutines.flow.collectLatest
 fun SplashScreen(
     navHostController: NavHostController,
     rootViewModel: RootViewModel,
+    deviceId:String
 ) {
 
     val scaffoldState = rememberScaffoldState()
@@ -38,9 +39,9 @@ fun SplashScreen(
         mutableStateOf(false)
     }
 
-    //Log.d(TAG, "SplashScreen: ")
 
     LaunchedEffect(key1 = true) {
+        rootViewModel.saveDeviceIdInDataStore(deviceId = deviceId)
         rootViewModel.splashScreenEvent.collectLatest { event ->
             when (event.uiEvent) {
                 is UiEvent.ShowProgressBar -> {
@@ -53,7 +54,6 @@ fun SplashScreen(
                     delay(2000L)
                     navHostController.popBackStack()
                     navHostController.navigate(route = event.uiEvent.route)
-                    // Log.d(TAG, "SplashScreen: ${event.uiEvent.route}")
                 }
                 is UiEvent.ShowButton1 -> {
                     showUrlSetButton = true
