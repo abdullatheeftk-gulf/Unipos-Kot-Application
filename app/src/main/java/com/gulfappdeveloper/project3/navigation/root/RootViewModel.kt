@@ -1,5 +1,6 @@
 package com.gulfappdeveloper.project3.navigation.root
 
+import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -46,7 +47,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
-//private const val TAG = "RootViewModel"
+private const val TAG = "RootViewModel"
 
 @HiltViewModel
 class RootViewModel @Inject constructor(
@@ -98,7 +99,7 @@ class RootViewModel @Inject constructor(
         private set
 
     // Kot Cancel privilege
-    var kotCancelPrivilege = mutableStateOf(false)
+    var kotCancelPrivilege = mutableStateOf(true)
         private set
 
 
@@ -147,7 +148,7 @@ class RootViewModel @Inject constructor(
     var kotNotes = mutableStateOf("")
         private set
 
-    // uder id from the login response
+    // user id from the login response
     private var fKUserId = mutableStateOf(0)
 
     // no of times login the app
@@ -992,6 +993,7 @@ class RootViewModel @Inject constructor(
                 url = url,
                 kot = kot
             ) { statusCode, message ->
+                Log.w(TAG, "generateKot: $kot", )
                 sendReviewScreenEvent(ReviewScreenEvent(UiEvent.CloseProgressBar))
                 if (statusCode in 200..299) {
                     sendReviewScreenEvent(ReviewScreenEvent(UiEvent.ShowAlertDialog))
@@ -1068,6 +1070,7 @@ class RootViewModel @Inject constructor(
                 url = url,
                 kot = kot
             ) { statusCode, statusMessage ->
+                //Log.e(TAG, "editKot: $kot", )
                 sendReviewScreenEvent(ReviewScreenEvent(UiEvent.CloseProgressBar))
                 if (statusCode in 200..299) {
                     sendReviewScreenEvent(ReviewScreenEvent(UiEvent.ShowAlertDialog))
@@ -1082,7 +1085,7 @@ class RootViewModel @Inject constructor(
                             ipAddress = publicIpAddress
                         )
                     )
-                    sendReviewScreenEvent(ReviewScreenEvent(UiEvent.ShowSnackBar(message = "There have some error :- $statusMessage")))
+                    sendReviewScreenEvent(ReviewScreenEvent(UiEvent.ShowSnackBar(message = "There have some error :-Error message:-  $statusMessage, ErrorCode:- $statusCode", )))
                 }
             }
         }
@@ -1362,7 +1365,8 @@ class RootViewModel @Inject constructor(
 
         // Dine in features  imp:- table id will reset in separate function
         orderName.value = ""
-        chairCount.value = 1
+
+        chairCount.value = 0
 
         selectedTable.value = null
         newTableOrder.value = null
@@ -1499,7 +1503,8 @@ class RootViewModel @Inject constructor(
                             collectionName = "UserInformation",
                             firebaseGeneralData = FirebaseGeneralData(
                                 deviceId = deviceId,
-                                ipAddress = publicIpAddress
+                                ipAddress = publicIpAddress,
+                                uniLicense = licenseKey
                             )
                         )
                     }

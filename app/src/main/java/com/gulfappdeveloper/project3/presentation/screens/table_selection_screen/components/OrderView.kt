@@ -46,8 +46,10 @@ fun OrderView(
             .padding(horizontal = 4.dp, vertical = 8.dp)
             .clickable {
                 if (tableOrder.id == 0) {
+                    // New order
                     rootViewModel.onNewTableOrderSet()
                 } else {
+                    // edit older order
                     rootViewModel.onEditTableOrderSet(kotMasterId = tableOrder.fK_KOTInvoiceId)
                 }
 

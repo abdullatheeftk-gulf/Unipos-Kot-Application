@@ -1,6 +1,9 @@
 package com.gulfappdeveloper.project3.presentation.screens.review_screen.components
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
@@ -27,14 +30,15 @@ fun KotSuccessAlertDialog(
         buttons = {
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
+                    //.fillMaxWidth(),
                     .padding(all = 10.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
                     text = if (editMode) "KOT updated Successfully" else "KOT generated Successfully!",
                     modifier = Modifier
-                        .fillMaxWidth(),
+                        // .fillMaxWidth(),
+                        .padding(horizontal = 10.dp),
                     textAlign = TextAlign.Center,
                     fontSize = MaterialTheme.typography.h6.fontSize,
                     fontStyle = MaterialTheme.typography.h6.fontStyle,
@@ -46,7 +50,7 @@ fun KotSuccessAlertDialog(
                 }
             }
         },
-        shape = RoundedCornerShape(size = 10.dp)
+        shape = RoundedCornerShape(percent = 4)
     )
 }
 

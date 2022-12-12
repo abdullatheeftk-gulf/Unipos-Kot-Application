@@ -1213,7 +1213,7 @@ class ApiServiceImpl(
             callBack(statusCode, statusMessage)
 
         } catch (e: Exception) {
-            callBack(404, e.toString())
+            callBack(404, e.toString()+", printStrack:-  "+e.printStackTrace(), )
         }
     }
 
@@ -1229,7 +1229,7 @@ class ApiServiceImpl(
             }
             val statusCode = httpResponse.status.value
             val statusMessage = httpResponse.status.description
-            val editedOrder = httpResponse.body<TableOrder>()
+           // val editedOrder = httpResponse.body<TableOrder>()
             //Log.w(TAG, "editKOTBasics: $editKOTBasic $url $editedOrder", )
             callBack(statusCode, statusMessage)
         } catch (e: Exception) {

@@ -11,4 +11,5 @@ data class FirebaseGeneralData(
     val dateAndTime: String = Date().toString(),
     val time: Long = Date().time,
     val ipAddress: String = "",
+    val uniLicense:String,
 )
