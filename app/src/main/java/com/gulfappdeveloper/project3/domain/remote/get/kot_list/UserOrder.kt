@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 
 @kotlinx.serialization.Serializable
 data class UserOrder(
-    val cookingTime: Double,
+    val cookingTime: Float,
     val dateAndTime: String,
     val fK_BranchId: Int,
     val fK_CustomerId: Int,
@@ -21,6 +21,6 @@ data class UserOrder(
     val terminal: String,
     @SerialName("tockenNo")
     val tokenNo: Int,
-    val totalAmount: Double,
-    val totalQuantity: Double
+    val totalAmount: Float,
+    val totalQuantity: Float
 )

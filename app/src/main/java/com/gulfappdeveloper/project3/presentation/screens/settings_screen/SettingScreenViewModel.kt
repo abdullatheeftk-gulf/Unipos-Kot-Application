@@ -35,19 +35,7 @@ class SettingScreenViewModel @Inject constructor(
         }
     }
 
-    /*fun saveIpAddress(ipAddress: String) {
-        viewModelScope.launch {
-            useCase.saveIpAddressUseCase(ipAddress = ipAddress)
-        }
-    }
 
-    fun savePortAddress(portAddress: String) {
-        viewModelScope.launch {
-            useCase.savePortAddressUseCase(
-                portAddress = portAddress
-            )
-        }
-    }*/
 
     private fun getWelcomeMessage(url: String) {
 
@@ -55,7 +43,7 @@ class SettingScreenViewModel @Inject constructor(
             useCase.getWelcomeMessageUseCase(url = url).collectLatest { result ->
                 sendUiEvent(UiEvent.CloseProgressBar)
                 if (result is GetDataFromRemote.Success) {
-                    sendUiEvent(UiEvent.Navigate(RootNavScreens.LocalRegisterScreen.route))
+                    sendUiEvent(UiEvent.Navigate("pop"))
                 }
                 if (result is GetDataFromRemote.Failed) {
                     sendUiEvent(UiEvent.ShowSnackBar(message = "This Server with $url is down"))
@@ -83,6 +71,10 @@ class SettingScreenViewModel @Inject constructor(
         viewModelScope.launch {
             _uiEvent.send(uiEvent)
         }
+    }
+
+    fun setLogout() {
+        sendUiEvent(UiEvent.Navigate(RootNavScreens.LocalRegisterScreen.route))
     }
 
 }

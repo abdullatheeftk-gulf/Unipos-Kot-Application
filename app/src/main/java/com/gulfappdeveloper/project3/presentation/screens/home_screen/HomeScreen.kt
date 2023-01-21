@@ -28,7 +28,6 @@ import com.gulfappdeveloper.project3.presentation.screens.home_screen.components
 fun HomeScreen(
     navHostController: NavHostController,
     rootViewModel: RootViewModel,
-    onScanButtonClicked: () -> Unit,
 ) {
 
     val scaffoldState = rememberScaffoldState()

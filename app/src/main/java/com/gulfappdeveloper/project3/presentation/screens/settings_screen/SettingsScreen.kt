@@ -12,11 +12,13 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.gulfappdeveloper.project3.navigation.root.RootNavScreens
 import com.gulfappdeveloper.project3.navigation.root.RootViewModel
 import com.gulfappdeveloper.project3.presentation.presentation_util.UiEvent
 import kotlinx.coroutines.flow.collectLatest
@@ -47,8 +49,9 @@ fun SettingsScreen(
         settingScreenViewModel.uiEvent.collectLatest { value: UiEvent ->
             when (value) {
                 is UiEvent.Navigate -> {
-                    navHostController.popBackStack()
-
+                    rootViewModel.setIsInitialLoadingIsNotFinished()
+                    navHostController.backQueue.clear()
+                    navHostController.navigate(route = RootNavScreens.LocalRegisterScreen.route)
                 }
                 is UiEvent.ShowSnackBar -> {
                     scaffoldState.snackbarHostState.showSnackbar(
@@ -91,6 +94,17 @@ fun SettingsScreen(
                             contentDescription = null
                         )
                     }
+                },
+                actions = {
+                    IconButton(
+                        onClick = {
+                            settingScreenViewModel.setLogout()
+                        },
+                    ) {
+                        Text(
+                            text = "LOGOUT",
+                        )
+                    }
                 }
             )
         },
@@ -112,7 +126,10 @@ fun SettingsScreen(
                     text = typedText
                 },
                 placeholder = {
-                    Text(text = currentBaseUrl)
+                    Text(
+                        text = currentBaseUrl,
+                        modifier = Modifier.alpha(ContentAlpha.medium)
+                    )
                 },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Uri,
@@ -123,7 +140,6 @@ fun SettingsScreen(
 
                         hideKeyboard()
                         if (urlValidator(baseUrl = text)) {
-                            rootViewModel.setIsInitialLoadingIsNotFinished()
                             settingScreenViewModel.setBaseUrl(value = text)
                         } else {
                             settingScreenViewModel.onErrorUrl(url = text)
@@ -132,7 +148,6 @@ fun SettingsScreen(
                 ),
                 modifier = Modifier
                     .fillMaxWidth(),
-                //.focusRequester(focusRequester = focusRequester),
                 enabled = !showProgressBar
             )
             Spacer(modifier = Modifier.height(10.dp))
@@ -142,7 +157,6 @@ fun SettingsScreen(
                     hideKeyboard()
                     if (!showProgressBar) {
                         if (urlValidator(baseUrl = text)) {
-                            rootViewModel.setIsInitialLoadingIsNotFinished()
                             settingScreenViewModel.setBaseUrl(value = text)
                         } else {
                             settingScreenViewModel.onErrorUrl(url = text)
@@ -154,72 +168,6 @@ fun SettingsScreen(
                 Text(text = "Set Base Url")
             }
             Spacer(modifier = Modifier.height(30.dp))
-            /*    Text(
-                    text = "Set Printer Properties",
-                    textDecoration = TextDecoration.Underline,
-                    fontSize = MaterialTheme.typography.h6.fontSize,
-                    fontStyle = MaterialTheme.typography.h6.fontStyle,
-                    fontWeight = MaterialTheme.typography.h6.fontWeight
-                )
-                Spacer(modifier = Modifier.height(10.dp))
-                Row(modifier = Modifier.fillMaxWidth()) {
-                    OutlinedTextField(
-                        value = ipAddress,
-                        onValueChange = {typedValue->
-                            ipAddress = typedValue
-                        },
-                        modifier = Modifier.weight(2f),
-                        label = {
-                            Text(text = "Ip Address")
-                        },
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Number,
-                            imeAction = ImeAction.Done
-                        ),
-                        keyboardActions = KeyboardActions(
-                            onDone = {
-                                hideKeyboard()
-                            }
-                        ),
-                        placeholder = {
-                            Text(text = ip)
-                        }
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    OutlinedTextField(
-                        value = portAddress,
-                        onValueChange = {typedValue->
-                            portAddress = typedValue
-                        },
-                        modifier = Modifier.weight(1f),
-                        label = {
-                            Text(text = "Port")
-                        },
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Number,
-                            imeAction = ImeAction.Done
-                        ),
-                        keyboardActions = KeyboardActions(
-                            onDone = {
-                                hideKeyboard()
-                            }
-                        ),
-                        placeholder = {
-                            Text(text = port)
-                        }
-                    )
-                }
-                Spacer(modifier = Modifier.height(20.dp))
-                Button(
-                    onClick = {
-                    hideKeyboard()
-                    settingScreenViewModel.saveIpAddress(ipAddress = ipAddress)
-                    settingScreenViewModel.savePortAddress(portAddress = portAddress)
-                    rootViewModel.readPortAddress()
-                    rootViewModel.readIpAddress()
-                }) {
-                   Text(text = "Save Printer Address")
-                }*/
         }
 
         if (showProgressBar) {

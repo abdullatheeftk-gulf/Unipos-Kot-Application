@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.gulfappdeveloper.project3.BuildConfig
 import com.gulfappdeveloper.project3.data.remote.HttpRoutes
 import com.gulfappdeveloper.project3.domain.datastore.UniLicenseDetails
 import com.gulfappdeveloper.project3.domain.firebase.FirebaseError
@@ -186,8 +187,8 @@ class RootViewModel @Inject constructor(
     var ipAddress = mutableStateOf("")
         private set
 
-    var port = mutableStateOf("")
-        private set
+    /*var port = mutableStateOf("")
+        private set*/
 
 
     //firebase
@@ -206,15 +207,15 @@ class RootViewModel @Inject constructor(
 
 
     init {
-
         sendSplashScreenEvent(SplashScreenEvent(UiEvent.ShowProgressBar))
+
         readDeviceId()
         saveOperationCount()
         readOperationCount()
         readSerialNo()
         readBaseUrl()
         readIpAddress()
-        readPortAddress()
+        //readPortAddress()
 
     }
 
@@ -226,18 +227,10 @@ class RootViewModel @Inject constructor(
     fun setIsInitialLoadingIsNotFinished() {
 
         try {
-            categoryList.removeAll {
-                true
-            }
-            productList.removeAll {
-                true
-            }
-            sectionList.removeAll {
-                true
-            }
-            tableList.removeAll {
-                true
-            }
+            categoryList.clear()
+            productList.clear()
+            sectionList.clear()
+            tableList.clear()
             readBaseUrl()
             isInitialLoadingFinished = false
 
@@ -272,7 +265,7 @@ class RootViewModel @Inject constructor(
         viewModelScope.launch {
             useCase.readDeviceIdUseCase().collectLatest {
                 _deviceIdSate.value = it
-                Log.w(TAG, "readDeviceId: ${_deviceIdSate.value}")
+               // Log.w(TAG, "readDeviceId: ${_deviceIdSate.value}")
             }
         }
     }
@@ -297,13 +290,13 @@ class RootViewModel @Inject constructor(
         }
     }
 
-    private fun readPortAddress() {
+   /* private fun readPortAddress() {
         viewModelScope.launch {
             useCase.readPortAddressUseCase().collectLatest { value ->
-                port.value = value
+                //port.value = value
             }
         }
-    }
+    }*/
 
     private fun readBaseUrl() {
         // Log.e(TAG, "readBaseUrl: ")
@@ -413,9 +406,7 @@ class RootViewModel @Inject constructor(
                 .collectLatest { result ->
                     if (result is GetDataFromRemote.Success) {
                         try {
-                            categoryList.removeAll {
-                                true
-                            }
+                            categoryList.clear()
                         } catch (e: Exception) {
                             //  Log.e(TAG, "getCategoryList: ${e.message}")
                         }
@@ -452,9 +443,7 @@ class RootViewModel @Inject constructor(
     private fun getProductList(value: Int) {
 
         try {
-            productList.removeAll {
-                true
-            }
+            productList.clear()
             selectedCategory.value = value
         } catch (e: Exception) {
             // Log.e(TAG, "getProductList: ${e.message}")
@@ -470,9 +459,7 @@ class RootViewModel @Inject constructor(
                 url = url
             ).collectLatest { result ->
                 try {
-                    productList.removeAll {
-                        true
-                    }
+                    productList.clear()
                     selectedCategory.value = value
                 } catch (e: Exception) {
                     // Log.e(TAG, "getProductList: ${e.message}")
@@ -510,7 +497,7 @@ class RootViewModel @Inject constructor(
 
     fun getMultiSizeProduct(id: Int) {
         try {
-            multiSizeProductList.removeAll { true }
+            multiSizeProductList.clear()
         } catch (e: Exception) {
             // Log.e(TAG, "getMultiSizeProduct: ${e.message}")
         }
@@ -544,9 +531,7 @@ class RootViewModel @Inject constructor(
     fun productSearch() {
         selectedCategory.value = -1
         try {
-            productList.removeAll {
-                true
-            }
+            productList.clear()
         } catch (e: Exception) {
             // Log.e(TAG, "productSearch: ${e.message}")
         }
@@ -558,9 +543,7 @@ class RootViewModel @Inject constructor(
                 url = url
             ).collectLatest { result ->
                 try {
-                    productList.removeAll {
-                        true
-                    }
+                    productList.clear()
                     selectedCategory.value = -1
                     productSearchText.value = ""
                 } catch (e: Exception) {
@@ -613,9 +596,7 @@ class RootViewModel @Inject constructor(
                 if (result is GetDataFromRemote.Success) {
                     // Log.i(TAG, "getSectionList: ${result.data}")
                     try {
-                        sectionList.removeAll {
-                            true
-                        }
+                        sectionList.clear()
                     } catch (e: Exception) {
                         // Log.e(TAG, "getSectionList: ${e.message}")
                     }
@@ -645,9 +626,7 @@ class RootViewModel @Inject constructor(
     fun getTableList(value: Int) {
         selectedSection.value = value
         try {
-            tableList.removeAll {
-                true
-            }
+            tableList.clear()
 
         } catch (e: Exception) {
             // Log.e(TAG, "getTableList: ${e.message}")
@@ -663,9 +642,7 @@ class RootViewModel @Inject constructor(
             ).collectLatest { result ->
 
                 try {
-                    tableList.removeAll {
-                        true
-                    }
+                    tableList.clear()
 
                 } catch (e: Exception) {
                     // Log.e(TAG, "getTableList: ${e.message}")
@@ -715,9 +692,7 @@ class RootViewModel @Inject constructor(
         // Log.w(TAG, "getTableOrderList: $id")
         sendTableSelectionUiEvent(TableSelectionUiEvent(UiEvent.ShowProgressBar))
         try {
-            tableOrderList.removeAll {
-                true
-            }
+            tableOrderList.clear()
         } catch (e: Exception) {
             //  Log.e(TAG, "getTableOrderList: ${e.message}")
         }
@@ -1171,9 +1146,7 @@ class RootViewModel @Inject constructor(
     // Get KOT
     fun getKOTDetails(kotNumber: Int) {
         try {
-            kotItemList.removeAll {
-                true
-            }
+            kotItemList.clear()
         } catch (e: Exception) {
             //Log.e(TAG, "getKOTDetails: ")
         }
@@ -1197,9 +1170,7 @@ class RootViewModel @Inject constructor(
                         }*/
                     } else {
                         try {
-                            kotItemList.removeAll {
-                                true
-                            }
+                            kotItemList.clear()
                         } catch (e: Exception) {
                             //  Log.e(TAG, "getKOTDetails: ")
                         }
@@ -1293,12 +1264,6 @@ class RootViewModel @Inject constructor(
         sendProductDisplayEvent(ProductDisplayScreenEvent(UiEvent.ShowSnackBar(message)))
     }
 
-    /*private fun navigateToNextScreenWithDelayForSplashScreen(route: String) {
-        viewModelScope.launch {
-            delay(2000)
-            sendSplashScreenEvent(SplashScreenEvent(UiEvent.Navigate(route = route)))
-        }
-    }*/
 
     private fun sendSplashScreenEvent(splashScreenEvent: SplashScreenEvent) {
         viewModelScope.launch {
@@ -1364,9 +1329,7 @@ class RootViewModel @Inject constructor(
 
 
         try {
-            kotItemList.removeAll {
-                true
-            }
+            kotItemList.clear()
         } catch (e: Exception) {
             // Log.e(TAG, "resetKot: ${e.message}")
         }
@@ -1385,9 +1348,7 @@ class RootViewModel @Inject constructor(
         selectedTable.value = null
         newTableOrder.value = null
         try {
-            tableOrderList.removeAll {
-                true
-            }
+            tableOrderList.clear()
         } catch (e: Exception) {
             // Log.e(TAG, "resetKot: ${e.message}")
         }
@@ -1404,36 +1365,11 @@ class RootViewModel @Inject constructor(
 
     }
 
-    /*private fun getPrintText(print: EscPosPrinter): String {
-        val date = SimpleDateFormat("dd/MM/yyyy h:mm:ss a", Locale.getDefault()).format(Date())
-        val res = context.resources.getDrawableForDensity(
-            R.drawable.unipospro_logo_full,
-            DisplayMetrics.DENSITY_MEDIUM
-        )
-        var kotItemsString = ""
-        kotItemList.forEachIndexed { index, kotItem ->
-            kotItemsString += "[L]${index + 1}, ${kotItem.productName}[R]${kotItem.quantity}\n"
-        }
-
-        return "[C]<img>" + PrinterTextParserImg.bitmapToHexadecimalString(
-            print,
-            res
-        ) + "</img>\n" +
-                "[C]<u>font size='big'>UNIPOSPRO</u>\n" +
-                "[C]Date:- $date\n" +
-                "[L]\n" +
-                "[C]============================================\n" +
-                kotItemsString + "\n" +
-                "[C]<barcode type='ean13' height='10'>831254784551</barcode>\n" +
-                "[C]<qrcode size='25'>123456789</qrcode>"
-    }*/
 
 
     fun getListOfPendingKOTs() {
         try {
-            kotPendingList.removeAll {
-                true
-            }
+            kotPendingList.clear()
         } catch (e: Exception) {
             // Log.e(TAG, "getListOfPendingKOTs: ${e.message}")
         }
@@ -1512,6 +1448,17 @@ class RootViewModel @Inject constructor(
                 sendUniLicenseActScreenEvent(UiEvent.CloseProgressBar)
 
                 if (result is GetDataFromRemote.Success) {
+                    val licenseType = result.data.message.licenseType
+                    val expiryDate = result.data.message.expiryDate
+                    expiryDate?.let {ed->
+                        if (licenseType =="demo"){
+                            if (!checkForLicenseExpiryDate(ed)){
+                                sendUniLicenseActScreenEvent(UiEvent.ShowSnackBar("Expired License"))
+                                licenseKeyActivationError.value = "Expired License"
+                                return@collectLatest
+                            }
+                        }
+                    }
                     // sendUniLicenseActScreenEvent(UiEvent.Navigate(route = RootNavScreens.LocalRegisterScreen.route))
                     val licenceInformation = UniLicenseDetails(
                         licenseType = result.data.message.licenseType,
@@ -1520,6 +1467,8 @@ class RootViewModel @Inject constructor(
                     )
 
                     uniLicenseDetails.value = licenceInformation
+
+
 
                     sendUniLicenseActScreenEvent(UiEvent.ShowAlertDialog)
 

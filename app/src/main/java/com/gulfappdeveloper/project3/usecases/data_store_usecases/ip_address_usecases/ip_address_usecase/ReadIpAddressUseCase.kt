@@ -1,4 +1,4 @@
-package com.gulfappdeveloper.project3.usecases.data_store_usecases.printer_usecases.ip_address_usecase
+package com.gulfappdeveloper.project3.usecases.data_store_usecases.ip_address_usecases.ip_address_usecase
 
 import com.gulfappdeveloper.project3.repositories.DataStoreRepository
 import kotlinx.coroutines.flow.Flow

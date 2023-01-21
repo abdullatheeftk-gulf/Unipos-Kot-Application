@@ -14,6 +14,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.gulfappdeveloper.project3.domain.datastore.UniLicenseDetails
 import com.gulfappdeveloper.project3.navigation.root.RootNavScreens
 import com.gulfappdeveloper.project3.navigation.root.RootViewModel
 import com.gulfappdeveloper.project3.presentation.presentation_util.UiEvent
@@ -35,6 +36,7 @@ fun UniLicenseActScreen(
         mutableStateOf("")
     }
 
+    val uniLicense by rootViewModel.uniLicenseDetails
     val licenseKeyActivationError by rootViewModel.licenseKeyActivationError
 
     val deviceIdFromDataStore by rootViewModel.deviceIdState
@@ -82,7 +84,10 @@ fun UniLicenseActScreen(
                 navHostController.popBackStack()
                 navHostController.navigate(route = RootNavScreens.LocalRegisterScreen.route)
             },
-            rootViewModel = rootViewModel
+            onLicenseExpired = {
+                showAlertDialog = false
+            },
+            uniLicense = uniLicense
         )
     }
 
@@ -106,15 +111,31 @@ fun UniLicenseActScreen(
             Row {
                 Text(
                     text = "Device Id:-   ",
-                    fontStyle = MaterialTheme.typography.h1.fontStyle,
+                    fontStyle = MaterialTheme.typography.h5.fontStyle,
                     fontSize = 20.sp
                 )
                 SelectionContainer() {
                     Text(
                         text = deviceIdFromDataStore.ifEmpty { deviceId },
-                        fontStyle = MaterialTheme.typography.h1.fontStyle,
+                        fontStyle = MaterialTheme.typography.h5.fontStyle,
                         fontSize = 20.sp,
                     )
+                }
+            }
+            uniLicense?.let { uniLicenseDetails: UniLicenseDetails ->
+                Row {
+                    Text(
+                        text = "App License:-   ",
+                        fontStyle = MaterialTheme.typography.h5.fontStyle,
+                        fontSize = 20.sp
+                    )
+                    SelectionContainer() {
+                        Text(
+                            text = uniLicenseDetails.licenseKey,
+                            fontStyle = MaterialTheme.typography.h5.fontStyle,
+                            fontSize = 20.sp,
+                        )
+                    }
                 }
             }
             Spacer(modifier = Modifier.height(10.dp))
@@ -158,7 +179,10 @@ fun UniLicenseActScreen(
                     .padding(start = 25.dp)
             ) {
                 if (licenseKeyActivationError.isNotBlank() || licenseKeyActivationError.isNotEmpty()) {
-                    Text(text = licenseKeyActivationError, color = MaterialTheme.colors.error)
+                    Text(
+                        text = if (licenseKeyActivationError == "Expired License") "Expired License" else "Bad Request",
+                        color = MaterialTheme.colors.error
+                    )
                 }
             }
 

@@ -72,7 +72,6 @@ fun RootNavGraph(
             changeStatusBarColor(R.color.white)
             HomeScreen(
                 navHostController = navHostController,
-                onScanButtonClicked = onScanButtonClicked,
                 rootViewModel = rootViewModel
             )
         }

@@ -1,5 +1,7 @@
 package com.gulfappdeveloper.project3.presentation.screens.uni_license_act_screen.components
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.AlertDialog
@@ -11,20 +13,61 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.gulfappdeveloper.project3.domain.datastore.UniLicenseDetails
 import com.gulfappdeveloper.project3.navigation.root.RootViewModel
 import com.gulfappdeveloper.project3.ui.theme.MyPrimeColor
+import java.text.SimpleDateFormat
+import java.util.*
+
 
 @Composable
 fun LicenseInformationDisplayAlertDialog(
     onDismissRequest: () -> Unit,
-    rootViewModel: RootViewModel
+    onLicenseExpired:()->Unit,
+    uniLicense:UniLicenseDetails?
 ) {
-    val uniLicense by rootViewModel.uniLicenseDetails
+
+
+    val expDateString = uniLicense?.expiryDate
+
+    expDateString?.let {
+        if (it.isNotEmpty() || it.isNotBlank()) {
+            if (isLicenseExpired(it)) {
+
+                AlertDialog(
+                    onDismissRequest = onLicenseExpired,
+                    buttons = {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.padding(10.dp)
+                        ) {
+
+
+                            Text(
+                                text = "Expired License",
+                                color = MaterialTheme.colors.error
+                            )
+
+                            Button(
+                                onClick = onLicenseExpired,
+                                modifier = Modifier.align(Alignment.End)
+                            ) {
+                                Text(text = "OK")
+                            }
+                        }
+                    }
+                )
+
+                return
+            }
+        }
+    }
 
     AlertDialog(
         onDismissRequest = onDismissRequest,
@@ -89,11 +132,24 @@ fun LicenseInformationDisplayAlertDialog(
                     )
                 }
                 Spacer(modifier = Modifier.height(15.dp))
-                Button(onClick = onDismissRequest) {
+                
+                Button(
+                    onClick = onDismissRequest
+                ) {
                     Text(text = "OK")
                 }
 
             }
         }
     )
+}
+
+private fun isLicenseExpired(eDate: String): Boolean {
+
+    val expDate: Date = SimpleDateFormat(
+        "dd-MM-yyyy",
+        Locale.getDefault()
+    ).parse(eDate)!!
+
+    return expDate <= Date()
 }
