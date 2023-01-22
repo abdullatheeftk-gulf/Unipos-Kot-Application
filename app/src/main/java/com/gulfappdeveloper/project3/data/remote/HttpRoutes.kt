@@ -13,7 +13,6 @@ object HttpRoutes {
     const val PRODUCT_IMAGE = "/api/proimage/"
     const val PRODUCT_SEARCH = "/api/productsearch/"
     const val MULTI_SIZE_PRODUCT = "/api/multisize/"
-    //const val MULTI_SIZE_PRODUCT_IMAGE = "/api/multiimage/"
 
     const val SECTION_LIST = "/api/section"
     const val TABLE_LIST = "/api/table/"

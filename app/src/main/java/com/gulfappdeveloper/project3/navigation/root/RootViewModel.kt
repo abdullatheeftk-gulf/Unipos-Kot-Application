@@ -1523,6 +1523,7 @@ class RootViewModel @Inject constructor(
                         // check for license expired
                         if (!checkForLicenseExpiryDate(licenseDetails.expiryDate)) {
                             // demo license expired
+                            sendUniLicenseActScreenEvent(UiEvent.ShowSnackBar("Your licence is expired"))
                             checkForPublicIpAddressStatus()
 
                         } else {
@@ -1573,6 +1574,7 @@ class RootViewModel @Inject constructor(
                             UiEvent.Navigate(route = RootNavScreens.UniLicenseActScreen.route)
                         )
                     )
+
                     return@launch
                 }
                 delay(1000L)

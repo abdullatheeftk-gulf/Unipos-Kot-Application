@@ -1,5 +1,6 @@
 package com.gulfappdeveloper.project3.presentation.screens.uni_license_act_screen
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -8,8 +9,7 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -36,6 +36,7 @@ fun UniLicenseActScreen(
         mutableStateOf("")
     }
 
+
     val uniLicense by rootViewModel.uniLicenseDetails
     val licenseKeyActivationError by rootViewModel.licenseKeyActivationError
 
@@ -45,19 +46,16 @@ fun UniLicenseActScreen(
         mutableStateOf(false)
     }
 
+
     var showAlertDialog by remember {
         mutableStateOf(false)
     }
 
     val scope = rememberCoroutineScope()
 
-    val focusRequester by remember {
-        mutableStateOf(FocusRequester())
-    }
 
     LaunchedEffect(key1 = true) {
 
-        focusRequester.requestFocus()
 
         rootViewModel.uniLicenseActScreenEvent.collectLatest { value: UniLicenseActScreenEvent ->
             when (value.uiEvent) {
@@ -92,6 +90,9 @@ fun UniLicenseActScreen(
     }
 
 
+
+
+
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = {
@@ -122,22 +123,7 @@ fun UniLicenseActScreen(
                     )
                 }
             }
-            uniLicense?.let { uniLicenseDetails: UniLicenseDetails ->
-                Row {
-                    Text(
-                        text = "App License:-   ",
-                        fontStyle = MaterialTheme.typography.h5.fontStyle,
-                        fontSize = 20.sp
-                    )
-                    SelectionContainer() {
-                        Text(
-                            text = uniLicenseDetails.licenseKey,
-                            fontStyle = MaterialTheme.typography.h5.fontStyle,
-                            fontSize = 20.sp,
-                        )
-                    }
-                }
-            }
+
             Spacer(modifier = Modifier.height(10.dp))
             OutlinedTextField(
                 value = licenseKeyText,
@@ -150,8 +136,7 @@ fun UniLicenseActScreen(
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 10.dp, end = 10.dp)
-                    .focusRequester(focusRequester = focusRequester),
+                    .padding(start = 10.dp, end = 10.dp),
                 isError = licenseKeyActivationError.isNotBlank() || licenseKeyActivationError.isNotEmpty(),
                 keyboardActions = KeyboardActions(onDone = {
                     hideKeyboard()
@@ -179,10 +164,26 @@ fun UniLicenseActScreen(
                     .padding(start = 25.dp)
             ) {
                 if (licenseKeyActivationError.isNotBlank() || licenseKeyActivationError.isNotEmpty()) {
+
                     Text(
                         text = if (licenseKeyActivationError == "Expired License") "Expired License" else "Bad Request",
                         color = MaterialTheme.colors.error
                     )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
+            uniLicense?.let { uniLicenseDetails: UniLicenseDetails ->
+
+                Row {
+                    Text(
+                        text = "App License:-   ")
+                    SelectionContainer() {
+                        Text(
+                            text = uniLicenseDetails.licenseKey,
+                            color = MaterialTheme.colors.error
+                        )
+                    }
                 }
             }
 

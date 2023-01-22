@@ -118,7 +118,7 @@ class ApiServiceImpl(
                     GetDataFromRemote.Failed(
                         error = Error(
                             code = 602,
-                            message = "No internet in Mobile"
+                            message = "Connection problem, Change base url"
                         )
                     )
                 )
