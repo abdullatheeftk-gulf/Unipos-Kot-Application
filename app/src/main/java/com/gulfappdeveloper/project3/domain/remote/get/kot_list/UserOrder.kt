@@ -22,5 +22,7 @@ data class UserOrder(
     @SerialName("tockenNo")
     val tokenNo: Int,
     val totalAmount: Float,
-    val totalQuantity: Float
+    val totalQuantity: Float,
+    //added newly
+    val orderStatus:Int?
 )

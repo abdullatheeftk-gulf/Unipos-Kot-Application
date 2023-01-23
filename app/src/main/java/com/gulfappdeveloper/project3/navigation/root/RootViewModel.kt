@@ -1,6 +1,6 @@
 package com.gulfappdeveloper.project3.navigation.root
 
-import android.util.Log
+//import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateListOf
@@ -49,7 +49,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
-private const val TAG = "RootViewModel"
+//private const val TAG = "RootViewModel"
 
 @HiltViewModel
 class RootViewModel @Inject constructor(
@@ -205,6 +205,10 @@ class RootViewModel @Inject constructor(
     var uniLicenseDetails: MutableState<UniLicenseDetails?> = mutableStateOf(null)
         private set
 
+    // kot type to display in show kot screen
+    private val _kotType = mutableStateOf(false)
+    val kotType: State<Boolean> = _kotType
+
 
     init {
         sendSplashScreenEvent(SplashScreenEvent(UiEvent.ShowProgressBar))
@@ -265,7 +269,7 @@ class RootViewModel @Inject constructor(
         viewModelScope.launch {
             useCase.readDeviceIdUseCase().collectLatest {
                 _deviceIdSate.value = it
-               // Log.w(TAG, "readDeviceId: ${_deviceIdSate.value}")
+                // Log.w(TAG, "readDeviceId: ${_deviceIdSate.value}")
             }
         }
     }
@@ -290,13 +294,13 @@ class RootViewModel @Inject constructor(
         }
     }
 
-   /* private fun readPortAddress() {
-        viewModelScope.launch {
-            useCase.readPortAddressUseCase().collectLatest { value ->
-                //port.value = value
-            }
-        }
-    }*/
+    /* private fun readPortAddress() {
+         viewModelScope.launch {
+             useCase.readPortAddressUseCase().collectLatest { value ->
+                 //port.value = value
+             }
+         }
+     }*/
 
     private fun readBaseUrl() {
         // Log.e(TAG, "readBaseUrl: ")
@@ -330,7 +334,15 @@ class RootViewModel @Inject constructor(
                     if (result is GetDataFromRemote.Success) {
                         //  Log.w(TAG, "getWelcomeMessage: ${result.data}")
                         message.value = result.data.message
-                        readUniLicenseKeyDetails()
+                        if (BuildConfig.DEBUG) {
+                            sendSplashScreenEvent(
+                                SplashScreenEvent(
+                                    UiEvent.Navigate(route = RootNavScreens.LocalRegisterScreen.route)
+                                )
+                            )
+                        } else {
+                            readUniLicenseKeyDetails()
+                        }
                         //navigateToNextScreenWithDelayForSplashScreen(route = RootNavScreens.LocalRegisterScreen.route)
                         // isInitialLoadingFinished = true
                     }
@@ -735,14 +747,25 @@ class RootViewModel @Inject constructor(
 
 
     fun onSelectedTable() {
-        tableId.value = selectedTable.value?.id!!
-        showNewTableOrderAddButton.value =
-            selectedTable.value?.occupied!! < selectedTable.value?.noOfSeats!!
+     //   Log.d("Test", "onSelectedTable:")
+        try {
+            tableId.value = selectedTable.value?.id!!
+            showNewTableOrderAddButton.value =
+                selectedTable.value?.occupied!! < selectedTable.value?.noOfSeats!!
+        } catch (e: Exception) {
+         //   Log.e("Test", "onSelectedTable: ${e.message} ")
+        }
 
     }
 
 
     fun newOrderButtonClicked(orderName: String, noOfChairRequired: Int) {
+        if (selectedTable.value == null) {
+            sendTableSelectionUiEvent(
+                TableSelectionUiEvent(UiEvent.ShowSnackBar("There have some error on Selected table, Selected table is null func: newOrderButtonClicked"))
+            )
+            return
+        }
         newTableOrder.value = TableOrder(
             chairCount = noOfChairRequired,
             fK_TableId = selectedTable.value?.id!!,
@@ -772,7 +795,7 @@ class RootViewModel @Inject constructor(
           this.chairCount.value = chairCount
       }*/
 
-    fun removeTableOrder() {
+    fun removeTableOrderAndResetSelectedTableAndTableId() {
         try {
             tableOrderList.removeAll {
                 it.id == 0
@@ -780,6 +803,9 @@ class RootViewModel @Inject constructor(
         } catch (e: Exception) {
             //Log.e(TAG, "removeOrder: ", )
         }
+        //new code added
+        selectedTable.value = null
+        resetTableId()
     }
 
 
@@ -835,12 +861,13 @@ class RootViewModel @Inject constructor(
                             documentName = "getKotCancelPrivilege,${Date()}",
                             errorData = FirebaseError(
                                 errorCode = result.error.code,
-                                errorMessage = result.error.message!!,
+                                errorMessage = result.error.message?:"",
                                 url = url,
                                 ipAddress = publicIpAddress
                             )
                         )
                     }
+                    else -> Unit
                 }
             }
         }
@@ -942,12 +969,22 @@ class RootViewModel @Inject constructor(
     }
 
 
-    fun onResetTableId() {
+    fun resetTableId() {
         tableId.value = 0
     }
 
     // kot generation
     fun generateKot(deviceId: String) {
+        if (tableId.value == 0 && chairCount.value != 0) {
+            sendReviewScreenEvent(ReviewScreenEvent(UiEvent.ShowSnackBar("tableId and chair count should be 0")))
+          //  Log.e("Test", "generateKot: ${tableId.value} ${chairCount.value}")
+            return
+        }
+        if (tableId.value != 0 && chairCount.value == 0) {
+            sendReviewScreenEvent(ReviewScreenEvent(UiEvent.ShowSnackBar("tableId and chair count should be 0")))
+            //Log.e("Test", "generateKot: ${tableId.value} ${chairCount.value}")
+            return
+        }
         if (kotItemList.isEmpty()) {
             sendReviewScreenEvent(ReviewScreenEvent(UiEvent.ShowSnackBar("No item in kot")))
             return
@@ -982,7 +1019,7 @@ class RootViewModel @Inject constructor(
                 url = url,
                 kot = kot
             ) { statusCode, message ->
-               // Log.w(TAG, "generateKot: $kot")
+              //  Log.w("Test", "generateKot: $kot")
                 sendReviewScreenEvent(ReviewScreenEvent(UiEvent.CloseProgressBar))
                 if (statusCode in 200..299) {
                     sendReviewScreenEvent(ReviewScreenEvent(UiEvent.ShowAlertDialog))
@@ -1029,6 +1066,16 @@ class RootViewModel @Inject constructor(
 
     //Edit Kot
     fun editKot(deviceId: String) {
+        if (tableId.value == 0 && chairCount.value != 0) {
+            sendReviewScreenEvent(ReviewScreenEvent(UiEvent.ShowSnackBar("tableId and chair count should be 0")))
+           // Log.e("Test", "generateKot: ${tableId.value} ${chairCount.value}")
+            return
+        }
+        if (tableId.value != 0 && chairCount.value == 0) {
+            sendReviewScreenEvent(ReviewScreenEvent(UiEvent.ShowSnackBar("tableId and chair count should be 0")))
+            //Log.e("Test", "generateKot: ${tableId.value} ${chairCount.value}")
+            return
+        }
         if (kotItemList.isEmpty()) {
             sendReviewScreenEvent(ReviewScreenEvent(UiEvent.ShowSnackBar("No item in Kot")))
             return
@@ -1055,6 +1102,8 @@ class RootViewModel @Inject constructor(
                 chairCount = chairCount.value,
                 kotMasterId = kotMasterId.value
             )
+          //  Log.i("Test", "editKot: $url")
+          //  Log.w("Test", "editKot: $kot")
             useCase.editKotUseCase(
                 url = url,
                 kot = kot
@@ -1142,9 +1191,12 @@ class RootViewModel @Inject constructor(
 
     }
 
+    // false is for dine in
+
 
     // Get KOT
     fun getKOTDetails(kotNumber: Int) {
+        _kotType.value = false
         try {
             kotItemList.clear()
         } catch (e: Exception) {
@@ -1169,6 +1221,9 @@ class RootViewModel @Inject constructor(
                             sendEditScreenEvent(UiEvent.ShowEmptyList)
                         }*/
                     } else {
+                       // Log.e("Test", "getKOTDetails: ${value.tableId} ${value.chairCount}")
+                        _kotType.value = value.tableId <= 0
+                        //Log.w("Test", "getKOTDetails: ${_kotType.value}")
                         try {
                             kotItemList.clear()
                         } catch (e: Exception) {
@@ -1230,17 +1285,23 @@ class RootViewModel @Inject constructor(
     }
 
     fun deleteKot() {
+        val url = baseUrl.value + HttpRoutes.EDIT_KOT + kotMasterId.value
         sendShowKotUiEvent(UiEvent.ShowProgressBar)
         viewModelScope.launch(Dispatchers.IO) {
             useCase.deleteKotUseCase(
-                url = baseUrl.value + HttpRoutes.EDIT_KOT + kotMasterId.value,
+                url = url,
                 callBack = { statusCode, statusMessage ->
                     sendShowKotUiEvent(UiEvent.CloseProgressBar)
+                    // Log.w(TAG, "deleteKot: $statusCode", )
+                    // Log.e(TAG, "deleteKot: $statusMessage", )
+                    // Log.d(TAG, "deleteKot:error url $url")
                     if (statusCode == 204) {
                         resetKot()
+                        removeTableOrderAndResetSelectedTableAndTableId()
                         sendShowKotUiEvent(UiEvent.ShowSnackBar("Deleted kot successfully "))
                         sendShowKotUiEvent(UiEvent.Navigate(route = RootNavScreens.HomeScreen.route))
                     } else {
+
                         sendShowKotUiEvent(UiEvent.ShowSnackBar("There have some Error with message : $statusMessage"))
                         useCase.insertErrorDataToFireStoreUseCase(
                             collectionName = collectionName,
@@ -1344,6 +1405,8 @@ class RootViewModel @Inject constructor(
         orderName.value = ""
 
         chairCount.value = 0
+        //newly added
+        //  tableId.value = 0
 
         selectedTable.value = null
         newTableOrder.value = null
@@ -1363,8 +1426,10 @@ class RootViewModel @Inject constructor(
         // reset selected order mode
         selectedOrderMode.value = OrderMode.NONE
 
-    }
+       // Log.e("Test", "resetKot: ${tableId.value}")
 
+
+    }
 
 
     fun getListOfPendingKOTs() {
@@ -1418,7 +1483,7 @@ class RootViewModel @Inject constructor(
     // saving device id in dataStore
     fun saveDeviceIdInDataStore(deviceId: String) {
         if (_deviceIdSate.value.isEmpty()) {
-            Log.d(TAG, "saveDeviceIdInDataStore: $deviceId")
+            // Log.d(TAG, "saveDeviceIdInDataStore: $deviceId")
             viewModelScope.launch {
                 useCase.saveDeviceIdUseCase(deviceId = deviceId)
             }
@@ -1450,9 +1515,9 @@ class RootViewModel @Inject constructor(
                 if (result is GetDataFromRemote.Success) {
                     val licenseType = result.data.message.licenseType
                     val expiryDate = result.data.message.expiryDate
-                    expiryDate?.let {ed->
-                        if (licenseType =="demo"){
-                            if (!checkForLicenseExpiryDate(ed)){
+                    expiryDate?.let { ed ->
+                        if (licenseType == "demo") {
+                            if (!checkForLicenseExpiryDate(ed)) {
                                 sendUniLicenseActScreenEvent(UiEvent.ShowSnackBar("Expired License"))
                                 licenseKeyActivationError.value = "Expired License"
                                 return@collectLatest

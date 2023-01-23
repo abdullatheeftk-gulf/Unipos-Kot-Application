@@ -26,6 +26,7 @@ fun EditNormalTopBar(
             IconButton(onClick = {
                 rootViewModel.resetKot()
                 rootViewModel.removeUnOrderedTableOrder()
+                rootViewModel.removeTableOrderAndResetSelectedTableAndTableId()
                 navHostController.popBackStack()
             }) {
                 Icon(

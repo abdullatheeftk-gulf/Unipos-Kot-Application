@@ -65,6 +65,7 @@ fun DineInScreen(
 
 
     BackHandler(enabled = true) {
+        rootViewModel.removeTableOrderAndResetSelectedTableAndTableId()
         rootViewModel.resetKot()
         navHostController.popBackStack()
     }
@@ -78,6 +79,7 @@ fun DineInScreen(
                 },
                 navigationIcon = {
                     IconButton(onClick = {
+                        rootViewModel.removeTableOrderAndResetSelectedTableAndTableId()
                         rootViewModel.resetKot()
                         navHostController.popBackStack()
                     }) {

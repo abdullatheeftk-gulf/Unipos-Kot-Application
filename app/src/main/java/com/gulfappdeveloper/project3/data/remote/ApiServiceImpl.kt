@@ -1179,7 +1179,7 @@ class ApiServiceImpl(
         kot: Kot,
         callBack: suspend (Int, String) -> Unit
     ) {
-        // Log.d(TAG, "generateKOT: $kot")
+       // Log.d("Test", "generateKOT: $kot")
         try {
             val httpResponse = client.post(url) {
                 contentType(ContentType.Application.Json)

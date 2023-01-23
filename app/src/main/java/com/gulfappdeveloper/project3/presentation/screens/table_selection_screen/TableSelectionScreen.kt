@@ -85,7 +85,7 @@ fun TableSelectionScreen(
     }
 
     BackHandler(true) {
-        rootViewModel.removeTableOrder()
+        rootViewModel.removeTableOrderAndResetSelectedTableAndTableId()
         navHostController.popBackStack()
     }
 
@@ -130,7 +130,7 @@ fun TableSelectionScreen(
                 navigationIcon = {
                     IconButton(onClick = {
                         navHostController.popBackStack()
-                        rootViewModel.removeTableOrder()
+                        rootViewModel.removeTableOrderAndResetSelectedTableAndTableId()
                     }) {
                         Icon(
                             imageVector = Icons.Filled.ArrowBack,

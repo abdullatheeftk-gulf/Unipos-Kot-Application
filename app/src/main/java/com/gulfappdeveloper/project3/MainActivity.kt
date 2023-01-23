@@ -28,8 +28,8 @@ class MainActivity : ComponentActivity() {
 
         val deviceId = Settings.Secure.getString(this.contentResolver, Settings.Secure.ANDROID_ID)
 
-        Log.d("MainActivity", "onCreate: ${BuildConfig.BUILD_TYPE}")
-        Log.e(TAG, "onCreate: ${!isLicenseExpired("08-01-2023")}", )
+      //  Log.d("MainActivity", "onCreate: ${BuildConfig.BUILD_TYPE}")
+       // Log.e(TAG, "onCreate: ${!isLicenseExpired("08-01-2023")}", )
         setContent {
             Project3Theme {
                 Surface(
@@ -62,7 +62,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun isLicenseExpired(eDate: String): Boolean {
+    /*private fun isLicenseExpired(eDate: String): Boolean {
 
         val expDate: Date = SimpleDateFormat(
             "dd-MM-yyyy",
@@ -70,7 +70,7 @@ class MainActivity : ComponentActivity() {
         ).parse(eDate)!!
 
         return expDate >= Date()
-    }
+    }*/
 
 }
 

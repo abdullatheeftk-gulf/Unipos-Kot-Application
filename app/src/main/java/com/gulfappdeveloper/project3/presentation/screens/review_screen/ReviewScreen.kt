@@ -25,6 +25,7 @@ import com.gulfappdeveloper.project3.presentation.screens.review_screen.componen
 import com.gulfappdeveloper.project3.ui.theme.MyPrimeColor
 import kotlinx.coroutines.flow.collectLatest
 
+//private const val TAG = "ReviewScreen"
 @Composable
 fun ReviewScreen(
     navHostController: NavHostController,
@@ -141,9 +142,10 @@ fun ReviewScreen(
                         inclusive = true
                     )
                 }
+                rootViewModel.removeTableOrderAndResetSelectedTableAndTableId()
+
                 rootViewModel.resetKot()
 
-                rootViewModel.onResetTableId()
             },
             onDismissRequest = {
                 cancelKotAlertDialog = false
@@ -154,6 +156,7 @@ fun ReviewScreen(
     if (kotSuccessAlertDialog) {
         KotSuccessAlertDialog(rootViewModel = rootViewModel) {
             kotSuccessAlertDialog = false
+            rootViewModel.removeTableOrderAndResetSelectedTableAndTableId()
             rootViewModel.resetKot()
 
             navHostController.navigate(route = RootNavScreens.HomeScreen.route) {
@@ -161,7 +164,8 @@ fun ReviewScreen(
                     inclusive = true
                 }
             }
-            rootViewModel.onResetTableId()
+          //  Log.i(TAG, "ReviewScreen: before")
+           // Log.w(TAG, "ReviewScreen: after", )
         }
     }
 
@@ -183,6 +187,7 @@ fun ReviewScreen(
                     inclusive = true
                 }
             }
+            rootViewModel.removeTableOrderAndResetSelectedTableAndTableId()
             rootViewModel.resetKot()
         } else {
             navHostController.popBackStack()
@@ -209,6 +214,7 @@ fun ReviewScreen(
                                     }
                                 }
                                 rootViewModel.resetKot()
+                                rootViewModel.removeTableOrderAndResetSelectedTableAndTableId()
                             } else {
                                 navHostController.popBackStack()
                             }

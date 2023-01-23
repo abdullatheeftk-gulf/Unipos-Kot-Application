@@ -88,6 +88,7 @@ fun EditingScreen(
     BackHandler(true) {
         rootViewModel.resetKot()
         rootViewModel.removeUnOrderedTableOrder()
+        rootViewModel.removeTableOrderAndResetSelectedTableAndTableId()
         navHostController.popBackStack()
     }
 
@@ -151,21 +152,7 @@ fun EditingScreen(
                     columns = GridCells.Adaptive(minSize = 128.dp),
                     contentPadding = PaddingValues(all = 8.dp),
                 ) {
-                    /*  item(
-                          span = {
-                              GridItemSpan(maxLineSpan)
-                          }
-                      ) {
-                          Text(
-                              text = "KOT Pending List",
-                              color = MaterialTheme.colors.MyPrimeColor,
-                              fontStyle = MaterialTheme.typography.h6.fontStyle,
-                              textAlign = TextAlign.Center,
-                              fontSize = MaterialTheme.typography.h6.fontSize,
-                              textDecoration = TextDecoration.Underline,
-                              modifier = Modifier.padding(bottom = 12.dp)
-                          )
-                      }*/
+
                     items(kotPendingList) { userOrder ->
                         KOTDetailsDisplay(
                             rootViewModel = rootViewModel,
@@ -176,77 +163,7 @@ fun EditingScreen(
                 }
             }
         }
-        /*  Column(
-              modifier = Modifier.padding(all = 16.dp),
-              horizontalAlignment = Alignment.CenterHorizontally
-          ) {
-              OutlinedTextField(
-                  modifier = Modifier.fillMaxWidth(),
-                  value = kotMasterId,
-                  onValueChange = { value ->
-                      showNoItem = false
-                      kotMasterId = value
-                  },
-                  label = {
-                      Text(text = "Enter Kot Master Id")
-                  },
-                  keyboardOptions = KeyboardOptions(
-                      imeAction = ImeAction.Done,
-                      keyboardType = KeyboardType.Number
-                  ),
-                  keyboardActions = KeyboardActions(
-                      onDone = {
-                          rootViewModel.getKOTDetails(
-                              kotNumber = kotMasterId.toInt(),
-                              isOrderFromEditScreen = true
-                          )
-                          hideKeyboard()
-                      }
-                  ),
-                  enabled = !showProgressBar,
-                  isError = showNoItem
-              )
-              if (showNoItem) {
-                  Row(
-                      modifier = Modifier.fillMaxWidth(),
-                      horizontalArrangement = Arrangement.Start
-                  ) {
-                      Spacer(modifier = Modifier.width(12.dp))
-                      Text(
-                          text = "No item with KOT id",
-                          color = MaterialTheme.colors.error,
-                          fontSize = MaterialTheme.typography.subtitle1.fontSize
-                      )
-                  }
-              } else {
-                  Spacer(modifier = Modifier.height(14.dp))
-              }
 
-              Spacer(modifier = Modifier.height(8.dp))
-
-              Button(
-                  onClick = {
-                      var kotNumber = 0
-                      try {
-                          kotNumber = kotMasterId.toInt()
-                          rootViewModel.getKOTDetails(
-                              kotNumber = kotNumber,
-                              isOrderFromEditScreen = true
-                          )
-                          hideKeyboard()
-                      } catch (e: Exception) {
-                          scope.launch {
-                              scaffoldState.snackbarHostState.showSnackbar("Enter kot master id")
-                              return@launch
-                          }
-                      }
-
-                  },
-                  enabled = !showProgressBar
-              ) {
-                  Text(text = "Search KOT")
-              }
-          }*/
 
     }
 }

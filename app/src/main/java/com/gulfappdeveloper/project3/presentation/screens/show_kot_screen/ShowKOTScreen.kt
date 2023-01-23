@@ -19,6 +19,7 @@ import com.gulfappdeveloper.project3.navigation.root.RootViewModel
 import com.gulfappdeveloper.project3.presentation.presentation_util.UiEvent
 import com.gulfappdeveloper.project3.presentation.screens.show_kot_screen.components.DeleteKotAlertDialog
 import com.gulfappdeveloper.project3.presentation.screens.show_kot_screen.components.KotItemDisplay
+import com.gulfappdeveloper.project3.ui.theme.ProgressBarColour
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -31,6 +32,8 @@ fun ShowKOTScreen(
     val kotItemsList = rootViewModel.kotItemList
 
     val kotMasterId by rootViewModel.kotMasterId
+
+    val kotType by rootViewModel.kotType
 
     var showProgressBar by remember {
         mutableStateOf(false)
@@ -83,6 +86,7 @@ fun ShowKOTScreen(
     }
     BackHandler(true) {
         rootViewModel.removeUnOrderedTableOrder()
+       // rootViewModel.removeTableOrderAndResetSelectedTableAndTableId()
         navHostController.popBackStack()
 
     }
@@ -100,6 +104,7 @@ fun ShowKOTScreen(
                     IconButton(
                         onClick = {
                             rootViewModel.removeUnOrderedTableOrder()
+                          //  rootViewModel.removeTableOrderAndResetSelectedTableAndTableId()
                             navHostController.popBackStack()
                         }
                     ) {
@@ -124,6 +129,33 @@ fun ShowKOTScreen(
                 contentPadding = PaddingValues(12.dp),
                 modifier = Modifier.weight(10f)
             ) {
+                item {
+                    if (!showProgressBar) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Text(
+                                text = "Order Mode:- ",
+                                fontStyle = MaterialTheme.typography.h6.fontStyle,
+                                fontSize = MaterialTheme.typography.h6.fontSize,
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = if (kotType) "TAKE AWAY" else "DINE IN",
+                                fontStyle = MaterialTheme.typography.h6.fontStyle,
+                                fontSize = MaterialTheme.typography.h6.fontSize,
+                                color = MaterialTheme.colors.ProgressBarColour
+                            )
+                        }
+                    }
+                }
+                item {
+                    if (!showProgressBar) {
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
+                }
                 item {
                     Row(
                         horizontalArrangement = Arrangement.Center,
