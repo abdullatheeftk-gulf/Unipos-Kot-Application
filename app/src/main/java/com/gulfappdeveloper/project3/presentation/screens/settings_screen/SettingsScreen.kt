@@ -21,6 +21,7 @@ import androidx.navigation.NavHostController
 import com.gulfappdeveloper.project3.navigation.root.RootNavScreens
 import com.gulfappdeveloper.project3.navigation.root.RootViewModel
 import com.gulfappdeveloper.project3.presentation.presentation_util.UiEvent
+import com.gulfappdeveloper.project3.ui.theme.ProgressBarColour
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -36,6 +37,8 @@ fun SettingsScreen(
     var text by remember {
         mutableStateOf("")
     }
+
+    val uniLicenseDetails by rootViewModel.uniLicenseDetails
 
 
     var showProgressBar by remember {
@@ -168,6 +171,21 @@ fun SettingsScreen(
                 Text(text = "Set Base Url")
             }
             Spacer(modifier = Modifier.height(30.dp))
+            uniLicenseDetails?.let {uniLicense->
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Text(text = "App License")
+                    Text(text = " : ")
+                    Text(
+                        text = uniLicense.licenseKey,
+                        color = MaterialTheme.colors.ProgressBarColour
+                    )
+
+                }
+            }
+
         }
 
         if (showProgressBar) {
