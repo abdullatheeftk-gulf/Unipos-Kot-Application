@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 class GetIp4AddressUseCase(
     private val remoteRepository: RemoteRepository
 ) {
-    suspend operator fun invoke(url:String):Flow<GetDataFromRemote<SeeIp>> {
+    suspend operator fun invoke(url:String):Flow<GetDataFromRemote<String>> {
         return remoteRepository.getIp4Address(url = url)
     }
 }

@@ -53,8 +53,12 @@ fun SettingsScreen(
             when (value) {
                 is UiEvent.Navigate -> {
                     rootViewModel.setIsInitialLoadingIsNotFinished()
-                    navHostController.backQueue.clear()
-                    navHostController.navigate(route = RootNavScreens.LocalRegisterScreen.route)
+                    //navHostController.backQueue.clear()
+                    navHostController.navigate(route = RootNavScreens.LocalRegisterScreen.route){
+                        popUpTo(RootNavScreens.HomeScreen.route){
+                            inclusive = true
+                        }
+                    }
                 }
                 is UiEvent.ShowSnackBar -> {
                     scaffoldState.snackbarHostState.showSnackbar(

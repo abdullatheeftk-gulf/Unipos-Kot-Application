@@ -68,6 +68,6 @@ interface ApiService {
     ): Flow<GetDataFromRemote<LicenseResponse>>
 
     // get ip address
-    suspend fun getIp4Address(url: String):Flow<GetDataFromRemote<SeeIp>>
+    suspend fun getIp4Address(url: String):Flow<GetDataFromRemote<String>>
 
 }

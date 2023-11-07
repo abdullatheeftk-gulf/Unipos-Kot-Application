@@ -1513,8 +1513,8 @@ class RootViewModel @Inject constructor(
                 sendUniLicenseActScreenEvent(UiEvent.CloseProgressBar)
 
                 if (result is GetDataFromRemote.Success) {
-                    val licenseType = result.data.message.licenseType
-                    val expiryDate = result.data.message.expiryDate
+                    val licenseType = result.data.licenseType
+                    val expiryDate = result.data.expiryDate
                     expiryDate?.let { ed ->
                         if (licenseType == "demo") {
                             if (!checkForLicenseExpiryDate(ed)) {
@@ -1526,9 +1526,9 @@ class RootViewModel @Inject constructor(
                     }
                     // sendUniLicenseActScreenEvent(UiEvent.Navigate(route = RootNavScreens.LocalRegisterScreen.route))
                     val licenceInformation = UniLicenseDetails(
-                        licenseType = result.data.message.licenseType,
+                        licenseType = result.data.licenseType,
                         licenseKey = licenseKey,
-                        expiryDate = result.data.message.expiryDate ?: ""
+                        expiryDate = result.data.expiryDate ?: ""
                     )
 
                     uniLicenseDetails.value = licenceInformation
@@ -1669,7 +1669,7 @@ class RootViewModel @Inject constructor(
 
                 when (result) {
                     is GetDataFromRemote.Success -> {
-                        publicIpAddress = result.data.ip ?: ""
+                        publicIpAddress = result.data.toString() ?: ""
                     }
                     is GetDataFromRemote.Failed -> {
                         useCase.insertErrorDataToFireStoreUseCase(

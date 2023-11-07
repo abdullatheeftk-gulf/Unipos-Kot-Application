@@ -1627,7 +1627,7 @@ class ApiServiceImpl(
         }
     }
 
-    override suspend fun getIp4Address(url: String): Flow<GetDataFromRemote<SeeIp>> {
+    override suspend fun getIp4Address(url: String): Flow<GetDataFromRemote<String>> {
         return flow {
             try {
                 val httpResponse = client.get(urlString = url)
