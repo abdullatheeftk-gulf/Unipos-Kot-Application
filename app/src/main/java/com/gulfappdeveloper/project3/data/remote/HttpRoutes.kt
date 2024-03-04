@@ -29,5 +29,5 @@ object HttpRoutes {
     const val UNI_LICENSE_ACTIVATION_URL =
         "http://license.riolabz.com/license-repo/public/api/v1/verifyjson"
 
-    const val SEE_IP4 = "https://ip4.seeip.org/json"
+    const val SEE_IP4 = "https://ipinfo.io/ip"
 }

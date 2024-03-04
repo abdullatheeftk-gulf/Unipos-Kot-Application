@@ -121,6 +121,7 @@ fun ReviewScreenBottomSheet(
 
             Button(
                 onClick = {
+
                     if (editMode) {
                         rootViewModel.editKot(deviceId = deviceId)
                     } else {

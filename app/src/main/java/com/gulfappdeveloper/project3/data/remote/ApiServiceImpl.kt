@@ -1,5 +1,6 @@
 package com.gulfappdeveloper.project3.data.remote
 
+import android.util.Log
 import com.gulfappdeveloper.project3.domain.remote.error.Error
 import com.gulfappdeveloper.project3.domain.remote.get.GetDataFromRemote
 import com.gulfappdeveloper.project3.domain.remote.get.dine_in.Section
@@ -28,8 +29,9 @@ import io.ktor.serialization.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import java.net.ConnectException
+import java.util.Date
 
-//private const val TAG = "ApiServiceImpl"
+private const val TAG = "ApiServiceImpl"
 
 class ApiServiceImpl(
     private val client: HttpClient
@@ -37,9 +39,11 @@ class ApiServiceImpl(
 
 
     override suspend fun getWelcomeMessage(url: String): Flow<GetDataFromRemote<WelcomeMessage>> {
+        Log.d(TAG, "getWelcomeMessage: ${Date()}")
         return flow {
             try {
                 val httpResponse = client.get(urlString = url)
+                Log.e(TAG, "getWelcomeMessage: ${Date()}", )
                 val statusCode = httpResponse.status.value
                 //Log.i(TAG, "status code $statusCode")
 
@@ -49,6 +53,7 @@ class ApiServiceImpl(
                             GetDataFromRemote.Success(httpResponse.body())
                         )
                     }
+
                     in 300..399 -> {
                         emit(
                             GetDataFromRemote.Failed(
@@ -59,6 +64,7 @@ class ApiServiceImpl(
                             )
                         )
                     }
+
                     in 400..499 -> {
                         emit(
                             GetDataFromRemote.Failed(
@@ -69,6 +75,7 @@ class ApiServiceImpl(
                             )
                         )
                     }
+
                     in 500..599 -> {
                         emit(
                             GetDataFromRemote.Failed(
@@ -79,6 +86,7 @@ class ApiServiceImpl(
                             )
                         )
                     }
+
                     else -> {
                         emit(
                             GetDataFromRemote.Failed(
@@ -92,6 +100,7 @@ class ApiServiceImpl(
                 }
 
             } catch (e: ConnectTimeoutException) {
+                Log.e(TAG, "getWelcomeMessage: ${Date()}", )
                 // Log.e(TAG, " ConnectTimeoutException")
                 emit(
                     GetDataFromRemote.Failed(
@@ -103,6 +112,7 @@ class ApiServiceImpl(
                 )
 
             } catch (e: NoTransformationFoundException) {
+                Log.e(TAG, "getWelcomeMessage: ${Date()}", )
                 // Log.e(TAG, " NoTransformationFoundException")
                 emit(
                     GetDataFromRemote.Failed(
@@ -113,6 +123,7 @@ class ApiServiceImpl(
                     )
                 )
             } catch (e: ConnectException) {
+                Log.e(TAG, "getWelcomeMessage: ${Date()}", )
                 //  Log.e(TAG, " No internet")
                 emit(
                     GetDataFromRemote.Failed(
@@ -123,6 +134,7 @@ class ApiServiceImpl(
                     )
                 )
             } catch (e: JsonConvertException) {
+                Log.e(TAG, "getWelcomeMessage: ${Date()}", )
 
                 // Log.e(TAG, " ${e.message}")
                 emit(
@@ -134,6 +146,7 @@ class ApiServiceImpl(
                     )
                 )
             } catch (e: Exception) {
+                Log.e(TAG, "getWelcomeMessage: ${Date()}", )
 
                 //Log.e(TAG, " ${e.message}")
                 emit(
@@ -161,6 +174,7 @@ class ApiServiceImpl(
                             GetDataFromRemote.Success(httpResponse.body())
                         )
                     }
+
                     in 300..399 -> {
                         emit(
                             GetDataFromRemote.Failed(
@@ -171,6 +185,7 @@ class ApiServiceImpl(
                             )
                         )
                     }
+
                     in 400..499 -> {
                         emit(
                             GetDataFromRemote.Failed(
@@ -181,6 +196,7 @@ class ApiServiceImpl(
                             )
                         )
                     }
+
                     in 500..599 -> {
                         emit(
                             GetDataFromRemote.Failed(
@@ -191,6 +207,7 @@ class ApiServiceImpl(
                             )
                         )
                     }
+
                     else -> {
                         emit(
                             GetDataFromRemote.Failed(
@@ -274,6 +291,7 @@ class ApiServiceImpl(
                             GetDataFromRemote.Success(httpResponse.body())
                         )
                     }
+
                     in 300..399 -> {
                         emit(
                             GetDataFromRemote.Failed(
@@ -284,6 +302,7 @@ class ApiServiceImpl(
                             )
                         )
                     }
+
                     in 400..499 -> {
                         emit(
                             GetDataFromRemote.Failed(
@@ -294,6 +313,7 @@ class ApiServiceImpl(
                             )
                         )
                     }
+
                     in 500..599 -> {
                         emit(
                             GetDataFromRemote.Failed(
@@ -304,6 +324,7 @@ class ApiServiceImpl(
                             )
                         )
                     }
+
                     else -> {
                         emit(
                             GetDataFromRemote.Failed(
@@ -382,11 +403,17 @@ class ApiServiceImpl(
                 //   Log.i(TAG, "status code $statusCode")
 
                 when (statusCode) {
-                    in 200..299 -> {
+                    200->{
                         emit(
                             GetDataFromRemote.Success(httpResponse.body())
                         )
                     }
+                    in 200..299 -> {
+                        emit(
+                            GetDataFromRemote.Success(emptyList())
+                        )
+                    }
+
                     in 300..399 -> {
                         emit(
                             GetDataFromRemote.Failed(
@@ -397,6 +424,7 @@ class ApiServiceImpl(
                             )
                         )
                     }
+
                     in 400..499 -> {
                         emit(
                             GetDataFromRemote.Failed(
@@ -407,6 +435,7 @@ class ApiServiceImpl(
                             )
                         )
                     }
+
                     in 500..599 -> {
                         emit(
                             GetDataFromRemote.Failed(
@@ -417,6 +446,7 @@ class ApiServiceImpl(
                             )
                         )
                     }
+
                     else -> {
                         emit(
                             GetDataFromRemote.Failed(
@@ -495,11 +525,17 @@ class ApiServiceImpl(
                 //   Log.i(TAG, "status code $statusCode")
 
                 when (statusCode) {
-                    in 200..299 -> {
+                    200->{
                         emit(
                             GetDataFromRemote.Success(httpResponse.body())
                         )
                     }
+                    in 200..299 -> {
+                        emit(
+                            GetDataFromRemote.Success(emptyList())
+                        )
+                    }
+
                     in 300..399 -> {
                         emit(
                             GetDataFromRemote.Failed(
@@ -510,6 +546,7 @@ class ApiServiceImpl(
                             )
                         )
                     }
+
                     in 400..499 -> {
                         emit(
                             GetDataFromRemote.Failed(
@@ -520,6 +557,7 @@ class ApiServiceImpl(
                             )
                         )
                     }
+
                     in 500..599 -> {
                         emit(
                             GetDataFromRemote.Failed(
@@ -530,6 +568,7 @@ class ApiServiceImpl(
                             )
                         )
                     }
+
                     else -> {
                         emit(
                             GetDataFromRemote.Failed(
@@ -607,11 +646,17 @@ class ApiServiceImpl(
                 //   Log.i(TAG, "status code $statusCode")
 
                 when (statusCode) {
-                    in 200..299 -> {
+                    200->{
                         emit(
                             GetDataFromRemote.Success(httpResponse.body())
                         )
                     }
+                    in 200..299 -> {
+                        emit(
+                            GetDataFromRemote.Success(emptyList())
+                        )
+                    }
+
                     in 300..399 -> {
                         emit(
                             GetDataFromRemote.Failed(
@@ -622,6 +667,7 @@ class ApiServiceImpl(
                             )
                         )
                     }
+
                     in 400..499 -> {
                         emit(
                             GetDataFromRemote.Failed(
@@ -632,6 +678,7 @@ class ApiServiceImpl(
                             )
                         )
                     }
+
                     in 500..599 -> {
                         emit(
                             GetDataFromRemote.Failed(
@@ -642,6 +689,7 @@ class ApiServiceImpl(
                             )
                         )
                     }
+
                     else -> {
                         emit(
                             GetDataFromRemote.Failed(
@@ -719,6 +767,7 @@ class ApiServiceImpl(
                 //   Log.i(TAG, "status code $statusCode")
 
                 when (statusCode) {
+
                     in 200..299 -> {
                         if (statusCode == 204) {
                             emit(
@@ -730,6 +779,7 @@ class ApiServiceImpl(
                             )
                         }
                     }
+
                     in 300..399 -> {
                         emit(
                             GetDataFromRemote.Failed(
@@ -740,6 +790,7 @@ class ApiServiceImpl(
                             )
                         )
                     }
+
                     in 400..499 -> {
                         emit(
                             GetDataFromRemote.Failed(
@@ -750,6 +801,7 @@ class ApiServiceImpl(
                             )
                         )
                     }
+
                     in 500..599 -> {
                         emit(
                             GetDataFromRemote.Failed(
@@ -760,6 +812,7 @@ class ApiServiceImpl(
                             )
                         )
                     }
+
                     else -> {
                         emit(
                             GetDataFromRemote.Failed(
@@ -832,16 +885,21 @@ class ApiServiceImpl(
     override suspend fun getSectionList(url: String): Flow<GetDataFromRemote<List<Section>>> {
         return flow {
             try {
+                Log.d(TAG, "getSectionList: $url")
                 val httpResponse = client.get(urlString = url)
                 val statusCode = httpResponse.status.value
                 // Log.i(TAG, "status code $statusCode")
 
                 when (statusCode) {
-                    in 200..299 -> {
+                    200->{
+                        GetDataFromRemote.Success(httpResponse.body<List<Section>>())
+                    }
+                    in 201..299 -> {
                         emit(
-                            GetDataFromRemote.Success(httpResponse.body())
+                            GetDataFromRemote.Success(emptyList())
                         )
                     }
+
                     in 300..399 -> {
                         emit(
                             GetDataFromRemote.Failed(
@@ -852,6 +910,7 @@ class ApiServiceImpl(
                             )
                         )
                     }
+
                     in 400..499 -> {
                         emit(
                             GetDataFromRemote.Failed(
@@ -862,6 +921,7 @@ class ApiServiceImpl(
                             )
                         )
                     }
+
                     in 500..599 -> {
                         emit(
                             GetDataFromRemote.Failed(
@@ -872,6 +932,7 @@ class ApiServiceImpl(
                             )
                         )
                     }
+
                     else -> {
                         emit(
                             GetDataFromRemote.Failed(
@@ -885,7 +946,7 @@ class ApiServiceImpl(
                 }
 
             } catch (e: ConnectTimeoutException) {
-                // Log.e(TAG, " ConnectTimeoutException")
+                 Log.e(TAG, " ConnectTimeoutException ${e.stackTrace}")
                 emit(
                     GetDataFromRemote.Failed(
                         error = Error(
@@ -896,7 +957,9 @@ class ApiServiceImpl(
                 )
 
             } catch (e: NoTransformationFoundException) {
-                // Log.e(TAG, " NoTransformationFoundException")
+
+                Log.e(TAG, " NoTransformationFoundException:-  ")
+
                 emit(
                     GetDataFromRemote.Failed(
                         error = Error(
@@ -906,7 +969,7 @@ class ApiServiceImpl(
                     )
                 )
             } catch (e: ConnectException) {
-                //  Log.e(TAG, " No internet")
+                  Log.e(TAG, " No internet")
                 emit(
                     GetDataFromRemote.Failed(
                         error = Error(
@@ -917,7 +980,7 @@ class ApiServiceImpl(
                 )
             } catch (e: JsonConvertException) {
 
-                //  Log.e(TAG, " ${e.message}")
+                Log.e(TAG, " ${e.message}")
                 emit(
                     GetDataFromRemote.Failed(
                         error = Error(
@@ -947,14 +1010,20 @@ class ApiServiceImpl(
             try {
                 val httpResponse = client.get(urlString = url)
                 val statusCode = httpResponse.status.value
-                // Log.i(TAG, "status code $statusCode")
+                Log.i(TAG, "status code $statusCode")
 
                 when (statusCode) {
-                    in 200..299 -> {
+                    200->{
                         emit(
                             GetDataFromRemote.Success(httpResponse.body())
                         )
                     }
+                    in 201..299 -> {
+                        emit(
+                            GetDataFromRemote.Success(emptyList())
+                        )
+                    }
+
                     in 300..399 -> {
                         emit(
                             GetDataFromRemote.Failed(
@@ -965,7 +1034,9 @@ class ApiServiceImpl(
                             )
                         )
                     }
+
                     in 400..499 -> {
+                        Log.e(TAG, "getTableList: 400- ${httpResponse.bodyAsText()}", )
                         emit(
                             GetDataFromRemote.Failed(
                                 error = Error(
@@ -975,7 +1046,9 @@ class ApiServiceImpl(
                             )
                         )
                     }
+
                     in 500..599 -> {
+                        Log.e(TAG, "getTableList: $500 ${httpResponse.bodyAsText()}", )
                         emit(
                             GetDataFromRemote.Failed(
                                 error = Error(
@@ -985,6 +1058,7 @@ class ApiServiceImpl(
                             )
                         )
                     }
+
                     else -> {
                         emit(
                             GetDataFromRemote.Failed(
@@ -998,7 +1072,7 @@ class ApiServiceImpl(
                 }
 
             } catch (e: ConnectTimeoutException) {
-                //  Log.e(TAG, " ConnectTimeoutException")
+                Log.e(TAG, " ConnectTimeoutException")
                 emit(
                     GetDataFromRemote.Failed(
                         error = Error(
@@ -1009,7 +1083,7 @@ class ApiServiceImpl(
                 )
 
             } catch (e: NoTransformationFoundException) {
-                // Log.e(TAG, " NoTransformationFoundException")
+                Log.e(TAG, " NoTransformationFoundException")
                 emit(
                     GetDataFromRemote.Failed(
                         error = Error(
@@ -1019,7 +1093,7 @@ class ApiServiceImpl(
                     )
                 )
             } catch (e: ConnectException) {
-                // Log.e(TAG, " No internet")
+                Log.e(TAG, " No internet")
                 emit(
                     GetDataFromRemote.Failed(
                         error = Error(
@@ -1030,7 +1104,7 @@ class ApiServiceImpl(
                 )
             } catch (e: JsonConvertException) {
 
-                // Log.e(TAG, " ${e.message}")
+                Log.e(TAG, " ${e.message}")
                 emit(
                     GetDataFromRemote.Failed(
                         error = Error(
@@ -1041,7 +1115,7 @@ class ApiServiceImpl(
                 )
             } catch (e: Exception) {
 
-                // Log.e(TAG, " ${e.message}")
+                Log.e(TAG, " ${e.message}")
                 emit(
                     GetDataFromRemote.Failed(
                         error = Error(
@@ -1073,6 +1147,7 @@ class ApiServiceImpl(
                             )
                         }
                     }
+
                     in 300..399 -> {
                         emit(
                             GetDataFromRemote.Failed(
@@ -1083,6 +1158,7 @@ class ApiServiceImpl(
                             )
                         )
                     }
+
                     in 400..499 -> {
                         emit(
                             GetDataFromRemote.Failed(
@@ -1093,6 +1169,7 @@ class ApiServiceImpl(
                             )
                         )
                     }
+
                     in 500..599 -> {
                         emit(
                             GetDataFromRemote.Failed(
@@ -1103,6 +1180,7 @@ class ApiServiceImpl(
                             )
                         )
                     }
+
                     else -> {
                         emit(
                             GetDataFromRemote.Failed(
@@ -1179,7 +1257,7 @@ class ApiServiceImpl(
         kot: Kot,
         callBack: suspend (Int, String) -> Unit
     ) {
-       // Log.d("Test", "generateKOT: $kot")
+         Log.d("Test", "generateKOT: $kot")
         try {
             val httpResponse = client.post(url) {
                 contentType(ContentType.Application.Json)
@@ -1256,6 +1334,7 @@ class ApiServiceImpl(
                             )
                         }
                     }
+
                     in 300..399 -> {
                         emit(
                             GetDataFromRemote.Failed(
@@ -1266,6 +1345,7 @@ class ApiServiceImpl(
                             )
                         )
                     }
+
                     in 400..499 -> {
                         emit(
                             GetDataFromRemote.Failed(
@@ -1276,6 +1356,7 @@ class ApiServiceImpl(
                             )
                         )
                     }
+
                     in 500..599 -> {
                         emit(
                             GetDataFromRemote.Failed(
@@ -1286,6 +1367,7 @@ class ApiServiceImpl(
                             )
                         )
                     }
+
                     else -> {
                         emit(
                             GetDataFromRemote.Failed(
@@ -1380,6 +1462,7 @@ class ApiServiceImpl(
                             )
                         }
                     }
+
                     in 300..399 -> {
                         emit(
                             GetDataFromRemote.Failed(
@@ -1390,6 +1473,7 @@ class ApiServiceImpl(
                             )
                         )
                     }
+
                     in 400..499 -> {
                         emit(
                             GetDataFromRemote.Failed(
@@ -1400,6 +1484,7 @@ class ApiServiceImpl(
                             )
                         )
                     }
+
                     in 500..599 -> {
                         emit(
                             GetDataFromRemote.Failed(
@@ -1410,6 +1495,7 @@ class ApiServiceImpl(
                             )
                         )
                     }
+
                     else -> {
                         emit(
                             GetDataFromRemote.Failed(
@@ -1502,9 +1588,9 @@ class ApiServiceImpl(
         url: String,
         licenseRequestBody: LicenseRequestBody
     ): Flow<GetDataFromRemote<LicenseResponse>> {
-        // Log.d(TAG, "request: $licenseRequestBody")
-        //Log.w(TAG, "url: $url", )
-        // Log.e(TAG, "header: $rioLabKey", )
+        //Log.d(TAG, "request: $licenseRequestBody")
+       // Log.w(TAG, "url: $url")
+       // Log.e(TAG, "header: $rioLabKey")
         return flow {
             try {
                 val httpResponse = client.post(urlString = url) {
@@ -1520,6 +1606,7 @@ class ApiServiceImpl(
                             GetDataFromRemote.Success(httpResponse.body())
                         )
                     }
+
                     in 300..399 -> {
                         emit(
                             GetDataFromRemote.Failed(
@@ -1530,15 +1617,16 @@ class ApiServiceImpl(
                             )
                         )
                     }
+
                     in 400..499 -> {
-                        var str= ""
+                        var str = ""
                         try {
                             str = httpResponse.bodyAsText()
                         } catch (e: Exception) {
                             e.message
                         }
 
-                        //Log.d(TAG, "uniLicenseActivation: $str")
+                        Log.d(TAG, "uniLicenseActivation: $str")
                         emit(
                             GetDataFromRemote.Failed(
                                 error = Error(
@@ -1548,6 +1636,7 @@ class ApiServiceImpl(
                             )
                         )
                     }
+
                     in 500..599 -> {
                         emit(
                             GetDataFromRemote.Failed(
@@ -1558,6 +1647,7 @@ class ApiServiceImpl(
                             )
                         )
                     }
+
                     else -> {
                         emit(
                             GetDataFromRemote.Failed(
@@ -1627,19 +1717,20 @@ class ApiServiceImpl(
         }
     }
 
-    override suspend fun getIp4Address(url: String): Flow<GetDataFromRemote<SeeIp>> {
+    override suspend fun getIp4Address(url: String): Flow<GetDataFromRemote<String>> {
         return flow {
             try {
                 val httpResponse = client.get(urlString = url)
                 val statusCode = httpResponse.status.value
-                //Log.i(TAG, "status code $statusCode")
+                Log.i(TAG, "status code $statusCode")
 
                 when (statusCode) {
                     in 200..299 -> {
                         emit(
-                            GetDataFromRemote.Success(httpResponse.body())
+                            GetDataFromRemote.Success(httpResponse.bodyAsText())
                         )
                     }
+
                     in 300..399 -> {
                         emit(
                             GetDataFromRemote.Failed(
@@ -1650,7 +1741,9 @@ class ApiServiceImpl(
                             )
                         )
                     }
+
                     in 400..499 -> {
+                        Log.d(TAG, "getIp4Address: ${httpResponse.bodyAsText()}")
                         emit(
                             GetDataFromRemote.Failed(
                                 error = Error(
@@ -1660,6 +1753,7 @@ class ApiServiceImpl(
                             )
                         )
                     }
+
                     in 500..599 -> {
                         emit(
                             GetDataFromRemote.Failed(
@@ -1670,6 +1764,7 @@ class ApiServiceImpl(
                             )
                         )
                     }
+
                     else -> {
                         emit(
                             GetDataFromRemote.Failed(

@@ -1,5 +1,6 @@
 package com.gulfappdeveloper.project3.presentation.screens.home_screen
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -23,7 +24,7 @@ import com.gulfappdeveloper.project3.navigation.root.RootViewModel
 import com.gulfappdeveloper.project3.presentation.presentation_util.OrderMode
 import com.gulfappdeveloper.project3.presentation.screens.home_screen.components.MenuCard
 
-
+private const val TAG = "HomeScreen"
 @Composable
 fun HomeScreen(
     navHostController: NavHostController,
@@ -38,6 +39,8 @@ fun HomeScreen(
     val context = LocalContext.current
 
     val uniLicenseDetails by rootViewModel.uniLicenseDetails
+
+    Log.e(TAG, "HomeScreen: ${sectionList.toList()}", )
 
 
     val menuList = listOf(

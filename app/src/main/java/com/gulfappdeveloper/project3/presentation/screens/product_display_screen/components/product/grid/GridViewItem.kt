@@ -27,7 +27,7 @@ import com.gulfappdeveloper.project3.data.remote.HttpRoutes
 import com.gulfappdeveloper.project3.domain.remote.get.product.Product
 import com.gulfappdeveloper.project3.navigation.root.RootViewModel
 import com.gulfappdeveloper.project3.ui.theme.MyPrimeColor
-import com.gulfappdeveloper.project3.ui.theme.ProgressBarColour
+
 
 @Composable
 fun GridViewItem(
@@ -84,7 +84,6 @@ fun GridViewItem(
                 error = painterResource(id = R.drawable.no_image),
                 onError = {
                     //  Log.e(TAG, "ListViewItem: ${it.result.throwable.message}", )
-
                 }
             )
             Column(

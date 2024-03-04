@@ -1,6 +1,6 @@
 package com.gulfappdeveloper.project3.navigation.root
 
-//import android.util.Log
+import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateListOf
@@ -49,7 +49,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
-//private const val TAG = "RootViewModel"
+private const val TAG = "RootViewModel"
 
 @HiltViewModel
 class RootViewModel @Inject constructor(
@@ -214,8 +214,8 @@ class RootViewModel @Inject constructor(
         sendSplashScreenEvent(SplashScreenEvent(UiEvent.ShowProgressBar))
 
         readDeviceId()
-        saveOperationCount()
-        readOperationCount()
+       // saveOperationCount()
+        //readOperationCount()
         readSerialNo()
         readBaseUrl()
         readIpAddress()
@@ -334,15 +334,15 @@ class RootViewModel @Inject constructor(
                     if (result is GetDataFromRemote.Success) {
                         //  Log.w(TAG, "getWelcomeMessage: ${result.data}")
                         message.value = result.data.message
-                        if (BuildConfig.DEBUG) {
+                        /*if (BuildConfig.DEBUG) {
                             sendSplashScreenEvent(
                                 SplashScreenEvent(
                                     UiEvent.Navigate(route = RootNavScreens.LocalRegisterScreen.route)
                                 )
                             )
-                        } else {
+                        } else {*/
                             readUniLicenseKeyDetails()
-                        }
+                        //}
                         //navigateToNextScreenWithDelayForSplashScreen(route = RootNavScreens.LocalRegisterScreen.route)
                         // isInitialLoadingFinished = true
                     }
@@ -601,23 +601,24 @@ class RootViewModel @Inject constructor(
 
     // Get Dine in details
     private fun getSectionList() {
+        Log.d(TAG, "getSectionList: start")
         viewModelScope.launch {
             useCase.getSectionListUseCase(
                 url = baseUrl.value + HttpRoutes.SECTION_LIST
             ).collectLatest { result ->
                 if (result is GetDataFromRemote.Success) {
-                    // Log.i(TAG, "getSectionList: ${result.data}")
+                    Log.i(TAG, "getSectionList: ${result.data}")
                     try {
                         sectionList.clear()
                     } catch (e: Exception) {
-                        // Log.e(TAG, "getSectionList: ${e.message}")
+                        Log.e(TAG, "getSectionList: ${e.message}")
                     }
                     sectionList.addAll(result.data)
                 }
                 isInitialLoadingFinished = true
                 if (result is GetDataFromRemote.Failed) {
                     isInitialLoadingFinished = false
-                    // Log.e(TAG, "getSectionList: ${result.error}")
+                    Log.e(TAG, "getSectionList: ${result.error}")
                     useCase.insertErrorDataToFireStoreUseCase(
                         collectionName = collectionName,
                         documentName = "getSectionList,${Date()}",
@@ -913,16 +914,7 @@ class RootViewModel @Inject constructor(
     }
 
     fun onDeleteItemFromKotItemClicked(kotItem: KotItem, index: Int) {
-        // Log.e(TAG, "onDeleteItemFromKotItemClicked: $index")
-        /*kotItemList.removeAll {
-            if (it.productId == kotItem.productId && it.quantity == kotItem.quantity) {
-                kotNetAmount.value -= it.netAmount
-                itemsCountInKot.value -= 1
-                true
-            } else {
-                false
-            }
-        }*/
+
 
         kotItemList.removeAt(index = index)
         kotNetAmount.value -= kotItem.netAmount
@@ -1004,16 +996,9 @@ class RootViewModel @Inject constructor(
         )
         val url = baseUrl.value + HttpRoutes.GENERATE_KOT
 
-        /* Log.i(TAG, "generateKot: ${kotItemList.toList()}")
-         Log.d(TAG, "generateKot: ${kotMasterId.value}")
-         Log.e(TAG, "generateKot: ${tableId.value}")
-         Log.w(TAG, "generateKot: ${kotNotes.value}")
-         Log.i(TAG, "generateKot: ${chairCount.value}")
-         Log.e(TAG, "generateKot: ${orderName.value}")
-         Log.w(TAG, "generateKot: ip address ${ipAddress.value}")
-         Log.i(TAG, "generateKot: port address ${port.value}")*/
 
-        // Log.d(TAG, "generateKot: $kot")
+
+         Log.d(TAG, "generateKot: $kot")
         viewModelScope.launch(Dispatchers.IO) {
             useCase.generateKotUseCase(
                 url = url,
@@ -1513,8 +1498,9 @@ class RootViewModel @Inject constructor(
                 sendUniLicenseActScreenEvent(UiEvent.CloseProgressBar)
 
                 if (result is GetDataFromRemote.Success) {
-                    val licenseType = result.data.message.licenseType
-                    val expiryDate = result.data.message.expiryDate
+                    //val licenseType = result.data.message.licenseType
+                    val licenseType = result.data.licenseType
+                    val expiryDate = result.data.expiryDate
                     expiryDate?.let { ed ->
                         if (licenseType == "demo") {
                             if (!checkForLicenseExpiryDate(ed)) {
@@ -1526,9 +1512,9 @@ class RootViewModel @Inject constructor(
                     }
                     // sendUniLicenseActScreenEvent(UiEvent.Navigate(route = RootNavScreens.LocalRegisterScreen.route))
                     val licenceInformation = UniLicenseDetails(
-                        licenseType = result.data.message.licenseType,
+                        licenseType = result.data.licenseType,
                         licenseKey = licenseKey,
-                        expiryDate = result.data.message.expiryDate ?: ""
+                        expiryDate = result.data.expiryDate ?: ""
                     )
 
                     uniLicenseDetails.value = licenceInformation
@@ -1576,6 +1562,8 @@ class RootViewModel @Inject constructor(
         viewModelScope.launch {
             useCase.uniLicenseReadUseCase().collectLatest { value ->
                 // checking for saved license details
+
+               // Log.d("Lath", "readUniLicenseKeyDetails: $value")
                 if (value.isNotEmpty() && value.isNotBlank()) {
 
                     val licenseDetails = Json.decodeFromString<UniLicenseDetails>(value)
@@ -1669,9 +1657,11 @@ class RootViewModel @Inject constructor(
 
                 when (result) {
                     is GetDataFromRemote.Success -> {
-                        publicIpAddress = result.data.ip ?: ""
+                        publicIpAddress = result.data
+                        Log.e(TAG, "getIp4Address: $publicIpAddress", )
                     }
                     is GetDataFromRemote.Failed -> {
+                        Log.d(TAG, "getIp4Address: $result")
                         useCase.insertErrorDataToFireStoreUseCase(
                             collectionName = collectionName,
                             documentName = "getIp4Address,${Date()}",
