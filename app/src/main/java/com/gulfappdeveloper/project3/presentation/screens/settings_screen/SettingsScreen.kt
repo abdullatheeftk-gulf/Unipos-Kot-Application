@@ -53,7 +53,8 @@ fun SettingsScreen(
             when (value) {
                 is UiEvent.Navigate -> {
                     rootViewModel.setIsInitialLoadingIsNotFinished()
-                    navHostController.backQueue.clear()
+                    //navHostController.backQueue.clear()
+                    navHostController.popBackStack(route = RootNavScreens.HomeScreen.route,inclusive = true)
                     navHostController.navigate(route = RootNavScreens.LocalRegisterScreen.route)
                 }
                 is UiEvent.ShowSnackBar -> {

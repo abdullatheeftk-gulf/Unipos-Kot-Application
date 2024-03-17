@@ -89,7 +89,8 @@ fun HomeScreen(
                     onMenuCardClicked = { menu ->
                         when (menu) {
                             "DINE IN" -> {
-                                if (sectionList.isNotEmpty()) {
+                                //if (sectionList.isNotEmpty()) {
+                                    if (true) {
                                     rootViewModel.setOrderMode(OrderMode.DINE_IN)
                                     navHostController.navigate(route = RootNavScreens.DineInScreen.route)
                                 } else {

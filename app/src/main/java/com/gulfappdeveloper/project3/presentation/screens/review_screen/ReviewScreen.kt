@@ -261,16 +261,7 @@ fun ReviewScreen(
             item {
                 Spacer(modifier = Modifier.height(10.dp))
             }
-            /* items(kotItemList) { item: KotItem ->
-                 KotItemsDisplay(
-                     kotItem = item,
-                     rootViewModel = rootViewModel,
-                     onItemClicked = { kotItem ->
-                         kotItemSelectedForAddingNote = kotItem
-                         showAddNoteToKotItemAlertDialog = true
-                     }
-                 )
-             }*/
+
 
             itemsIndexed(kotItemList) { index, item: KotItem ->
                 KotItemsDisplay(

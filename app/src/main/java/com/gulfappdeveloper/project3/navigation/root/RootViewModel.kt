@@ -214,7 +214,7 @@ class RootViewModel @Inject constructor(
         sendSplashScreenEvent(SplashScreenEvent(UiEvent.ShowProgressBar))
 
         readDeviceId()
-       // saveOperationCount()
+        // saveOperationCount()
         //readOperationCount()
         readSerialNo()
         readBaseUrl()
@@ -332,19 +332,10 @@ class RootViewModel @Inject constructor(
                 .collectLatest { result ->
                     sendSplashScreenEvent(SplashScreenEvent(UiEvent.CloseProgressBar))
                     if (result is GetDataFromRemote.Success) {
-                        //  Log.w(TAG, "getWelcomeMessage: ${result.data}")
                         message.value = result.data.message
-                        /*if (BuildConfig.DEBUG) {
-                            sendSplashScreenEvent(
-                                SplashScreenEvent(
-                                    UiEvent.Navigate(route = RootNavScreens.LocalRegisterScreen.route)
-                                )
-                            )
-                        } else {*/
-                            readUniLicenseKeyDetails()
-                        //}
-                        //navigateToNextScreenWithDelayForSplashScreen(route = RootNavScreens.LocalRegisterScreen.route)
-                        // isInitialLoadingFinished = true
+
+                        readUniLicenseKeyDetails()
+
                     }
                     if (result is GetDataFromRemote.Failed) {
 
@@ -361,6 +352,7 @@ class RootViewModel @Inject constructor(
                                     )
                                 )
                             }
+
                             in 400..600 -> {
                                 sendSplashScreenEvent(SplashScreenEvent(UiEvent.ShowButton1))
                                 sendSplashScreenEvent(
@@ -372,6 +364,7 @@ class RootViewModel @Inject constructor(
                                 )
 
                             }
+
                             in 601..605 -> {
                                 sendSplashScreenEvent(SplashScreenEvent(UiEvent.ShowButton1))
                                 sendSplashScreenEvent(
@@ -383,6 +376,7 @@ class RootViewModel @Inject constructor(
                                     )
                                 )
                             }
+
                             else -> {
                                 sendSplashScreenEvent(
                                     SplashScreenEvent(
@@ -466,7 +460,7 @@ class RootViewModel @Inject constructor(
 
         val url = baseUrl.value + HttpRoutes.PRODUCT_LIST + "${selectedCategory.value}"
 
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch() {
             useCase.getProductListUseCase(
                 url = url
             ).collectLatest { result ->
@@ -748,13 +742,13 @@ class RootViewModel @Inject constructor(
 
 
     fun onSelectedTable() {
-     //   Log.d("Test", "onSelectedTable:")
+        //   Log.d("Test", "onSelectedTable:")
         try {
             tableId.value = selectedTable.value?.id!!
             showNewTableOrderAddButton.value =
                 selectedTable.value?.occupied!! < selectedTable.value?.noOfSeats!!
         } catch (e: Exception) {
-         //   Log.e("Test", "onSelectedTable: ${e.message} ")
+            //   Log.e("Test", "onSelectedTable: ${e.message} ")
         }
 
     }
@@ -855,6 +849,7 @@ class RootViewModel @Inject constructor(
                         //  Log.e(TAG, "getKotCancelPrivilege: ${result.data.isPrivileged}")
                         kotCancelPrivilege.value = result.data.isPrivileged
                     }
+
                     is GetDataFromRemote.Failed -> {
 
                         useCase.insertErrorDataToFireStoreUseCase(
@@ -862,12 +857,13 @@ class RootViewModel @Inject constructor(
                             documentName = "getKotCancelPrivilege,${Date()}",
                             errorData = FirebaseError(
                                 errorCode = result.error.code,
-                                errorMessage = result.error.message?:"",
+                                errorMessage = result.error.message ?: "",
                                 url = url,
                                 ipAddress = publicIpAddress
                             )
                         )
                     }
+
                     else -> Unit
                 }
             }
@@ -969,7 +965,7 @@ class RootViewModel @Inject constructor(
     fun generateKot(deviceId: String) {
         if (tableId.value == 0 && chairCount.value != 0) {
             sendReviewScreenEvent(ReviewScreenEvent(UiEvent.ShowSnackBar("tableId and chair count should be 0")))
-          //  Log.e("Test", "generateKot: ${tableId.value} ${chairCount.value}")
+            //  Log.e("Test", "generateKot: ${tableId.value} ${chairCount.value}")
             return
         }
         if (tableId.value != 0 && chairCount.value == 0) {
@@ -998,13 +994,13 @@ class RootViewModel @Inject constructor(
 
 
 
-         Log.d(TAG, "generateKot: $kot")
+        Log.d(TAG, "generateKot: $kot")
         viewModelScope.launch(Dispatchers.IO) {
             useCase.generateKotUseCase(
                 url = url,
                 kot = kot
             ) { statusCode, message ->
-              //  Log.w("Test", "generateKot: $kot")
+                //  Log.w("Test", "generateKot: $kot")
                 sendReviewScreenEvent(ReviewScreenEvent(UiEvent.CloseProgressBar))
                 if (statusCode in 200..299) {
                     sendReviewScreenEvent(ReviewScreenEvent(UiEvent.ShowAlertDialog))
@@ -1053,7 +1049,7 @@ class RootViewModel @Inject constructor(
     fun editKot(deviceId: String) {
         if (tableId.value == 0 && chairCount.value != 0) {
             sendReviewScreenEvent(ReviewScreenEvent(UiEvent.ShowSnackBar("tableId and chair count should be 0")))
-           // Log.e("Test", "generateKot: ${tableId.value} ${chairCount.value}")
+            // Log.e("Test", "generateKot: ${tableId.value} ${chairCount.value}")
             return
         }
         if (tableId.value != 0 && chairCount.value == 0) {
@@ -1087,8 +1083,8 @@ class RootViewModel @Inject constructor(
                 chairCount = chairCount.value,
                 kotMasterId = kotMasterId.value
             )
-          //  Log.i("Test", "editKot: $url")
-          //  Log.w("Test", "editKot: $kot")
+            //  Log.i("Test", "editKot: $url")
+            //  Log.w("Test", "editKot: $kot")
             useCase.editKotUseCase(
                 url = url,
                 kot = kot
@@ -1206,7 +1202,7 @@ class RootViewModel @Inject constructor(
                             sendEditScreenEvent(UiEvent.ShowEmptyList)
                         }*/
                     } else {
-                       // Log.e("Test", "getKOTDetails: ${value.tableId} ${value.chairCount}")
+                        // Log.e("Test", "getKOTDetails: ${value.tableId} ${value.chairCount}")
                         _kotType.value = value.tableId <= 0
                         //Log.w("Test", "getKOTDetails: ${_kotType.value}")
                         try {
@@ -1217,6 +1213,11 @@ class RootViewModel @Inject constructor(
 
                         //Adding data for editing
                         kotItemList.addAll(value.kotDetails)
+                        /*useCase.insertErrorDataToFireStoreUseCase(
+                            collectionName = "kotItemList",
+                            documentName = Date().toString(),
+                            errorData = FirebaseError(errorMessage = kotItemList.toList().toString())
+                        )*/
                         itemsCountInKot.value = value.kotDetails.size
                         try {
                             kotItemList.forEach { kotItem ->
@@ -1411,7 +1412,7 @@ class RootViewModel @Inject constructor(
         // reset selected order mode
         selectedOrderMode.value = OrderMode.NONE
 
-       // Log.e("Test", "resetKot: ${tableId.value}")
+        // Log.e("Test", "resetKot: ${tableId.value}")
 
 
     }
@@ -1563,7 +1564,7 @@ class RootViewModel @Inject constructor(
             useCase.uniLicenseReadUseCase().collectLatest { value ->
                 // checking for saved license details
 
-               // Log.d("Lath", "readUniLicenseKeyDetails: $value")
+                // Log.d("Lath", "readUniLicenseKeyDetails: $value")
                 if (value.isNotEmpty() && value.isNotBlank()) {
 
                     val licenseDetails = Json.decodeFromString<UniLicenseDetails>(value)
@@ -1658,8 +1659,9 @@ class RootViewModel @Inject constructor(
                 when (result) {
                     is GetDataFromRemote.Success -> {
                         publicIpAddress = result.data
-                        Log.e(TAG, "getIp4Address: $publicIpAddress", )
+                        Log.e(TAG, "getIp4Address: $publicIpAddress")
                     }
+
                     is GetDataFromRemote.Failed -> {
                         Log.d(TAG, "getIp4Address: $result")
                         useCase.insertErrorDataToFireStoreUseCase(
@@ -1677,6 +1679,18 @@ class RootViewModel @Inject constructor(
 
             }
         }
+    }
+
+
+    fun showSnackBarToShowErrorOnShowKotScreenEditButtonClicked(error:String){
+        viewModelScope.launch {
+            useCase.insertErrorDataToFireStoreUseCase(
+                collectionName = "editKotError",
+                documentName = Date().toString(),
+                errorData = FirebaseError(errorMessage = error)
+            )
+        }
+        sendShowKotUiEvent(UiEvent.ShowSnackBar(error))
     }
 
 

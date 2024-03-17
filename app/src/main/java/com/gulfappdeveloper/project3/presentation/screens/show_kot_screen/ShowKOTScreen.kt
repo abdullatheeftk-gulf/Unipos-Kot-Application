@@ -248,12 +248,17 @@ fun ShowKOTScreen(
                 Spacer(modifier = Modifier.width(16.dp))
                 Button(
                     onClick = {
-                        rootViewModel.setEditMode(value = true)
-                        navHostController.popBackStack(
-                            route = RootNavScreens.EditingScreen.route,
-                            inclusive = true
-                        )
-                        navHostController.navigate(route = RootNavScreens.ReviewScreen.route)
+                        try {
+                            rootViewModel.setEditMode(value = true)
+                            navHostController.popBackStack(
+                                route = RootNavScreens.EditingScreen.route,
+                                inclusive = true
+                            )
+                            navHostController.navigate(route = RootNavScreens.ReviewScreen.route)
+                        }catch (e:Exception){
+                            rootViewModel.showSnackBarToShowErrorOnShowKotScreenEditButtonClicked(e.message?:"Unknown error")
+                        }
+
                     },
                     modifier = Modifier.weight(1f),
                     enabled = !showProgressBar
