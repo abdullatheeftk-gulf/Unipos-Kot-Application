@@ -35,8 +35,10 @@ fun DineInScreen(
         mutableStateOf(false)
     }
 
+    val sectionList = rootViewModel.sectionList.toList()
+
     LaunchedEffect(key1 = true) {
-        rootViewModel.getTableList(value = 1)
+        rootViewModel.getTableList(value = sectionList[0].id)
         rootViewModel.dineInScreenEvent.collectLatest { value: DineInScreenEvent ->
             when (value.uiEvent) {
                 is UiEvent.ShowProgressBar -> {

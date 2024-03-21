@@ -308,7 +308,7 @@ class RootViewModel @Inject constructor(
             useCase.readBaseUrlUseCase().collect {
 
                 baseUrl.value = it
-                // Log.w(TAG, "readBaseUrl: $it $isInitialLoadingFinished")
+                 //Log.w(TAG, "readBaseUrl: base url $it , initial loading $isInitialLoadingFinished")
                 if (!isInitialLoadingFinished) {
                     //Log.i(TAG, "readBaseUrl: $it")
                     getWelcomeMessage()
@@ -595,11 +595,13 @@ class RootViewModel @Inject constructor(
 
     // Get Dine in details
     private fun getSectionList() {
-        Log.d(TAG, "getSectionList: start")
+        val url = baseUrl.value + HttpRoutes.SECTION_LIST
+        Log.d(TAG, "getSectionList: $url")
         viewModelScope.launch {
             useCase.getSectionListUseCase(
-                url = baseUrl.value + HttpRoutes.SECTION_LIST
-            ).collectLatest { result ->
+                url = url
+            ).collect { result ->
+                Log.d(TAG, "getSectionList: ")
                 if (result is GetDataFromRemote.Success) {
                     Log.i(TAG, "getSectionList: ${result.data}")
                     try {
@@ -619,7 +621,7 @@ class RootViewModel @Inject constructor(
                         errorData = FirebaseError(
                             errorMessage = result.error.message ?: "",
                             errorCode = result.error.code,
-                            url = baseUrl.value + HttpRoutes.SECTION_LIST,
+                            url =url,
                             ipAddress = publicIpAddress
                         )
                     )
@@ -630,7 +632,8 @@ class RootViewModel @Inject constructor(
     }
 
 
-    fun getTableList(value: Int) {
+    fun getTableList(value:Int) {
+
         selectedSection.value = value
         try {
             tableList.clear()
@@ -994,7 +997,7 @@ class RootViewModel @Inject constructor(
 
 
 
-        Log.d(TAG, "generateKot: $kot")
+       // Log.d(TAG, "generateKot: $kot")
         viewModelScope.launch(Dispatchers.IO) {
             useCase.generateKotUseCase(
                 url = url,
@@ -1659,11 +1662,11 @@ class RootViewModel @Inject constructor(
                 when (result) {
                     is GetDataFromRemote.Success -> {
                         publicIpAddress = result.data
-                        Log.e(TAG, "getIp4Address: $publicIpAddress")
+                        //Log.e(TAG, "getIp4Address: $publicIpAddress")
                     }
 
                     is GetDataFromRemote.Failed -> {
-                        Log.d(TAG, "getIp4Address: $result")
+                        //Log.d(TAG, "getIp4Address: $result")
                         useCase.insertErrorDataToFireStoreUseCase(
                             collectionName = collectionName,
                             documentName = "getIp4Address,${Date()}",

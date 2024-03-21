@@ -38,13 +38,11 @@ class ApiServiceImpl(
 
 
     override suspend fun getWelcomeMessage(url: String): Flow<GetDataFromRemote<WelcomeMessage>> {
-        Log.d(TAG, "getWelcomeMessage: ${Date()}")
         return flow {
             try {
                 val httpResponse = client.get(urlString = url)
-                Log.e(TAG, "getWelcomeMessage: ${Date()}")
                 val statusCode = httpResponse.status.value
-                //Log.i(TAG, "status code $statusCode")
+
 
                 when (statusCode) {
                     in 200..299 -> {
@@ -99,8 +97,7 @@ class ApiServiceImpl(
                 }
 
             } catch (e: ConnectTimeoutException) {
-                Log.e(TAG, "getWelcomeMessage: ${Date()}")
-                // Log.e(TAG, " ConnectTimeoutException")
+
                 emit(
                     GetDataFromRemote.Failed(
                         error = Error(
@@ -111,8 +108,7 @@ class ApiServiceImpl(
                 )
 
             } catch (e: NoTransformationFoundException) {
-                Log.e(TAG, "getWelcomeMessage: ${Date()}")
-                // Log.e(TAG, " NoTransformationFoundException")
+
                 emit(
                     GetDataFromRemote.Failed(
                         error = Error(
@@ -122,8 +118,7 @@ class ApiServiceImpl(
                     )
                 )
             } catch (e: ConnectException) {
-                Log.e(TAG, "getWelcomeMessage: ${Date()}")
-                //  Log.e(TAG, " No internet")
+
                 emit(
                     GetDataFromRemote.Failed(
                         error = Error(
@@ -133,9 +128,7 @@ class ApiServiceImpl(
                     )
                 )
             } catch (e: JsonConvertException) {
-                Log.e(TAG, "getWelcomeMessage: ${Date()}")
 
-                // Log.e(TAG, " ${e.message}")
                 emit(
                     GetDataFromRemote.Failed(
                         error = Error(
@@ -145,9 +138,7 @@ class ApiServiceImpl(
                     )
                 )
             } catch (e: Exception) {
-                Log.e(TAG, "getWelcomeMessage: ${Date()}")
 
-                //Log.e(TAG, " ${e.message}")
                 emit(
                     GetDataFromRemote.Failed(
                         error = Error(
@@ -165,8 +156,7 @@ class ApiServiceImpl(
             try {
                 val httpResponse = client.get(urlString = url)
                 val statusCode = httpResponse.status.value
-                Log.e(TAG, "status code $statusCode ${httpResponse.bodyAsText()}")
-                Log.d(TAG, "registerUser: $url")
+
 
                 when (statusCode) {
                     in 200..299 -> {
@@ -221,7 +211,6 @@ class ApiServiceImpl(
                 }
 
             } catch (e: ConnectTimeoutException) {
-                //Log.e(TAG, " ConnectTimeoutException")
                 emit(
                     GetDataFromRemote.Failed(
                         error = Error(
@@ -232,7 +221,6 @@ class ApiServiceImpl(
                 )
 
             } catch (e: NoTransformationFoundException) {
-                // Log.e(TAG, " NoTransformationFoundException")
                 emit(
                     GetDataFromRemote.Failed(
                         error = Error(
@@ -242,7 +230,6 @@ class ApiServiceImpl(
                     )
                 )
             } catch (e: ConnectException) {
-                //Log.e(TAG, " No internet")
                 emit(
                     GetDataFromRemote.Failed(
                         error = Error(
@@ -253,7 +240,6 @@ class ApiServiceImpl(
                 )
             } catch (e: JsonConvertException) {
 
-                // Log.e(TAG, " ${e.message}")
                 emit(
                     GetDataFromRemote.Failed(
                         error = Error(
@@ -264,7 +250,6 @@ class ApiServiceImpl(
                 )
             } catch (e: Exception) {
 
-                // Log.e(TAG, " ${e.message}")
                 emit(
                     GetDataFromRemote.Failed(
                         error = Error(
@@ -888,14 +873,15 @@ class ApiServiceImpl(
     override suspend fun getSectionList(url: String): Flow<GetDataFromRemote<List<Section>>> {
         return flow {
             try {
-                Log.d(TAG, "getSectionList: $url")
+
                 val httpResponse = client.get(urlString = url)
                 val statusCode = httpResponse.status.value
-                // Log.i(TAG, "status code $statusCode")
+
+
 
                 when (statusCode) {
                     200 -> {
-                        GetDataFromRemote.Success(httpResponse.body<List<Section>>())
+                       emit( GetDataFromRemote.Success(httpResponse.body<List<Section>>()))
                     }
 
                     in 201..299 -> {
@@ -950,7 +936,7 @@ class ApiServiceImpl(
                 }
 
             } catch (e: ConnectTimeoutException) {
-                Log.e(TAG, " ConnectTimeoutException ${e.stackTrace}")
+
                 emit(
                     GetDataFromRemote.Failed(
                         error = Error(
@@ -962,7 +948,7 @@ class ApiServiceImpl(
 
             } catch (e: NoTransformationFoundException) {
 
-                Log.e(TAG, " NoTransformationFoundException:-  ")
+
 
                 emit(
                     GetDataFromRemote.Failed(
@@ -973,7 +959,7 @@ class ApiServiceImpl(
                     )
                 )
             } catch (e: ConnectException) {
-                Log.e(TAG, " No internet")
+
                 emit(
                     GetDataFromRemote.Failed(
                         error = Error(
@@ -984,7 +970,7 @@ class ApiServiceImpl(
                 )
             } catch (e: JsonConvertException) {
 
-                Log.e(TAG, " ${e.message}")
+
                 emit(
                     GetDataFromRemote.Failed(
                         error = Error(
@@ -1012,6 +998,7 @@ class ApiServiceImpl(
     override suspend fun getTableList(url: String): Flow<GetDataFromRemote<List<Table>>> {
         return flow {
             try {
+                Log.d(TAG, "getTableList: $url")
                 val httpResponse = client.get(urlString = url)
                 val statusCode = httpResponse.status.value
                 Log.i(TAG, "status code $statusCode")
@@ -1041,7 +1028,6 @@ class ApiServiceImpl(
                     }
 
                     in 400..499 -> {
-                        Log.e(TAG, "getTableList: 400- ${httpResponse.bodyAsText()}")
                         emit(
                             GetDataFromRemote.Failed(
                                 error = Error(
@@ -1053,7 +1039,6 @@ class ApiServiceImpl(
                     }
 
                     in 500..599 -> {
-                        Log.e(TAG, "getTableList: $500 ${httpResponse.bodyAsText()}")
                         emit(
                             GetDataFromRemote.Failed(
                                 error = Error(
@@ -1077,7 +1062,6 @@ class ApiServiceImpl(
                 }
 
             } catch (e: ConnectTimeoutException) {
-                Log.e(TAG, " ConnectTimeoutException")
                 emit(
                     GetDataFromRemote.Failed(
                         error = Error(
@@ -1088,7 +1072,6 @@ class ApiServiceImpl(
                 )
 
             } catch (e: NoTransformationFoundException) {
-                Log.e(TAG, " NoTransformationFoundException")
                 emit(
                     GetDataFromRemote.Failed(
                         error = Error(
@@ -1098,7 +1081,6 @@ class ApiServiceImpl(
                     )
                 )
             } catch (e: ConnectException) {
-                Log.e(TAG, " No internet")
                 emit(
                     GetDataFromRemote.Failed(
                         error = Error(
@@ -1109,7 +1091,6 @@ class ApiServiceImpl(
                 )
             } catch (e: JsonConvertException) {
 
-                Log.e(TAG, " ${e.message}")
                 emit(
                     GetDataFromRemote.Failed(
                         error = Error(
@@ -1120,7 +1101,6 @@ class ApiServiceImpl(
                 )
             } catch (e: Exception) {
 
-                Log.e(TAG, " ${e.message}")
                 emit(
                     GetDataFromRemote.Failed(
                         error = Error(
@@ -1632,7 +1612,6 @@ class ApiServiceImpl(
                             e.message
                         }
 
-                        Log.d(TAG, "uniLicenseActivation: $str")
                         emit(
                             GetDataFromRemote.Failed(
                                 error = Error(
@@ -1728,7 +1707,6 @@ class ApiServiceImpl(
             try {
                 val httpResponse = client.get(urlString = url)
                 val statusCode = httpResponse.status.value
-                Log.i(TAG, "status code $statusCode")
 
                 when (statusCode) {
                     in 200..299 -> {
@@ -1749,7 +1727,6 @@ class ApiServiceImpl(
                     }
 
                     in 400..499 -> {
-                        Log.d(TAG, "getIp4Address: ${httpResponse.bodyAsText()}")
                         emit(
                             GetDataFromRemote.Failed(
                                 error = Error(

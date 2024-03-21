@@ -1,5 +1,6 @@
 package com.gulfappdeveloper.project3.repositories
 
+import android.util.Log
 import com.gulfappdeveloper.project3.domain.remote.get.GetDataFromRemote
 import com.gulfappdeveloper.project3.domain.remote.get.dine_in.Section
 import com.gulfappdeveloper.project3.domain.remote.get.dine_in.Table
@@ -18,10 +19,11 @@ import com.gulfappdeveloper.project3.domain.remote.put.EditKOTBasic
 import com.gulfappdeveloper.project3.domain.remote.seeip.SeeIp
 import com.gulfappdeveloper.project3.domain.services.ApiService
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
 import javax.inject.Singleton
 
-
+private const val TAG = "RemoteRepository"
 @Singleton
 class RemoteRepository @Inject constructor(
     private val apiService: ApiService
@@ -57,6 +59,15 @@ class RemoteRepository @Inject constructor(
     }
 
     suspend fun getSectionList(url: String): Flow<GetDataFromRemote<List<Section>>> {
+        Log.d(TAG, "getSectionList: $url")
+       /* apiService.getSectionList(url = url).collectLatest {
+            if(it is GetDataFromRemote.Success){
+                Log.e(TAG, "getSectionList: success", )
+            }
+            if(it is GetDataFromRemote.Failed){
+                Log.i(TAG, "getSectionList: failed")
+            }
+        }*/
         return apiService.getSectionList(url = url)
     }
 
