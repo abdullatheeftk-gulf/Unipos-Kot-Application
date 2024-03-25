@@ -40,13 +40,13 @@ fun EditOrderNameAndChairDialog(
     //orderName = tableOrder.orderName
 
     var chairSelected by remember {
-        mutableStateOf(1)
+        mutableIntStateOf(1)
     }
 
     // chairSelected = tableOrder.chairCount!!
 
     var noOfChairRemaining by remember {
-        mutableStateOf(0)
+        mutableIntStateOf(0)
     }
 
     var showError by remember {

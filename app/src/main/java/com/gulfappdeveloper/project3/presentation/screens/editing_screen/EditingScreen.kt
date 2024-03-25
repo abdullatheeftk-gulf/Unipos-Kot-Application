@@ -70,7 +70,6 @@ fun EditingScreen(
                 }
 
                 is UiEvent.Navigate -> {
-                    // Log.i(TAG, "EditingScreen: ${value.uiEvent.route}")
 
                     navHostController.navigate(RootNavScreens.ShowKotScreen.route)
 

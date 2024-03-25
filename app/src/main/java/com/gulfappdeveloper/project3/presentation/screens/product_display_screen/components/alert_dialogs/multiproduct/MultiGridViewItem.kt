@@ -39,7 +39,7 @@ fun MultiGridViewItem(
     onDismissRequest: () -> Unit,
 ) {
     var orderCount by remember {
-        mutableStateOf(1)
+        mutableIntStateOf(1)
     }
 
     val baseUrl by rootViewModel.baseUrl

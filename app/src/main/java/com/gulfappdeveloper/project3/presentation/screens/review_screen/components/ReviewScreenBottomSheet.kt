@@ -3,6 +3,8 @@ package com.gulfappdeveloper.project3.presentation.screens.review_screen.compone
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.runtime.Composable
@@ -108,7 +110,7 @@ fun ReviewScreenBottomSheet(
                 enabled = !showProgressBar
             ) {
                 Icon(
-                    imageVector = Icons.Filled.KeyboardArrowLeft,
+                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
                     contentDescription = null,
                     tint = MaterialTheme.colors.MyPrimeColor
                 )
@@ -139,7 +141,7 @@ fun ReviewScreenBottomSheet(
                     color = if (editMode) MaterialTheme.colors.background else MaterialTheme.colors.MyPrimeColor
                 )
                 Icon(
-                    imageVector = Icons.Filled.KeyboardArrowRight,
+                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                     contentDescription = null,
                     tint = if (editMode) MaterialTheme.colors.background else MaterialTheme.colors.MyPrimeColor
                 )

@@ -38,7 +38,7 @@ fun ListViewItem(
 ) {
 
     var orderCount by remember {
-        mutableStateOf(1)
+        mutableIntStateOf(1)
     }
 
 

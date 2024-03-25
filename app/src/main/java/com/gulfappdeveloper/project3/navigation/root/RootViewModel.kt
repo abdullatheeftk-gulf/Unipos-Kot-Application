@@ -3,6 +3,8 @@ package com.gulfappdeveloper.project3.navigation.root
 import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -128,10 +130,14 @@ class RootViewModel @Inject constructor(
     val sectionList = mutableStateListOf<Section>()
     val tableList = mutableStateListOf<Table>()
 
-    var selectedTable: MutableState<Table?> = mutableStateOf(null)
-        private set
+    /*var selectedTable: MutableState<Table?> = mutableStateOf(null)
+        private set*/
 
-    private var newTableOrder: MutableState<TableOrder?> = mutableStateOf(null)
+    private val _selectedTable: MutableState<Table?> = mutableStateOf(null)
+    val selectedTable: State<Table?> = _selectedTable
+
+    private val _newTableOrder: MutableState<TableOrder?> = mutableStateOf(null)
+    val newTableOrder: State<TableOrder?> = _newTableOrder
 
 
     val tableOrderList = mutableStateListOf<TableOrder>()
@@ -143,10 +149,10 @@ class RootViewModel @Inject constructor(
     // For KOT
     val kotItemList = mutableStateListOf<KotItem>()
 
-    var itemsCountInKot = mutableStateOf(0)
+    var itemsCountInKot = mutableIntStateOf(0)
         private set
 
-    var kotNetAmount = mutableStateOf(0f)
+    var kotNetAmount = mutableFloatStateOf(0f)
         private set
 
     // it will add in ReviewScreen
@@ -154,22 +160,23 @@ class RootViewModel @Inject constructor(
         private set
 
     // user id from the login response
-    private var fKUserId = mutableStateOf(0)
+    private var fKUserId = mutableIntStateOf(0)
 
     // no of times login the app
-    private var serialNo = mutableStateOf(0)
+    private var serialNo = mutableIntStateOf(0)
 
     // order name is added from dine in tables
     private var orderName = mutableStateOf("")
 
-    var tableId = mutableStateOf(0)
+    var tableId = mutableIntStateOf(0)
         private set
 
-    private var chairCount = mutableStateOf(0)
+    private val _chairCount = mutableIntStateOf(0)
+    val chairCount: State<Int> = _chairCount
 
 
     // For editing only
-    var kotMasterId = mutableStateOf(0)
+    var kotMasterId = mutableIntStateOf(0)
         private set
 
     var editMode = mutableStateOf(false)
@@ -280,7 +287,7 @@ class RootViewModel @Inject constructor(
         viewModelScope.launch {
             useCase.readSerialNoCountUseCase().collect {
                 // Log.d(TAG, "readSerialNo: $it")
-                serialNo.value = it
+                serialNo.intValue = it
 
             }
         }
@@ -308,7 +315,7 @@ class RootViewModel @Inject constructor(
             useCase.readBaseUrlUseCase().collect {
 
                 baseUrl.value = it
-                 //Log.w(TAG, "readBaseUrl: base url $it , initial loading $isInitialLoadingFinished")
+                //Log.w(TAG, "readBaseUrl: base url $it , initial loading $isInitialLoadingFinished")
                 if (!isInitialLoadingFinished) {
                     //Log.i(TAG, "readBaseUrl: $it")
                     getWelcomeMessage()
@@ -603,7 +610,7 @@ class RootViewModel @Inject constructor(
             ).collect { result ->
                 Log.d(TAG, "getSectionList: ")
                 if (result is GetDataFromRemote.Success) {
-                    Log.i(TAG, "getSectionList: ${result.data}")
+
                     try {
                         sectionList.clear()
                     } catch (e: Exception) {
@@ -614,14 +621,13 @@ class RootViewModel @Inject constructor(
                 isInitialLoadingFinished = true
                 if (result is GetDataFromRemote.Failed) {
                     isInitialLoadingFinished = false
-                    Log.e(TAG, "getSectionList: ${result.error}")
                     useCase.insertErrorDataToFireStoreUseCase(
                         collectionName = collectionName,
                         documentName = "getSectionList,${Date()}",
                         errorData = FirebaseError(
                             errorMessage = result.error.message ?: "",
                             errorCode = result.error.code,
-                            url =url,
+                            url = url,
                             ipAddress = publicIpAddress
                         )
                     )
@@ -632,7 +638,7 @@ class RootViewModel @Inject constructor(
     }
 
 
-    fun getTableList(value:Int) {
+    fun getTableList(value: Int) {
 
         selectedSection.value = value
         try {
@@ -692,7 +698,7 @@ class RootViewModel @Inject constructor(
     }
 
     fun setSelectedTable(table: Table) {
-        selectedTable.value = table
+        _selectedTable.value = table
         sendDineInScreenEvent(DineInScreenEvent(UiEvent.Navigate(route = RootNavScreens.TableSelectionScreen.route)))
         getTableOrderList(id = table.id)
     }
@@ -718,11 +724,12 @@ class RootViewModel @Inject constructor(
                     result.data.forEach {
                         chairs += it.chairCount ?: 0
                     }
-                    showNewTableOrderAddButton.value = selectedTable.value?.noOfSeats!! > chairs
 
-                    // Log.d(TAG, "getTableOrderList: ${showNewTableOrderAddButton.value}")
-                    //  Log.e(TAG, "getTableOrderList: ${selectedTable.value}")
-                    //  Log.i(TAG, "getTableOrderList: $chairs")
+                    _selectedTable.value?.let {
+                        showNewTableOrderAddButton.value = it.noOfSeats > chairs
+                    }
+
+
                     tableOrderList.addAll(result.data)
                 }
                 if (result is GetDataFromRemote.Failed) {
@@ -747,9 +754,9 @@ class RootViewModel @Inject constructor(
     fun onSelectedTable() {
         //   Log.d("Test", "onSelectedTable:")
         try {
-            tableId.value = selectedTable.value?.id!!
+            tableId.intValue = _selectedTable.value?.id!!
             showNewTableOrderAddButton.value =
-                selectedTable.value?.occupied!! < selectedTable.value?.noOfSeats!!
+                _selectedTable.value?.occupied!! < _selectedTable.value?.noOfSeats!!
         } catch (e: Exception) {
             //   Log.e("Test", "onSelectedTable: ${e.message} ")
         }
@@ -758,27 +765,30 @@ class RootViewModel @Inject constructor(
 
 
     fun newOrderButtonClicked(orderName: String, noOfChairRequired: Int) {
-        if (selectedTable.value == null) {
+        if (_selectedTable.value == null) {
             sendTableSelectionUiEvent(
                 TableSelectionUiEvent(UiEvent.ShowSnackBar("There have some error on Selected table, Selected table is null func: newOrderButtonClicked"))
             )
             return
         }
-        newTableOrder.value = TableOrder(
-            chairCount = noOfChairRequired,
-            fK_TableId = selectedTable.value?.id!!,
-            fK_KOTInvoiceId = 0,
-            id = 0,
-            isBooked = false,
-            isReserved = false,
-            orderName = orderName,
-            remarks = null
-        )
+        _selectedTable.value?.let {
+            _newTableOrder.value = TableOrder(
+                chairCount = noOfChairRequired,
+                fK_TableId = it.id,
+                fK_KOTInvoiceId = 0,
+                id = 0,
+                isBooked = false,
+                isReserved = false,
+                orderName = orderName,
+                remarks = null
+            )
+        }
+
         tableOrderList.removeAll {
             it.fK_KOTInvoiceId == 0
         }
         tableOrderList.add(
-            element = newTableOrder.value!!
+            element = _newTableOrder.value!!
         )
         showNewTableOrderAddButton.value = false
     }
@@ -802,7 +812,7 @@ class RootViewModel @Inject constructor(
             //Log.e(TAG, "removeOrder: ", )
         }
         //new code added
-        selectedTable.value = null
+        _selectedTable.value = null
         resetTableId()
     }
 
@@ -821,7 +831,7 @@ class RootViewModel @Inject constructor(
                     if (result is GetDataFromRemote.Success) {
                         val user = result.data
                         updateSerialNo()
-                        fKUserId.value = user.userId
+                        fKUserId.intValue = user.userId
                         sendLocalRegisterEvent(UiEvent.Navigate(route = RootNavScreens.HomeScreen.route))
                     }
                     if (result is GetDataFromRemote.Failed) {
@@ -845,7 +855,7 @@ class RootViewModel @Inject constructor(
 
     fun getKotCancelPrivilege() {
         viewModelScope.launch(Dispatchers.IO) {
-            val url = "${baseUrl.value}${HttpRoutes.KOT_CANCEL_PRIVILEGE}${fKUserId.value}"
+            val url = "${baseUrl.value}${HttpRoutes.KOT_CANCEL_PRIVILEGE}${fKUserId.intValue}"
             useCase.kotCancelPrivilegeUseCase(url = url).collectLatest { result ->
                 when (result) {
                     is GetDataFromRemote.Success -> {
@@ -867,7 +877,7 @@ class RootViewModel @Inject constructor(
                         )
                     }
 
-                    else -> Unit
+
                 }
             }
         }
@@ -886,38 +896,90 @@ class RootViewModel @Inject constructor(
 
     // KOT
     fun addProductToKOT(count: Int, product: Product) {
-        val kotItem = KotItem(
-            barcode = product.barcode,
-            netAmount = count * product.rate,
-            quantity = count.toFloat(),
-            rate = product.rate,
-            productId = product.id,
-            productName = product.name
-        )
-        kotItemList.add(kotItem)
-        itemsCountInKot.value += 1
-        kotNetAmount.value += count * product.rate
+        try {
+            val kotItem = KotItem(
+                barcode = product.barcode,
+                netAmount = count * product.rate,
+                quantity = count.toFloat(),
+                rate = product.rate,
+                productId = product.id,
+                productName = product.name
+            )
+            kotItemList.add(kotItem)
+            itemsCountInKot.intValue += 1
+            kotNetAmount.floatValue += count * product.rate
+        }catch (e:Exception){
+            viewModelScope.launch(Dispatchers.IO) {
+                useCase.insertErrorDataToFireStoreUseCase(
+                    collectionName = "arrayOutOfBoundException funcaddProductToKOT",
+                    documentName = "${Date()}",
+                    errorData = FirebaseError(
+                        errorMessage = e.message ?: "there have some problem on editing"
+                    )
+                )
+            }
+        }
 
     }
 
     fun onIncrementAndDecrementKotItemClicked(count: Int, productId: Int, index: Int) {
+        try {
 
-        kotItemList.mapIndexed { i, kotItem ->
-            if (i == index && kotItem.productId == productId) {
-                kotNetAmount.value -= kotItem.netAmount
-                kotItem.quantity = count.toFloat()
-                kotItem.netAmount = count * kotItem.rate
-                kotNetAmount.value += kotItem.netAmount
+
+            kotItemList.mapIndexed { i, kotItem ->
+                if (i == index && kotItem.productId == productId) {
+                    kotNetAmount.floatValue -= kotItem.netAmount
+                    kotItem.quantity = count.toFloat()
+                    kotItem.netAmount = count * kotItem.rate
+                    kotNetAmount.floatValue += kotItem.netAmount
+                }
             }
+        } catch (e: Exception) {
+            sendReviewScreenEvent(
+                ReviewScreenEvent(
+                    UiEvent.ShowSnackBar(
+                        message = e.message ?: "There have some problem while editing"
+                    )
+                )
+            )
+            viewModelScope.launch(Dispatchers.IO) {
+                useCase.insertErrorDataToFireStoreUseCase(
+                    collectionName = "arrayOutOfBoundException func onIncrementAndDecrementKotItemClicked",
+                    documentName = "${Date()}",
+                    errorData = FirebaseError(
+                        errorMessage = e.message ?: "there have some problem on editing"
+                    )
+                )
+            }
+
         }
     }
 
     fun onDeleteItemFromKotItemClicked(kotItem: KotItem, index: Int) {
 
+        try {
+            kotItemList.removeAt(index = index)
+            kotNetAmount.floatValue -= kotItem.netAmount
+            itemsCountInKot.intValue -= 1
+        } catch (e: Exception) {
+            sendReviewScreenEvent(
+                ReviewScreenEvent(
+                    UiEvent.ShowSnackBar(
+                        message = e.message ?: "There have some problem while deleting"
+                    )
+                )
+            )
+            viewModelScope.launch(Dispatchers.IO) {
+                useCase.insertErrorDataToFireStoreUseCase(
+                    collectionName = "arrayOutOfBoundException func onDeleteItemFromKotItemClicked",
+                    documentName = "${Date()}",
+                    errorData = FirebaseError(
+                        errorMessage = e.message ?: "there have some problem on deleting"
+                    )
+                )
+            }
 
-        kotItemList.removeAt(index = index)
-        kotNetAmount.value -= kotItem.netAmount
-        itemsCountInKot.value -= 1
+        }
 
 
     }
@@ -927,17 +989,42 @@ class RootViewModel @Inject constructor(
     }
 
     fun addNoteToKotItem(kotItem: KotItem, note: String, index: Int) {
-        kotItemList.mapIndexed { i, item ->
-            if (item.productId == kotItem.productId && i == index) {
-                item.itemNote = note
+        try {
+            kotItemList.mapIndexed { i, item ->
+                if (item.productId == kotItem.productId && i == index) {
+                    item.itemNote = note
+                }
+            }
+        }catch (e:Exception){
+            sendReviewScreenEvent(
+                ReviewScreenEvent(
+                    UiEvent.ShowSnackBar(
+                        message = e.message ?: "There have some problem while deleting"
+                    )
+                )
+            )
+            viewModelScope.launch(Dispatchers.IO) {
+                useCase.insertErrorDataToFireStoreUseCase(
+                    collectionName = "arrayOutOfBoundException func addNoteToKotItem",
+                    documentName = "${Date()}",
+                    errorData = FirebaseError(
+                        errorMessage = e.message ?: "there have some problem on deleting"
+                    )
+                )
             }
         }
     }
 
     fun onNewTableOrderSet() {
-        orderName.value = newTableOrder.value?.orderName!!
-        // tableId.value = newTableOrder.value?.id!!
-        chairCount.value = newTableOrder.value?.chairCount!!
+        _newTableOrder.value?.let {
+            orderName.value = it.orderName
+            // tableId.value = newTableOrder.value?.id!!
+            it.chairCount?.let { cc ->
+                _chairCount.intValue = cc
+            }
+
+        }
+
         //Log.w(TAG, "onTableOrderSet: ${tableId.value}")*/
         sendTableSelectionUiEvent(
             TableSelectionUiEvent(
@@ -960,18 +1047,18 @@ class RootViewModel @Inject constructor(
     }
 
 
-    fun resetTableId() {
-        tableId.value = 0
+    private fun resetTableId() {
+        tableId.intValue = 0
     }
 
     // kot generation
     fun generateKot(deviceId: String) {
-        if (tableId.value == 0 && chairCount.value != 0) {
+        if (tableId.intValue == 0 && _chairCount.intValue != 0) {
             sendReviewScreenEvent(ReviewScreenEvent(UiEvent.ShowSnackBar("tableId and chair count should be 0")))
             //  Log.e("Test", "generateKot: ${tableId.value} ${chairCount.value}")
             return
         }
-        if (tableId.value != 0 && chairCount.value == 0) {
+        if (tableId.intValue != 0 && _chairCount.intValue == 0) {
             sendReviewScreenEvent(ReviewScreenEvent(UiEvent.ShowSnackBar("tableId and chair count should be 0")))
             //Log.e("Test", "generateKot: ${tableId.value} ${chairCount.value}")
             return
@@ -982,22 +1069,21 @@ class RootViewModel @Inject constructor(
         }
         sendReviewScreenEvent(ReviewScreenEvent(UiEvent.ShowProgressBar))
         val kot = Kot(
-            fK_UserId = fKUserId.value,
+            fK_UserId = fKUserId.intValue,
             kotDetails = kotItemList.toList(),
             notes = kotNotes.value,
-            serialNo = serialNo.value,
+            serialNo = serialNo.intValue,
             terminal = _deviceIdSate.value.ifEmpty { deviceId },
-            tableId = tableId.value,
+            tableId = tableId.intValue,
             orderName = orderName.value,
-            chairCount = chairCount.value,
+            chairCount = _chairCount.intValue,
             // For generation it will be 1
             kotMasterId = 1
         )
         val url = baseUrl.value + HttpRoutes.GENERATE_KOT
 
 
-
-       // Log.d(TAG, "generateKot: $kot")
+        // Log.d(TAG, "generateKot: $kot")
         viewModelScope.launch(Dispatchers.IO) {
             useCase.generateKotUseCase(
                 url = url,
@@ -1007,21 +1093,6 @@ class RootViewModel @Inject constructor(
                 sendReviewScreenEvent(ReviewScreenEvent(UiEvent.CloseProgressBar))
                 if (statusCode in 200..299) {
                     sendReviewScreenEvent(ReviewScreenEvent(UiEvent.ShowAlertDialog))
-
-                    /* if (ipAddress.value.isNotEmpty() && ipAddress.value.isNotBlank() && port.value.isNotEmpty() && port.value.isNotEmpty()) {
-
-                         val printer = Printer(
-                             address = ipAddress.value,
-                             port = port.value.toInt(),
-                             timeOut = 30
-                         )
-                        // val p = printer.pr
-
-                        // val text = getPrintText(print = p)
-                       //  printer.printKot(text)
-
-
-                     }*/
 
                 } else {
                     // Log.e(TAG, "generateKot: $", )
@@ -1050,12 +1121,12 @@ class RootViewModel @Inject constructor(
 
     //Edit Kot
     fun editKot(deviceId: String) {
-        if (tableId.value == 0 && chairCount.value != 0) {
+        if (tableId.intValue == 0 && _chairCount.intValue != 0) {
             sendReviewScreenEvent(ReviewScreenEvent(UiEvent.ShowSnackBar("tableId and chair count should be 0")))
             // Log.e("Test", "generateKot: ${tableId.value} ${chairCount.value}")
             return
         }
-        if (tableId.value != 0 && chairCount.value == 0) {
+        if (tableId.intValue != 0 && _chairCount.intValue == 0) {
             sendReviewScreenEvent(ReviewScreenEvent(UiEvent.ShowSnackBar("tableId and chair count should be 0")))
             //Log.e("Test", "generateKot: ${tableId.value} ${chairCount.value}")
             return
@@ -1066,28 +1137,20 @@ class RootViewModel @Inject constructor(
         }
         sendReviewScreenEvent(ReviewScreenEvent(UiEvent.ShowProgressBar))
 
-        /* Log.i(TAG, "editKot: ${kotItemList.toList()}")
-         Log.d(TAG, "editKot: ${kotMasterId.value}")
-         Log.e(TAG, "editKot: ${tableId.value}")
-         Log.w(TAG, "editKot: ${kotNotes.value}")
-         Log.i(TAG, "editKot: ${chairCount.value}")
-         Log.e(TAG, "editKot: ${orderName.value}")
- */
         viewModelScope.launch(Dispatchers.IO) {
-            val url = baseUrl.value + HttpRoutes.EDIT_KOT + kotMasterId.value
+            val url = baseUrl.value + HttpRoutes.EDIT_KOT + kotMasterId.intValue
             val kot = Kot(
-                fK_UserId = fKUserId.value,
+                fK_UserId = fKUserId.intValue,
                 kotDetails = kotItemList.toList(),
                 notes = kotNotes.value,
-                serialNo = serialNo.value,
+                serialNo = serialNo.intValue,
                 terminal = _deviceIdSate.value.ifEmpty { deviceId },
-                tableId = tableId.value,
+                tableId = tableId.intValue,
                 orderName = orderName.value,
-                chairCount = chairCount.value,
-                kotMasterId = kotMasterId.value
+                chairCount = _chairCount.intValue,
+                kotMasterId = kotMasterId.intValue
             )
-            //  Log.i("Test", "editKot: $url")
-            //  Log.w("Test", "editKot: $kot")
+
             useCase.editKotUseCase(
                 url = url,
                 kot = kot
@@ -1166,9 +1229,7 @@ class RootViewModel @Inject constructor(
                             ipAddress = publicIpAddress
                         )
                     )
-                    //  Log.e(TAG, "editOrderNameAndChairCount: $statusCode $statusMessage")
-                    //  Log.w(TAG, "editOrderNameAndChairCount: $url")
-                    // Log.d(TAG, "editOrderNameAndChairCount: $editKOTBasic")
+
                 }
             }
         }
@@ -1216,15 +1277,11 @@ class RootViewModel @Inject constructor(
 
                         //Adding data for editing
                         kotItemList.addAll(value.kotDetails)
-                        /*useCase.insertErrorDataToFireStoreUseCase(
-                            collectionName = "kotItemList",
-                            documentName = Date().toString(),
-                            errorData = FirebaseError(errorMessage = kotItemList.toList().toString())
-                        )*/
-                        itemsCountInKot.value = value.kotDetails.size
+
+                        itemsCountInKot.intValue = value.kotDetails.size
                         try {
                             kotItemList.forEach { kotItem ->
-                                kotNetAmount.value += kotItem.netAmount
+                                kotNetAmount.floatValue += kotItem.netAmount
                             }
                         } catch (e: Exception) {
                             //  Log.e(TAG, "getKOTDetails: ${e.message}")
@@ -1232,28 +1289,20 @@ class RootViewModel @Inject constructor(
                         // Log.e(TAG, "getKOTDetails: ${chairCount.value}")
                         // Log.d(TAG, "getKOTDetails: ${orderName.value}")
 
-                        kotMasterId.value = value.kotMasterId
-                        tableId.value = value.tableId
+                        kotMasterId.intValue = value.kotMasterId
+                        tableId.intValue = value.tableId
                         kotNotes.value = value.notes ?: ""
-                        chairCount.value = if (chairCount.value == 0) {
+                        _chairCount.intValue = if (_chairCount.intValue == 0) {
                             value.chairCount
                         } else {
-                            chairCount.value
+                            _chairCount.intValue
                         }
                         orderName.value = orderName.value.ifEmpty {
                             value.orderName ?: ""
                         }
-                        /* Log.w(TAG, "getKOTDetails: ---------------")
-                         Log.e(TAG, "getKOTDetails: ${chairCount.value}")
-                         Log.d(TAG, "getKOTDetails: ${orderName.value}")*/
 
-
-                        /*if (isOrderFromEditScreen) {
-                            sendEditScreenEvent(UiEvent.Navigate(RootNavScreens.ShowKotScreen.route))
-                        }
-*/
                     }
-                    // Log.d(TAG, "getKOTDetails: ${result.data}")
+
                 }
                 if (result is GetDataFromRemote.Failed) {
                     // Log.e(TAG, "getKOTDetails: ${result.error}")
@@ -1274,16 +1323,14 @@ class RootViewModel @Inject constructor(
     }
 
     fun deleteKot() {
-        val url = baseUrl.value + HttpRoutes.EDIT_KOT + kotMasterId.value
+        val url = baseUrl.value + HttpRoutes.EDIT_KOT + kotMasterId.intValue
         sendShowKotUiEvent(UiEvent.ShowProgressBar)
         viewModelScope.launch(Dispatchers.IO) {
             useCase.deleteKotUseCase(
                 url = url,
                 callBack = { statusCode, statusMessage ->
                     sendShowKotUiEvent(UiEvent.CloseProgressBar)
-                    // Log.w(TAG, "deleteKot: $statusCode", )
-                    // Log.e(TAG, "deleteKot: $statusMessage", )
-                    // Log.d(TAG, "deleteKot:error url $url")
+
                     if (statusCode == 204) {
                         resetKot()
                         removeTableOrderAndResetSelectedTableAndTableId()
@@ -1298,7 +1345,7 @@ class RootViewModel @Inject constructor(
                             errorData = FirebaseError(
                                 errorCode = statusCode,
                                 errorMessage = statusMessage,
-                                url = baseUrl.value + HttpRoutes.EDIT_KOT + kotMasterId.value,
+                                url = baseUrl.value + HttpRoutes.EDIT_KOT + kotMasterId.intValue,
                                 ipAddress = publicIpAddress
                             )
                         )
@@ -1384,21 +1431,21 @@ class RootViewModel @Inject constructor(
             // Log.e(TAG, "resetKot: ${e.message}")
         }
 
-        itemsCountInKot.value = 0
-        kotNetAmount.value = 0f
+        itemsCountInKot.intValue = 0
+        kotNetAmount.floatValue = 0f
         kotNotes.value = ""
 
-        kotMasterId.value = 0
+        kotMasterId.intValue = 0
 
         // Dine in features  imp:- table id will reset in separate function
         orderName.value = ""
 
-        chairCount.value = 0
+        _chairCount.intValue = 0
         //newly added
         //  tableId.value = 0
 
-        selectedTable.value = null
-        newTableOrder.value = null
+        _selectedTable.value = null
+        _newTableOrder.value = null
         try {
             tableOrderList.clear()
         } catch (e: Exception) {
@@ -1428,7 +1475,7 @@ class RootViewModel @Inject constructor(
             // Log.e(TAG, "getListOfPendingKOTs: ${e.message}")
         }
         sendEditScreenEvent(UiEvent.ShowProgressBar)
-        val url = baseUrl.value + HttpRoutes.LIST_KOT_OF_USER + fKUserId.value
+        val url = baseUrl.value + HttpRoutes.LIST_KOT_OF_USER + fKUserId.intValue
         viewModelScope.launch(Dispatchers.IO) {
             useCase.getListOfPendingKOTs(url = url).collectLatest { result ->
                 sendEditScreenEvent(UiEvent.CloseProgressBar)
@@ -1685,7 +1732,7 @@ class RootViewModel @Inject constructor(
     }
 
 
-    fun showSnackBarToShowErrorOnShowKotScreenEditButtonClicked(error:String){
+    fun showSnackBarToShowErrorOnShowKotScreenEditButtonClicked(error: String) {
         viewModelScope.launch {
             useCase.insertErrorDataToFireStoreUseCase(
                 collectionName = "editKotError",

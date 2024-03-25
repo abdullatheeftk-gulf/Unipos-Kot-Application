@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -90,25 +91,31 @@ fun TableSelectionScreen(
     }
 
     if (showAddNewOrderDialog) {
-        AddNewOrderDialog(
-            rootViewModel = rootViewModel,
-            hideKeyboard = hideKeyboard,
-            noOfSeatsRemaining = selectedTable?.noOfSeats!! - selectedTable?.occupied!!,
-            onDismissRequest = {
-                showAddNewOrderDialog = false
-            }
-        )
+        selectedTable?.let {
+            AddNewOrderDialog(
+                rootViewModel = rootViewModel,
+                hideKeyboard = hideKeyboard,
+                noOfSeatsRemaining =it.noOfSeats - it.occupied,
+                onDismissRequest = {
+                    showAddNewOrderDialog = false
+                }
+            )
+        }
+
     }
 
     if (showEditOrderNameAndChairCountDialog) {
-        EditOrderNameAndChairDialog(
-            onDismissRequest = {
-                showEditOrderNameAndChairCountDialog = false
-            },
-            hideKeyboard = hideKeyboard,
-            rootViewModel = rootViewModel,
-            tableOrder = selectedOrder!!
-        )
+        selectedOrder?.let {
+            EditOrderNameAndChairDialog(
+                onDismissRequest = {
+                    showEditOrderNameAndChairCountDialog = false
+                },
+                hideKeyboard = hideKeyboard,
+                rootViewModel = rootViewModel,
+                tableOrder = it
+            )
+        }
+
     }
 
     if (showCompletedEditOnAndCc) {
@@ -133,7 +140,7 @@ fun TableSelectionScreen(
                         rootViewModel.removeTableOrderAndResetSelectedTableAndTableId()
                     }) {
                         Icon(
-                            imageVector = Icons.Filled.ArrowBack,
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = null
                         )
                     }
